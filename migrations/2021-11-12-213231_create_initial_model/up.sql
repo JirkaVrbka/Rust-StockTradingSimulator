@@ -1,1 +1,43 @@
--- Your SQL goes here
+CREATE TABLE STONKER (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    balance INTEGER NOT NULL
+);
+
+CREATE TABLE COMPANY (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    performer_id INTEGER REFERENCES STONKER(id)
+);
+
+CREATE TYPE CommandTypes AS ENUM (
+    'SELL', 'SELL_IF_HIGH', 'SELL_IF_LOW', 'BUY_IF_LOW'
+);
+
+CREATE TABLE COMMAND (
+    id SERIAL PRIMARY KEY,
+    stonker_id INTEGER REFERENCES STONKER(id),
+    company_id INTEGER REFERENCES COMPANY(id),
+    threshold INTEGER NOT NULL,
+    count INTEGER NOT NULL,
+    "type" CommandTypes NOT NULL
+);
+
+
+CREATE TABLE HISTORY (
+    id SERIAL PRIMARY KEY,
+    stonker_id INTEGER REFERENCES STONKER(id),
+    stock_id INTEGER,
+    bought_for INTEGER,
+    created_at TIMESTAMP NOT NULL,
+    sold_for INTEGER
+);
+
+CREATE TABLE STOCK (
+    id SERIAL PRIMARY KEY,
+    stonker_id INTEGER REFERENCES STONKER(id),
+    company_id INTEGER REFERENCES COMPANY(id),
+    last_transaction_id INTEGER REFERENCES HISTORY(id)
+);
+
+ALTER TABLE HISTORY ADD CONSTRAINT fk_history_stock FOREIGN KEY(stock_id) REFERENCES STOCK(id);
