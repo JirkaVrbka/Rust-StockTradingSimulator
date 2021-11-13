@@ -4,9 +4,9 @@ table! {
         stonker_id -> Nullable<Int4>,
         company_id -> Nullable<Int4>,
         threshold -> Int4,
-        count -> Int4,
+        share -> Nullable<Numeric>,
         #[sql_name = "type"]
-        type_ -> Commandtypes,
+        type_ -> Nullable<Varchar>,
     }
 }
 
@@ -34,7 +34,6 @@ table! {
         id -> Int4,
         stonker_id -> Nullable<Int4>,
         company_id -> Nullable<Int4>,
-        last_transaction_id -> Nullable<Int4>,
     }
 }
 
@@ -49,14 +48,9 @@ table! {
 joinable!(command -> company (company_id));
 joinable!(command -> stonker (stonker_id));
 joinable!(company -> stonker (performer_id));
+joinable!(history -> stock (stock_id));
 joinable!(history -> stonker (stonker_id));
 joinable!(stock -> company (company_id));
 joinable!(stock -> stonker (stonker_id));
 
-allow_tables_to_appear_in_same_query!(
-    command,
-    company,
-    history,
-    stock,
-    stonker,
-);
+allow_tables_to_appear_in_same_query!(command, company, history, stock, stonker,);

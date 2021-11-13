@@ -9,7 +9,6 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: example
-      DATABASE_URL: postgres://postgres:example@localhost:5432/stocks
  
   adminer:
     image: adminer
