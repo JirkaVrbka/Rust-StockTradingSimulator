@@ -2,5 +2,5 @@
 pub struct Company {
     pub id: i32,
     name: String,
-    performer_id: i32
+    performer_id: i32,
 }
