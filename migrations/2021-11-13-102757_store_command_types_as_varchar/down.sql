@@ -1,1 +1,6 @@
--- This file should undo anything in `up.sql`
+DELETE FROM COMMAND;
+ALTER TABLE COMMAND DROP COLUMN "type";
+CREATE TYPE CommandTypes AS ENUM (
+    'SELL', 'SELL_IF_HIGH', 'SELL_IF_LOW', 'BUY_IF_LOW'
+);
+ALTER TABLE COMMAND ADD COLUMN "type" CommandTypes;

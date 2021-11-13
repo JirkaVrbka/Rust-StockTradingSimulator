@@ -1,1 +1,6 @@
--- This file should undo anything in `up.sql`
+DROP TABLE STONKER;
+DROP TABLE COMPANY;
+DROP TYPE CommandTypes;
+DROP TABLE COMMAND;
+DROP TABLE HISTORY;
+DROP TABLE STOCK;
