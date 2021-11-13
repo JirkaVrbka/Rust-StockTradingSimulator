@@ -9,7 +9,7 @@ extern crate dotenv;
 use std::sync::Arc;
 
 use crate::endpoints::company_endpoints::{get_companies, get_company};
-use crate::endpoints::stonker_endpoints::{get_stonker, get_stonkers};
+use crate::endpoints::stonker_endpoints::{get_stonker, get_stonkers, create_stonker};
 use crate::models::stonker::Stonker;
 use crate::repos::company_repo::PostgresCompanyRepo;
 use crate::repos::connection::establish_connection;
@@ -35,6 +35,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_stonker)
             .service(get_companies)
             .service(get_company)
+            .service(create_stonker)
     })
     .bind(("127.0.0.1", 8081))?
     .run()
