@@ -53,4 +53,10 @@ joinable!(history -> stonker (stonker_id));
 joinable!(stock -> company (company_id));
 joinable!(stock -> stonker (stonker_id));
 
-allow_tables_to_appear_in_same_query!(command, company, history, stock, stonker,);
+allow_tables_to_appear_in_same_query!(
+    command,
+    company,
+    history,
+    stock,
+    stonker,
+);
