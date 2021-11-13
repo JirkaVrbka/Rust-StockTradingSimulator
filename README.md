@@ -17,8 +17,11 @@
 `username: postgres`
 
 ## Install Diesel CLI
-`cargo install diesel_cli`
 `cargo install diesel_cli --no-default-features --features postgres`
+
+## Install yew
+* `rustup target add wasm32-unknown-unknown` rust compiles to wasm 
+* `cargo install trunk wasm-bindgen-cli` trunk serve
 
 ### Unix Problems
 In case of problems: `sudo apt install libpq-dev`

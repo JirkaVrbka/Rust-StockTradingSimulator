@@ -1,5 +1,5 @@
-use crate::models::stonker::NewStonker;
-use crate::repos::stonker_repo::StonkerRepo;
+use crate::schema::models::stonker::NewStonker;
+use crate::schema::repos::stonker_repo::StonkerRepo;
 use crate::PostgresStonkerRepo;
 use crate::Stonker;
 use actix_web::web;
