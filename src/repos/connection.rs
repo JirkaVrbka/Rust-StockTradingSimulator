@@ -1,9 +1,12 @@
 #[macro_use]
+use crate::Stonker;
+use crate::PostgresStonkerRepo;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool, PoolError, PooledConnection};
 use dotenv::dotenv;
 use std::env;
+use crate::repos::stonker_repo::StonkerRepo;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
@@ -19,4 +22,17 @@ pub fn establish_connection() -> PgPool {
     PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url));
 
     init_pool(&database_url).expect("Failed to create pool")
+}
+
+pub async fn test_connection() {
+    let pool = establish_connection();
+    let stonker_repo = PostgresStonkerRepo::new(pool);
+    let stonkers: Vec<Stonker> = stonker_repo
+        .get_stonkers()
+        .await
+        .expect("Fetching stonkers failed");
+    println!("Displaying {} stonkers", stonkers.len());
+    for entity in stonkers {
+        println!("id: {} name: {}", entity.id, entity.name);
+    }
 }

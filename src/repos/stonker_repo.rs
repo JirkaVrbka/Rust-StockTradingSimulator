@@ -9,6 +9,7 @@ pub trait StonkerRepo {
     async fn get_stonkers(&self) -> anyhow::Result<Vec<Stonker>>;
 }
 
+#[derive(std::clone::Clone)]
 pub struct PostgresStonkerRepo {
     pg_pool: Arc<PgPool>,
 }
