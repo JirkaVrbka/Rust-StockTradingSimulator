@@ -1,12 +1,12 @@
 table! {
     command (id) {
         id -> Int4,
-        stonker_id -> Nullable<Int4>,
-        company_id -> Nullable<Int4>,
+        stonker_id -> Int4,
+        company_id -> Int4,
         threshold -> Int4,
-        share -> Nullable<Numeric>,
+        share -> Numeric,
         #[sql_name = "type"]
-        type_ -> Nullable<Varchar>,
+        type_ -> Varchar,
     }
 }
 
@@ -14,15 +14,15 @@ table! {
     company (id) {
         id -> Int4,
         name -> Varchar,
-        performer_id -> Nullable<Int4>,
+        performer_id -> Int4,
     }
 }
 
 table! {
     history (id) {
         id -> Int4,
-        stonker_id -> Nullable<Int4>,
-        stock_id -> Nullable<Int4>,
+        stonker_id -> Int4,
+        stock_id -> Int4,
         bought_for -> Nullable<Int4>,
         created_at -> Timestamp,
         sold_for -> Nullable<Int4>,
@@ -32,8 +32,8 @@ table! {
 table! {
     stock (id) {
         id -> Int4,
-        stonker_id -> Nullable<Int4>,
-        company_id -> Nullable<Int4>,
+        stonker_id -> Int4,
+        company_id -> Int4,
     }
 }
 

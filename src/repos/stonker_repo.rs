@@ -1,9 +1,9 @@
+use crate::diesel::QueryDsl;
 use crate::diesel::RunQueryDsl;
 use crate::schema::stonker::dsl::*;
 use crate::{models::stonker::Stonker, repos::connection::PgPool};
 use async_trait::async_trait;
 use std::sync::Arc;
-use crate::diesel::QueryDsl;
 
 #[async_trait]
 pub trait StonkerRepo {
@@ -17,10 +17,8 @@ pub struct PostgresStonkerRepo {
 }
 
 impl PostgresStonkerRepo {
-    pub fn new(pg_pool: PgPool) -> Self {
-        Self {
-            pg_pool: Arc::new(pg_pool),
-        }
+    pub fn new(pg_pool: Arc<PgPool>) -> Self {
+        Self { pg_pool: pg_pool }
     }
 }
 
