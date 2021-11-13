@@ -1,8 +1,9 @@
+use crate::models::stonker::NewStonker;
 use crate::repos::stonker_repo::StonkerRepo;
 use crate::PostgresStonkerRepo;
 use crate::Stonker;
 use actix_web::web;
-use actix_web::{get, HttpResponse, Result};
+use actix_web::{get, post, HttpResponse, Result};
 
 #[get("/stonkers")]
 pub async fn get_stonkers(repo: web::Data<PostgresStonkerRepo>) -> Result<HttpResponse> {
@@ -17,6 +18,19 @@ pub async fn get_stonker(
 ) -> Result<HttpResponse> {
     let stonker: Stonker = repo
         .get_stonker_by_id(*id)
+        .await
+        .expect("Fetching stonkers failed");
+    Ok(HttpResponse::Ok().json(stonker))
+}
+
+#[post("stonkers")]
+pub async fn create_stonker(repo: web::Data<PostgresStonkerRepo>, stonker_data: web::Json<NewStonker>) -> Result<HttpResponse> {
+    let new_stonker = NewStonker {
+        name: stonker_data.name.clone(),
+        balance: stonker_data.balance,
+    };
+    let stonker: Stonker = repo
+        .create_stonker(new_stonker)
         .await
         .expect("Fetching stonkers failed");
     Ok(HttpResponse::Ok().json(stonker))
