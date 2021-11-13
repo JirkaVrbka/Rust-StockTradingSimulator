@@ -1,12 +1,12 @@
 #[macro_use]
 use crate::Stonker;
+use crate::repos::stonker_repo::StonkerRepo;
 use crate::PostgresStonkerRepo;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool, PoolError, PooledConnection};
 use dotenv::dotenv;
 use std::env;
-use crate::repos::stonker_repo::StonkerRepo;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
