@@ -10,7 +10,29 @@
 `docker-compose -f stack.yml up`
 
 ## Endpoints
+### Stonker endpoints
 `GET http://localhost:8081/stonkers`
+    - get all stonkers
+`GET http://localhost:8081/stonkers/{id}`
+    - get stonker by id
+`POST http://localhost:8081/stonkers`
+    - create a stonker
+    - Request Body: {name: string, balance: number}
+
+### Company endpoints
+`GET http://localhost:8081/companies`
+    - get all companies
+`GET http://localhost:8081/companies/{id}`
+    - get company by id
+
+### Stock endpoints
+`GET http://localhost:8081/stocks`
+    - get all stocks
+`GET http://localhost:8081/stocks/{id}`
+    - get stock by id
+`POST http://localhost:8081/stocks`
+    - create a stock
+    - Request Body: {stonker_id: string, company_id: number}
 
 ## View DB in Adminer
 `http://localhost:8080/`  

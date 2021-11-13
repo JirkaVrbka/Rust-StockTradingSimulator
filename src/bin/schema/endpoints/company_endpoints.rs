@@ -14,7 +14,7 @@ pub async fn get_companies(repo: web::Data<PostgresCompanyRepo>) -> Result<HttpR
     Ok(HttpResponse::Ok().json(companies))
 }
 
-#[get("/company/{id}")]
+#[get("/companies/{id}")]
 pub async fn get_company(
     repo: web::Data<PostgresCompanyRepo>,
     id: web::Path<i32>,
