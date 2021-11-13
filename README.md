@@ -4,6 +4,9 @@
 ## Start application in Docker
 `docker-compose -f stack.yml up`
 
+## Endpoints
+`GET http://localhost:8081/stonkers`
+
 ## View DB in Adminer
 `http://localhost:8080/`  
 `username: postgres`
