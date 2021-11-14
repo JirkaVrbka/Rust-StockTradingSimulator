@@ -23,7 +23,10 @@ pub async fn get_stock(
 }
 
 #[post("stocks")]
-pub async fn create_stock(repo: web::Data<PostgresStockRepo>, stock_data: web::Json<NewStock>) -> Result<HttpResponse> {
+pub async fn create_stock(
+    repo: web::Data<PostgresStockRepo>,
+    stock_data: web::Json<NewStock>,
+) -> Result<HttpResponse> {
     let new_stock = NewStock {
         stonker_id: stock_data.stonker_id,
         company_id: stock_data.company_id,

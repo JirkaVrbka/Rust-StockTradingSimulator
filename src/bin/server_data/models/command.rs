@@ -1,6 +1,6 @@
+use crate::schema::command;
 use diesel_derive_enum::DbEnum;
 use serde::{Deserialize, Serialize};
-use crate::schema::command;
 
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug)]
 #[DieselType = "Commandtypes"]
@@ -12,7 +12,7 @@ pub enum CommandTypes {
 }
 
 #[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable)]
-#[table_name="command"]
+#[table_name = "command"]
 pub struct Command {
     pub id: i32,
     pub stonker_id: i32,
@@ -23,7 +23,7 @@ pub struct Command {
 }
 
 #[derive(Insertable, Serialize, Deserialize)]
-#[table_name="command"]
+#[table_name = "command"]
 pub struct NewCommand {
     pub stonker_id: i32,
     pub company_id: i32,

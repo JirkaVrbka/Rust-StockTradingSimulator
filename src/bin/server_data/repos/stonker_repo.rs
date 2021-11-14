@@ -1,12 +1,12 @@
-use crate::models::stock::Stock;
-use crate::models::stonker::NewStonker;
+use crate::diesel::BelongingToDsl;
 use crate::diesel::QueryDsl;
 use crate::diesel::RunQueryDsl;
-use crate::schema::stonker::dsl::*;
+use crate::models::stock::Stock;
+use crate::models::stonker::NewStonker;
 use crate::schema::stonker;
-use crate::{models::stonker::Stonker as Stonker, repos::connection::PgPool};
+use crate::schema::stonker::dsl::*;
+use crate::{models::stonker::Stonker, repos::connection::PgPool};
 use async_trait::async_trait;
-use crate::diesel::BelongingToDsl;
 use std::sync::Arc;
 
 #[async_trait]

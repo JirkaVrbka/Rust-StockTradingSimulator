@@ -24,7 +24,10 @@ pub async fn get_stonker(
 }
 
 #[post("stonkers")]
-pub async fn create_stonker(repo: web::Data<PostgresStonkerRepo>, stonker_data: web::Json<NewStonker>) -> Result<HttpResponse> {
+pub async fn create_stonker(
+    repo: web::Data<PostgresStonkerRepo>,
+    stonker_data: web::Json<NewStonker>,
+) -> Result<HttpResponse> {
     let new_stonker = NewStonker {
         name: stonker_data.name.clone(),
         balance: stonker_data.balance,
