@@ -11,4 +11,5 @@ yew = "0.18"
 server_deps = []
 
 [[bin]]
-name = "..\\client"
+name = "client"
+path = "../client.rs"

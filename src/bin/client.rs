@@ -1,3 +1,4 @@
+pub mod client_data;
 use yew::prelude::*;
 
 #[derive(Debug)]
