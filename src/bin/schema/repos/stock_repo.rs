@@ -12,6 +12,8 @@ pub trait StockRepo {
     async fn get_stocks(&self) -> anyhow::Result<Vec<Stock>>;
     async fn get_stock_by_id(&self, stock_id: i32) -> anyhow::Result<Stock>;
     async fn create_stock(&self, new_stock: NewStock) -> anyhow::Result<Stock>;
+    // async fn get_stock_by_user_id(&self, user_id: i32) -> anyhow::Result<Stock>;
+    // async fn get_stock_by_company_id(&self, company_id: i32) -> anyhow::Result<Stock>;
 }
 
 #[derive(std::clone::Clone)]
@@ -56,4 +58,24 @@ impl StockRepo for PostgresStockRepo {
 
         Ok(result)
     }
+
+    // async fn get_stock_by_user_id(&self, user_id: i32) -> anyhow::Result<Stock> {
+    //     let connection = self.pg_pool.get().expect("Cannot get connection from pool");
+    //     let result = stock
+    //         .find(stock_id)
+    //         .first(&connection)
+    //         .expect("Error loading stonkers");
+
+    //     Ok(result)
+    // }
+
+    // async fn get_stock_by_company_id(&self, company_id: i32) -> anyhow::Result<Stock> {
+    //     let connection = self.pg_pool.get().expect("Cannot get connection from pool");
+    //     let result = stock
+    //         .find(stock_id)
+    //         .first(&connection)
+    //         .expect("Error loading stonkers");
+
+    //     Ok(result)
+    // }
 }
