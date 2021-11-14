@@ -1,16 +1,21 @@
 table! {
+    use diesel::sql_types::*;
+    use crate::models::command::*;
+
     command (id) {
         id -> Int4,
         stonker_id -> Int4,
         company_id -> Int4,
         threshold -> Int4,
-        #[sql_name = "type"]
-        type_ -> Varchar,
         share -> Int4,
+        kind -> Commandtypes,
     }
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::models::command::*;
+
     company (id) {
         id -> Int4,
         name -> Varchar,
@@ -19,6 +24,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::models::command::*;
+
     history (id) {
         id -> Int4,
         stonker_id -> Int4,
@@ -30,6 +38,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::models::command::*;
+
     stock (id) {
         id -> Int4,
         stonker_id -> Int4,
@@ -38,6 +49,9 @@ table! {
 }
 
 table! {
+    use diesel::sql_types::*;
+    use crate::models::command::*;
+
     stonker (id) {
         id -> Int4,
         name -> Varchar,

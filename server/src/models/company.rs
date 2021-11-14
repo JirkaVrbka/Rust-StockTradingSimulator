@@ -3,6 +3,7 @@ use crate::schema::company;
 
 
 #[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
+#[table_name="company"]
 pub struct Company {
     pub id: i32,
     pub name: String,

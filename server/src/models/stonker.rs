@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use crate::schema::stonker;
 
 #[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
+#[table_name="stonker"]
 pub struct Stonker {
     pub id: i32,
     pub name: String,

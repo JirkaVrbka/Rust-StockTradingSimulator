@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use crate::schema::stock;
 
 #[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
+#[table_name="stock"]
 pub struct Stock {
     pub id: i32,
     pub stonker_id: i32,

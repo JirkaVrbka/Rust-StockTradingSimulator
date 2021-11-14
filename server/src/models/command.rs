@@ -1,7 +1,9 @@
+use diesel_derive_enum::DbEnum;
 use serde::{Deserialize, Serialize};
 use crate::schema::command;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, DbEnum, Debug)]
+#[DieselType = "Commandtypes"]
 pub enum CommandTypes {
     SELL,
     SELL_IF_HIGH,
@@ -17,7 +19,7 @@ pub struct Command {
     pub company_id: i32,
     pub threshold: i32,
     pub share: i32, // eg.: 50% = 50 * 10000 = 500000
-    pub r#type: CommandTypes,
+    pub kind: CommandTypes,
 }
 
 #[derive(Insertable, Serialize, Deserialize)]
@@ -27,5 +29,5 @@ pub struct NewCommand {
     pub company_id: i32,
     pub threshold: i32,
     pub share: i32,
-    pub r#type: CommandTypes,
+    pub kind: CommandTypes,
 }

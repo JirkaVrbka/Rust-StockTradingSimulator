@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 use crate::schema::history;
-use chrono::serde::ts_seconds;
+use chrono::naive::serde::ts_seconds;
 
 #[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
+#[table_name="history"]
 pub struct History {
     pub id: i32,
     pub stonker_id: i32,
