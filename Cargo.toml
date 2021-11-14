@@ -3,18 +3,22 @@ name = "Rust-StockTradingSimulator"
 version = "0.1.0"
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+async-trait = { version = "0.1.51", optional = true }
+anyhow = { version = "1.0.45", optional = true }
+tokio = { version = "1", features = ["full"], optional = true }
+actix-web = { version = "3", optional = true }
+diesel = { version = "1.0.0", features = ["postgres", "r2d2", "chrono"], optional = true }
+dotenv = { version = "0.15.0", optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }
+serde_json = { version = "1.0", optional = true }
+chrono = { version = "0.4", features = ["serde"], optional = true }
+diesel-derive-enum = { version = "0.4", features = ["postgres"], optional = true }
+yew = { version = "0.18", optional = true }
 
-[workspace]
-members = [
-    "server",  # run `cargo run -p server` or `cargo run --bin server --manifest-path server/Cargo.toml`
-    "client",  # run `trunk serve`
-]
+[features]
+server_deps = ["async-trait", "anyhow", "tokio","actix-web","diesel", "dotenv", "serde", "serde_json", "chrono", "diesel-derive-enum"]
+client_deps = ["yew"]
 
-[[bin]]
-name = "server"
-path = "server/src/main.rs"
-
-[[bin]]
-name = "client"
-path = "client/src/main.rs"
+#cargo build --bin client --target wasm32-unknown-unknown --features client_deps
+#cargo run --bin server --features server

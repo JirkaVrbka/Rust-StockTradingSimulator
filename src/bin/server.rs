@@ -1,7 +1,5 @@
-pub mod endpoints;
-pub mod models;
-pub mod repos;
-pub mod schema;
+pub mod server_data;
+use server_data::*;
 
 #[macro_use]
 extern crate diesel;
