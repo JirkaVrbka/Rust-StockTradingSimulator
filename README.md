@@ -1,13 +1,43 @@
 # Rust-StockTradingSimulator
 ![diagram](diagram.svg)
 
+## Run the application
+### Server
+#### Docker Database
+```
+docker-compose -f .\stack.yml up
+```
+[adminer](http://localhost:8080) 
+username: postgres
+
+#### Server page
+```
+cargo run --bin server --features server_deps
+```
+[stonkers.json](http://localhost:8081/stonkers)
+
+### Client
+#### First time setup
+```
+cargo install trunk wasm-bindgen-cli
+rustup target add wasm32-unknown-unknown
+```
+#### Build only
+```
+cargo build --bin client --target wasm32-unknown-unknown
+```
+
+#### Run and watch
+```
+trunk serve
+```
+[webpage](http://localhost:5000/)
+
 ## Ports
 * `localhost:8080` - Adminer - manage database from browser
-* `localhost:8081` - Webpage - client app
+* `localhost:8081` - Server side webpage full of json
 * `localhost:5432` - Database - manage database from code
-
-## Start application in Docker
-`docker-compose -f stack.yml up`
+* `localhost:5000` - Webpage client app full of nice css
 
 ## Endpoints
 ### Stonker endpoints
@@ -38,10 +68,6 @@
 `POST http://localhost:8081/stocks`
     - create a stock
     - Request Body: {stonker_id: string, company_id: number}
-
-## View DB in Adminer
-`http://localhost:8080/`  
-`username: postgres`
 
 ## Install Diesel CLI
 `cargo install diesel_cli --no-default-features --features postgres`
