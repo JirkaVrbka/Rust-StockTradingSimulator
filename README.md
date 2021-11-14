@@ -39,7 +39,7 @@ cargo build --bin client --target wasm32-unknown-unknown
 
 #### Run and watch
 ```
-trunk serve
+trunk --config .\src\bin\client_data\trunk.toml serve
 ```
 [webpage](http://localhost:5000/)
 

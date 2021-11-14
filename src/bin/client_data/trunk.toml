@@ -1,5 +1,5 @@
 [build]
-target = "src\\bin\\client_data\\index.html"
+target = "index.html"
 
 [serve]
 # The port to serve on.
