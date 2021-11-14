@@ -1,3 +1,6 @@
+pub mod endpoints;
+pub mod models;
+pub mod repos;
 pub mod schema;
 
 #[macro_use]
@@ -5,13 +8,13 @@ extern crate diesel;
 extern crate dotenv;
 use std::sync::Arc;
 
-use crate::schema::endpoints::stonker_endpoints::{get_stonker, get_stonkers, create_stonker};
-use crate::schema::endpoints::stock_endpoints::{get_stocks, get_stock, create_stock};
-use crate::schema::endpoints::company_endpoints::{get_companies, get_company};
-use crate::schema::repos::company_repo::PostgresCompanyRepo;
-use crate::schema::repos::connection::establish_connection;
-use crate::schema::repos::stonker_repo::PostgresStonkerRepo;
-use crate::schema::repos::stock_repo::PostgresStockRepo;
+use crate::endpoints::stonker_endpoints::{get_stonker, get_stonkers, create_stonker};
+use crate::endpoints::stock_endpoints::{get_stocks, get_stock, create_stock};
+use crate::endpoints::company_endpoints::{get_companies, get_company};
+use crate::repos::company_repo::PostgresCompanyRepo;
+use crate::repos::connection::establish_connection;
+use crate::repos::stonker_repo::PostgresStonkerRepo;
+use crate::repos::stock_repo::PostgresStockRepo;
 use actix_web::{App, HttpServer};
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};

@@ -1,9 +1,9 @@
 use actix_web::web;
 use actix_web::{get, HttpResponse, Result};
 
-use crate::schema::models::company::Company;
+use crate::models::company::Company;
 
-use crate::schema::repos::company_repo::{CompanyRepo, PostgresCompanyRepo};
+use crate::repos::company_repo::{CompanyRepo, PostgresCompanyRepo};
 
 #[get("/companies")]
 pub async fn get_companies(repo: web::Data<PostgresCompanyRepo>) -> Result<HttpResponse> {

@@ -1,5 +1,5 @@
-use crate::schema::models::stock::{NewStock, Stock};
-use crate::schema::repos::stock_repo::StockRepo;
+use crate::models::stock::{NewStock, Stock};
+use crate::repos::stock_repo::StockRepo;
 use crate::PostgresStockRepo;
 use actix_web::web;
 use actix_web::{get, post, HttpResponse, Result};

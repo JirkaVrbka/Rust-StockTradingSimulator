@@ -1,9 +1,9 @@
-use crate::schema::models::stock::NewStock;
+use crate::models::stock::NewStock;
 use crate::diesel::QueryDsl;
 use crate::diesel::RunQueryDsl;
 use crate::schema::stock;
 use crate::schema::stock::dsl::*;
-use crate::schema::{models::stock::Stock as Stock, repos::connection::PgPool};
+use crate::{models::stock::Stock as Stock, repos::connection::PgPool};
 use async_trait::async_trait;
 use std::sync::Arc;
 

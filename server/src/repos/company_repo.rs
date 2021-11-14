@@ -1,8 +1,8 @@
 use crate::diesel::QueryDsl;
 use crate::diesel::RunQueryDsl;
 use crate::schema::company::dsl::*;
-use crate::schema::models::company::Company;
-use crate::schema::repos::connection::PgPool;
+use crate::models::company::Company;
+use crate::repos::connection::PgPool;
 use async_trait::async_trait;
 use std::sync::Arc;
 
