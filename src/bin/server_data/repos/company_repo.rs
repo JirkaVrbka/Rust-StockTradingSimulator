@@ -7,6 +7,7 @@ use crate::repos::connection::PgPool;
 use crate::diesel::BelongingToDsl;
 use async_trait::async_trait;
 use std::sync::Arc;
+use anyhow::{Context};
 
 #[async_trait]
 pub trait CompanyRepo {
@@ -29,34 +30,34 @@ impl PostgresCompanyRepo {
 #[async_trait]
 impl CompanyRepo for PostgresCompanyRepo {
     async fn get_companies(&self) -> anyhow::Result<Vec<Company>> {
-        let connection = self.pg_pool.get().expect("Cannot get connection from pool");
+        let connection = self.pg_pool.get().context("Cannot get connection from pool")?;
         let results = company
             .load::<Company>(&connection)
-            .expect("Error loading companies");
+            .context(format!("Could not get companies"))?;
 
         Ok(results)
     }
 
     async fn get_company_by_id(&self, company_id: i32) -> anyhow::Result<Company> {
-        let connection = self.pg_pool.get().expect("Cannot get connection from pool");
+        let connection = self.pg_pool.get().context("Cannot get connection from pool")?;
         let result = company
             .find(company_id)
             .first(&connection)
-            .expect("Error loading company");
+            .context(format!("Could not find company with id {}", company_id))?;
 
         Ok(result)
     }
 
     async fn get_company_stocks(&self, company_id: i32) -> anyhow::Result<Vec<Stock>> {
-        let connection = self.pg_pool.get().expect("Cannot get connection from pool");
+        let connection = self.pg_pool.get().context("Cannot get connection from pool")?;
         let c: Company = company
             .find(company_id)
             .first(&connection)
-            .expect("Error loading company");
+            .context(format!("Could not find company with id {}", company_id))?;
 
         let company_stocks: Vec<Stock> = Stock::belonging_to(&c)
             .load::<Stock>(&connection)
-            .expect("Error loading company stocks");
+            .context(format!("Could not find stock belonging to company with id {}", company_id))?;
 
         Ok(company_stocks)
     }
