@@ -22,7 +22,10 @@ pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let pool = Arc::new(establish_connection());
+    let pool = match establish_connection() {
+            Ok(p) => Arc::new(p),
+            Err(_) => panic!("Cannot establish connection"),
+    };
     let stonker_repo = PostgresStonkerRepo::new(pool.clone());
     let company_repo = PostgresCompanyRepo::new(pool.clone());
     let stock_repo = PostgresStockRepo::new(pool.clone());

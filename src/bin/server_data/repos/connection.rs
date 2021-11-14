@@ -13,10 +13,10 @@ fn init_pool(database_url: &str) -> Result<PgPool, PoolError> {
     Pool::builder().build(manager)
 }
 
-pub fn establish_connection() -> PgPool {
+pub fn establish_connection() -> anyhow::Result<PgPool> {
     dotenv().ok();
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url));
+    let database_url = env::var("DATABASE_URL")?;
+    PgConnection::establish(&database_url)?;
 
-    init_pool(&database_url).expect("Failed to create pool")
+    Ok(init_pool(&database_url)?)
 }

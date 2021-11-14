@@ -15,6 +15,7 @@ serde_json = { version = "1.0", optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 diesel-derive-enum = { version = "0.4", features = ["postgres"], optional = true }
 yew = { version = "0.18", optional = true }
+strum_macros = { version = "0.22.0", optional = true }
 
 [features]
 server_deps = ["async-trait", "anyhow", "tokio","actix-web","diesel", "dotenv", "serde", "serde_json", "chrono", "diesel-derive-enum"]
