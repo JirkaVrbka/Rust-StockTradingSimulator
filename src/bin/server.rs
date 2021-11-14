@@ -7,13 +7,15 @@ extern crate diesel;
 extern crate dotenv;
 use std::sync::Arc;
 
-use crate::endpoints::stonker_endpoints::{get_stonker, get_stonkers, create_stonker, get_stonker_stocks};
-use crate::endpoints::stock_endpoints::{get_stocks, get_stock, create_stock};
 use crate::endpoints::company_endpoints::{get_companies, get_company, get_company_stocks};
+use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks};
+use crate::endpoints::stonker_endpoints::{
+    create_stonker, get_stonker, get_stonker_stocks, get_stonkers,
+};
 use crate::repos::company_repo::PostgresCompanyRepo;
 use crate::repos::connection::establish_connection;
-use crate::repos::stonker_repo::PostgresStonkerRepo;
 use crate::repos::stock_repo::PostgresStockRepo;
+use crate::repos::stonker_repo::PostgresStonkerRepo;
 use actix_web::{App, HttpServer};
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
@@ -24,8 +26,8 @@ pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let pool = match establish_connection() {
-            Ok(p) => Arc::new(p),
-            Err(_) => panic!("Cannot establish connection"),
+        Ok(p) => Arc::new(p),
+        Err(_) => panic!("Cannot establish connection"),
     };
     let stonker_repo = PostgresStonkerRepo::new(pool.clone());
     let company_repo = PostgresCompanyRepo::new(pool.clone());
