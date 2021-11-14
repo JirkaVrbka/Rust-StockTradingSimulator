@@ -36,7 +36,7 @@ impl CompanyRepo for PostgresCompanyRepo {
             .context("500::::Cannot get connection from pool")?;
         let results = company
             .load::<Company>(&connection)
-            .context(format!("500::::Could not get companies"))?;
+            .context(format!("404::::Could not get companies"))?;
 
         Ok(results)
     }
@@ -50,7 +50,7 @@ impl CompanyRepo for PostgresCompanyRepo {
             .find(company_id)
             .first(&connection)
             .context(format!(
-                "500::::Could not find company with id {}",
+                "404::::Could not find company with id {}",
                 company_id
             ))?;
 
@@ -61,19 +61,19 @@ impl CompanyRepo for PostgresCompanyRepo {
         let connection = self
             .pg_pool
             .get()
-            .context("500:::::: get connection from pool")?;
+            .context("500::::::Cannot not get connection from pool")?;
         let c: Company = company
             .find(company_id)
             .first(&connection)
             .context(format!(
-                "500::::Could not find company with id {}",
+                "404::::Could not find company with id {}",
                 company_id
             ))?;
 
         let company_stocks: Vec<Stock> = Stock::belonging_to(&c)
             .load::<Stock>(&connection)
             .context(format!(
-                "500::::Could not find stock belonging to company with id {}",
+                "404::::Could not find stock belonging to company with id {}",
                 company_id
             ))?;
 

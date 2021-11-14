@@ -28,10 +28,9 @@ fn handle_api_error(e: anyhow::Error) -> Result<HttpResponse> {
     let api_error = api_error_from_string(e.to_string());
     // TODO: handle more error codes (eg. 400, 404, ...)
     match api_error.code {
-        500 => Ok(HttpResponse::InternalServerError().json(ApiError {
-            code: api_error.code,
-            cause:  api_error.cause,
-        })),
+        500 => Ok(HttpResponse::InternalServerError().json(api_error)),
+        400 => Ok(HttpResponse::BadRequest().json(api_error)),
+        404 => Ok(HttpResponse::NotFound().json(api_error)),
         _ => {
             panic!("Error not defined yet");
         }
