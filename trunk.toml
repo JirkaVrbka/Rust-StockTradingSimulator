@@ -1,0 +1,6 @@
+[build]
+target = "client\\index.html"
+
+[serve]
+# The port to serve on.
+port = 5000

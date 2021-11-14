@@ -28,3 +28,10 @@ impl Component for Model {
         }
     }
 }
+
+//cargo install trunk wasm-bindgen-cli
+//rustup target add wasm32-unknown-unknown
+//trunk serve
+fn main() {
+    yew::start_app::<Model>();
+}
