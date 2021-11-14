@@ -4,6 +4,7 @@ use crate::models::stock::Stock;
 use crate::schema::company::dsl::*;
 use crate::models::company::Company;
 use crate::repos::connection::PgPool;
+use crate::diesel::BelongingToDsl;
 use async_trait::async_trait;
 use std::sync::Arc;
 
@@ -11,7 +12,7 @@ use std::sync::Arc;
 pub trait CompanyRepo {
     async fn get_companies(&self) -> anyhow::Result<Vec<Company>>;
     async fn get_company_by_id(&self, company_id: i32) -> anyhow::Result<Company>;
-    // async fn get_company_stocks(&self, company_id: i32) -> anyhow::Result<Vec<Stock>>;
+    async fn get_company_stocks(&self, company_id: i32) -> anyhow::Result<Vec<Stock>>;
 }
 
 #[derive(std::clone::Clone)]
@@ -46,14 +47,17 @@ impl CompanyRepo for PostgresCompanyRepo {
         Ok(result)
     }
 
-    // async fn get_company_stocks(&self, company_id: i32) -> anyhow::Result<Vec<Stock>> {
-    //     let connection = self.pg_pool.get().expect("Cannot get connection from pool");
-    //     let result = company
-    //         .find(company_id)
-    //         .first(&connection)
-    //         .expect("Error loading company");
-    //     let company_stocks = Stock::belonging_to(&company).load::<Company>(&connection).expect("Error loading company stocks");
+    async fn get_company_stocks(&self, company_id: i32) -> anyhow::Result<Vec<Stock>> {
+        let connection = self.pg_pool.get().expect("Cannot get connection from pool");
+        let c: Company = company
+            .find(company_id)
+            .first(&connection)
+            .expect("Error loading company");
 
-    //     Ok(company_stocks)
-    // }
+        let company_stocks: Vec<Stock> = Stock::belonging_to(&c)
+            .load::<Stock>(&connection)
+            .expect("Error loading company stocks");
+
+        Ok(company_stocks)
+    }
 }

@@ -3,6 +3,7 @@ use actix_web::{get, HttpResponse, Result};
 
 use crate::models::company::Company;
 
+use crate::models::stock::Stock;
 use crate::repos::company_repo::{CompanyRepo, PostgresCompanyRepo};
 
 #[get("/companies")]
@@ -24,4 +25,16 @@ pub async fn get_company(
         .await
         .expect("Fetching company failed");
     Ok(HttpResponse::Ok().json(company))
+}
+
+#[get("/companies/{id}/stocks")]
+pub async fn get_company_stocks(
+    repo: web::Data<PostgresCompanyRepo>,
+    id: web::Path<i32>,
+) -> Result<HttpResponse> {
+    let company_stocks: Vec<Stock> = repo
+        .get_company_stocks(*id)
+        .await
+        .expect("Fetching company failed");
+    Ok(HttpResponse::Ok().json(company_stocks))
 }

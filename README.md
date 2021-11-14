@@ -18,12 +18,17 @@
 `POST http://localhost:8081/stonkers`
     - create a stonker
     - Request Body: {name: string, balance: number}
+`GET http://localhost:8081/stonkers/{id}/stocks`
+    - get stonker stocks
 
 ### Company endpoints
 `GET http://localhost:8081/companies`
     - get all companies
 `GET http://localhost:8081/companies/{id}`
     - get company by id
+`GET http://localhost:8081/companies/{id}/stocks`
+    - get company stocks
+
 
 ### Stock endpoints
 `GET http://localhost:8081/stocks`

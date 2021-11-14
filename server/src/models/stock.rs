@@ -1,7 +1,11 @@
+use crate::models::company::Company;
+use crate::models::stonker::Stonker;
 use serde::{Deserialize, Serialize};
 use crate::schema::stock;
 
 #[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
+#[belongs_to(Company)]
+#[belongs_to(Stonker)]
 #[table_name="stock"]
 pub struct Stock {
     pub id: i32,

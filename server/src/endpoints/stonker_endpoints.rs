@@ -1,3 +1,4 @@
+use crate::models::stock::Stock;
 use crate::models::stonker::{NewStonker, Stonker};
 use crate::repos::stonker_repo::StonkerRepo;
 use crate::PostgresStonkerRepo;
@@ -33,4 +34,16 @@ pub async fn create_stonker(repo: web::Data<PostgresStonkerRepo>, stonker_data: 
         .await
         .expect("Fetching stonkers failed");
     Ok(HttpResponse::Ok().json(stonker))
+}
+
+#[get("/stonkers/{id}/stocks")]
+pub async fn get_stonker_stocks(
+    repo: web::Data<PostgresStonkerRepo>,
+    id: web::Path<i32>,
+) -> Result<HttpResponse> {
+    let stonker_stocks: Vec<Stock> = repo
+        .get_stonker_stocks(*id)
+        .await
+        .expect("Fetching stonker stocks failed");
+    Ok(HttpResponse::Ok().json(stonker_stocks))
 }

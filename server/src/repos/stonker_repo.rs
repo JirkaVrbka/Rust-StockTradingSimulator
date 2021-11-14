@@ -1,3 +1,4 @@
+use crate::models::stock::Stock;
 use crate::models::stonker::NewStonker;
 use crate::diesel::QueryDsl;
 use crate::diesel::RunQueryDsl;
@@ -5,6 +6,7 @@ use crate::schema::stonker::dsl::*;
 use crate::schema::stonker;
 use crate::{models::stonker::Stonker as Stonker, repos::connection::PgPool};
 use async_trait::async_trait;
+use crate::diesel::BelongingToDsl;
 use std::sync::Arc;
 
 #[async_trait]
@@ -12,6 +14,7 @@ pub trait StonkerRepo {
     async fn get_stonkers(&self) -> anyhow::Result<Vec<Stonker>>;
     async fn get_stonker_by_id(&self, stonker_id: i32) -> anyhow::Result<Stonker>;
     async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<Stonker>;
+    async fn get_stonker_stocks(&self, stonker_id: i32) -> anyhow::Result<Vec<Stock>>;
 }
 
 #[derive(std::clone::Clone)]
@@ -55,5 +58,19 @@ impl StonkerRepo for PostgresStonkerRepo {
             .expect("Error saving new message");
 
         Ok(result)
+    }
+
+    async fn get_stonker_stocks(&self, stonker_id: i32) -> anyhow::Result<Vec<Stock>> {
+        let connection = self.pg_pool.get().expect("Cannot get connection from pool");
+        let s: Stonker = stonker
+            .find(stonker_id)
+            .first(&connection)
+            .expect("Error loading stonker");
+
+        let stonker_stocks: Vec<Stock> = Stock::belonging_to(&s)
+            .load::<Stock>(&connection)
+            .expect("Error loading stonker stocks");
+
+        Ok(stonker_stocks)
     }
 }
