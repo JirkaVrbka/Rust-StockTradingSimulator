@@ -1,7 +1,3 @@
-pub mod endpoints;
-pub mod models;
-pub mod repos;
-
 table! {
     command (id) {
         id -> Int4,
