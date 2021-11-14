@@ -1,5 +1,6 @@
 pub mod server_data;
 use server_data::*;
+pub mod utils;
 
 #[macro_use]
 extern crate diesel;
@@ -29,7 +30,7 @@ async fn main() -> std::io::Result<()> {
     let stonker_repo = PostgresStonkerRepo::new(pool.clone());
     let company_repo = PostgresCompanyRepo::new(pool.clone());
     let stock_repo = PostgresStockRepo::new(pool.clone());
-
+    println!("Utils: {}", utils::hello());
     HttpServer::new(move || {
         App::new()
             .data(stonker_repo.clone())
