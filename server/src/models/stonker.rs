@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use crate::schema::stonker;
 
-#[derive(Queryable, Serialize, Deserialize, Clone)]
+#[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
 pub struct Stonker {
     pub id: i32,
     pub name: String,

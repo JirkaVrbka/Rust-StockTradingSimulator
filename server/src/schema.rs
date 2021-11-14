@@ -4,9 +4,9 @@ table! {
         stonker_id -> Int4,
         company_id -> Int4,
         threshold -> Int4,
-        share -> Numeric,
         #[sql_name = "type"]
         type_ -> Varchar,
+        share -> Int4,
     }
 }
 
