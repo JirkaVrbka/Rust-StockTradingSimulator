@@ -10,6 +10,16 @@ docker-compose -f .\stack.yml up
 [adminer](http://localhost:8080) 
 username: postgres
 
+Run new migrations
+```
+diesel migration run
+```
+
+If there is some problem you can always delete stocks database and create new within adminer like a so:
+```sql
+create database stocks
+```
+
 #### Server page
 ```
 cargo run --bin server --features server_deps
