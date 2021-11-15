@@ -4,9 +4,9 @@ use crate::models::stock::NewStock;
 use crate::schema::stock;
 use crate::schema::stock::dsl::*;
 use crate::{models::stock::Stock, repos::connection::PgPool};
+use anyhow::Context;
 use async_trait::async_trait;
 use std::sync::Arc;
-use anyhow::Context;
 
 #[async_trait]
 pub trait StockRepo {
@@ -29,7 +29,10 @@ impl PostgresStockRepo {
 #[async_trait]
 impl StockRepo for PostgresStockRepo {
     async fn get_stocks(&self) -> anyhow::Result<Vec<Stock>> {
-        let connection = self.pg_pool.get().context("500::::Cannot get connection from pool")?;
+        let connection = self
+            .pg_pool
+            .get()
+            .context("500::::Cannot get connection from pool")?;
         let results = stock
             .load::<Stock>(&connection)
             .context("404::::Could not find stocks")?;
@@ -38,7 +41,10 @@ impl StockRepo for PostgresStockRepo {
     }
 
     async fn get_stock_by_id(&self, stock_id: i32) -> anyhow::Result<Stock> {
-        let connection = self.pg_pool.get().context("500::::Cannot get connection from pool")?;
+        let connection = self
+            .pg_pool
+            .get()
+            .context("500::::Cannot get connection from pool")?;
         let result = stock
             .find(stock_id)
             .first(&connection)
@@ -48,7 +54,10 @@ impl StockRepo for PostgresStockRepo {
     }
 
     async fn create_stock(&self, new_stock: NewStock) -> anyhow::Result<Stock> {
-        let connection = self.pg_pool.get().context("500::::Cannot get connection from pool")?;
+        let connection = self
+            .pg_pool
+            .get()
+            .context("500::::Cannot get connection from pool")?;
 
         let result = diesel::insert_into(stock::table)
             .values(&new_stock)

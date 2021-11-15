@@ -15,10 +15,10 @@ serde_json = { version = "1.0", optional = true }
 chrono = { version = "0.4", features = ["serde"], optional = true }
 diesel-derive-enum = { version = "0.4", features = ["postgres"], optional = true }
 yew = { version = "0.18" }
-strum_macros = { version = "0.22.0", optional = true }
+actix-cors = { version = "0.5.4", optional = true }
 
 [features]
-server_deps = ["async-trait", "anyhow", "tokio","actix-web","diesel", "dotenv", "serde", "serde_json", "chrono", "diesel-derive-enum"]
+server_deps = ["async-trait", "anyhow", "tokio","actix-web","diesel", "dotenv", "serde", "serde_json", "chrono", "diesel-derive-enum", "actix-cors"]
 
 #cargo build --bin client --target wasm32-unknown-unknown --features client_deps
 #cargo run --bin server --features server

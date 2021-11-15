@@ -6,9 +6,9 @@ use crate::models::stonker::NewStonker;
 use crate::schema::stonker;
 use crate::schema::stonker::dsl::*;
 use crate::{models::stonker::Stonker, repos::connection::PgPool};
+use anyhow::Context;
 use async_trait::async_trait;
 use std::sync::Arc;
-use anyhow::Context;
 
 #[async_trait]
 pub trait StonkerRepo {
@@ -32,7 +32,10 @@ impl PostgresStonkerRepo {
 #[async_trait]
 impl StonkerRepo for PostgresStonkerRepo {
     async fn get_stonkers(&self) -> anyhow::Result<Vec<Stonker>> {
-        let connection = self.pg_pool.get().context("500::::Cannot get connection from pool")?;
+        let connection = self
+            .pg_pool
+            .get()
+            .context("500::::Cannot get connection from pool")?;
         let results = stonker
             .load::<Stonker>(&connection)
             .context("404::::Could not find stonkers")?;
@@ -41,17 +44,26 @@ impl StonkerRepo for PostgresStonkerRepo {
     }
 
     async fn get_stonker_by_id(&self, stonker_id: i32) -> anyhow::Result<Stonker> {
-        let connection = self.pg_pool.get().context("500::::Cannot get connection from pool")?;
+        let connection = self
+            .pg_pool
+            .get()
+            .context("500::::Cannot get connection from pool")?;
         let result = stonker
             .find(stonker_id)
             .first(&connection)
-            .context(format!("404::::Could not find stonker with id {}", stonker_id))?;
+            .context(format!(
+                "404::::Could not find stonker with id {}",
+                stonker_id
+            ))?;
 
         Ok(result)
     }
 
     async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<Stonker> {
-        let connection = self.pg_pool.get().context("500::::Cannot get connection from pool")?;
+        let connection = self
+            .pg_pool
+            .get()
+            .context("500::::Cannot get connection from pool")?;
 
         let result = diesel::insert_into(stonker::table)
             .values(&new_stonker)
@@ -62,15 +74,24 @@ impl StonkerRepo for PostgresStonkerRepo {
     }
 
     async fn get_stonker_stocks(&self, stonker_id: i32) -> anyhow::Result<Vec<Stock>> {
-        let connection = self.pg_pool.get().context("500::::Cannot get connection from pool")?;
+        let connection = self
+            .pg_pool
+            .get()
+            .context("500::::Cannot get connection from pool")?;
         let s: Stonker = stonker
             .find(stonker_id)
             .first(&connection)
-            .context(format!("404::::Could not find stonker with id {}", stonker_id))?;
+            .context(format!(
+                "404::::Could not find stonker with id {}",
+                stonker_id
+            ))?;
 
         let stonker_stocks: Vec<Stock> = Stock::belonging_to(&s)
             .load::<Stock>(&connection)
-            .context(format!("404::::Could not find stock belonging to stonker with id {}", stonker_id))?;
+            .context(format!(
+                "404::::Could not find stock belonging to stonker with id {}",
+                stonker_id
+            ))?;
 
         Ok(stonker_stocks)
     }

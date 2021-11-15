@@ -37,12 +37,12 @@ fn handle_api_error(e: anyhow::Error) -> Result<HttpResponse> {
     }
 }
 
-pub fn handle_api_result<T>(result: anyhow::Result<T>) -> Result<HttpResponse> where T: Serialize, {
+pub fn handle_api_result<T>(result: anyhow::Result<T>) -> Result<HttpResponse>
+where
+    T: Serialize,
+{
     match result {
         Ok(response) => Ok(HttpResponse::Ok().json(response)),
         Err(e) => handle_api_error(e),
     }
 }
-
-
-

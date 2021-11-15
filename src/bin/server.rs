@@ -16,7 +16,8 @@ use crate::repos::company_repo::PostgresCompanyRepo;
 use crate::repos::connection::establish_connection;
 use crate::repos::stock_repo::PostgresStockRepo;
 use crate::repos::stonker_repo::PostgresStonkerRepo;
-use actix_web::{App, HttpServer};
+use actix_cors::Cors;
+use actix_web::{http::header, App, HttpServer};
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 
@@ -35,6 +36,15 @@ async fn main() -> std::io::Result<()> {
     println!("Utils: {}", utils::hello());
     HttpServer::new(move || {
         App::new()
+            .wrap(
+                Cors::default()
+                    .allowed_origin("http://localhost:5000")
+                    .allowed_methods(vec!["GET", "POST", "DELETE", "PUT"])
+                    .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+                    .allowed_header(header::CONTENT_TYPE)
+                    .supports_credentials()
+                    .max_age(3600),
+            )
             .data(stonker_repo.clone())
             .data(company_repo.clone())
             .data(stock_repo.clone())
