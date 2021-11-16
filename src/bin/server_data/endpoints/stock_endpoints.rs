@@ -1,6 +1,6 @@
 use crate::models::stock::NewStock;
 use crate::repos::stock_repo::StockRepo;
-use crate::server_data::models::apiError::handle_api_result;
+use crate::server_data::models::api_error::handle_api_result;
 use crate::PostgresStockRepo;
 use actix_web::web;
 use actix_web::{get, post, HttpResponse, Result};

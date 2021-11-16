@@ -20,12 +20,22 @@ use actix_cors::Cors;
 use actix_web::{http::header, App, HttpServer};
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
+use actix_web::middleware::Logger;
+use env_logger;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
+fn init_logger() {
+    std::env::set_var("RUST_LOG", "info");
+    std::env::set_var("RUST_BACKTRACE", "1");
+    env_logger::init();
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    init_logger();
+
     let pool = match establish_connection() {
         Ok(p) => Arc::new(p),
         Err(_) => panic!("Cannot establish connection"),
@@ -36,6 +46,7 @@ async fn main() -> std::io::Result<()> {
     println!("Utils: {}", utils::hello());
     HttpServer::new(move || {
         App::new()
+            .wrap(Logger::default())
             .wrap(
                 Cors::default()
                     .allowed_origin("http://localhost:5000")
