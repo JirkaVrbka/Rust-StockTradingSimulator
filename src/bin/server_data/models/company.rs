@@ -1,12 +1,21 @@
 use crate::schema::company;
 use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
+use super::stonker::Stonker;
+
+#[derive(Queryable, Clone, Associations, Identifiable, PartialEq)]
 #[table_name = "company"]
 pub struct Company {
     pub id: i32,
     pub name: String,
     pub performer_id: i32,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct CompanyJSON {
+    pub id: i32,
+    pub name: String,
+    pub performer: Stonker,
 }
 
 #[derive(Insertable, Serialize, Deserialize, Clone)]

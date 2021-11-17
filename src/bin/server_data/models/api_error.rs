@@ -1,4 +1,5 @@
 use actix_web::{HttpResponse, Result};
+use log::error;
 use serde::{Deserialize, Serialize};
 
 // Used with `.context(<string>)` where string is in format "<code>::::<cause>"
@@ -26,6 +27,7 @@ fn api_error_from_string(err: String) -> ApiError {
 
 fn handle_api_error(e: anyhow::Error) -> Result<HttpResponse> {
     let api_error = api_error_from_string(e.to_string());
+    error!("{}", api_error.cause);
     // TODO: handle more error codes (eg. 400, 404, ...)
     match api_error.code {
         500 => Ok(HttpResponse::InternalServerError().json(api_error)),

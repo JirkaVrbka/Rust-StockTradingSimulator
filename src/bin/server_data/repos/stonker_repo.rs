@@ -5,6 +5,8 @@ use crate::models::stock::Stock;
 use crate::models::stonker::NewStonker;
 use crate::schema::stonker;
 use crate::schema::stonker::dsl::*;
+use crate::server_data::models::stock::StockJSON;
+use crate::server_data::repos::stock_repo::stocks_to_json;
 use crate::{models::stonker::Stonker, repos::connection::PgPool};
 use anyhow::Context;
 use async_trait::async_trait;
@@ -15,7 +17,7 @@ pub trait StonkerRepo {
     async fn get_stonkers(&self) -> anyhow::Result<Vec<Stonker>>;
     async fn get_stonker_by_id(&self, stonker_id: i32) -> anyhow::Result<Stonker>;
     async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<Stonker>;
-    async fn get_stonker_stocks(&self, stonker_id: i32) -> anyhow::Result<Vec<Stock>>;
+    async fn get_stonker_stocks(&self, stonker_id: i32) -> anyhow::Result<Vec<StockJSON>>;
 }
 
 #[derive(std::clone::Clone)]
@@ -73,7 +75,7 @@ impl StonkerRepo for PostgresStonkerRepo {
         Ok(result)
     }
 
-    async fn get_stonker_stocks(&self, stonker_id: i32) -> anyhow::Result<Vec<Stock>> {
+    async fn get_stonker_stocks(&self, stonker_id: i32) -> anyhow::Result<Vec<StockJSON>> {
         let connection = self
             .pg_pool
             .get()
@@ -93,6 +95,6 @@ impl StonkerRepo for PostgresStonkerRepo {
                 stonker_id
             ))?;
 
-        Ok(stonker_stocks)
+        Ok(stocks_to_json(&connection, &stonker_stocks)?)
     }
 }
