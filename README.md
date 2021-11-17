@@ -188,8 +188,17 @@ stock-server:
 - Build docker image: `docker build --tag pv281.azurecr.io/stocks-server:<tag> .`
 - Run the container: `docker run -p 8081:8081 pv281.azurecr.io/stocks-server:<tag>`
 - Login to azure container registry: `docker login pv281.azurecr.io` (user name: `pv281`)
+- Push image: `docker push pv281.azurecr.io/stocks-server:<tag>`
 - Run the container in azure portal.
 - The server should run at: `http://pv281-stock.germanywestcentral.azurecontainer.io:8081`
 
-### 
+### Front-end
+front-end:
+- Compile server: `cargo build --bin client --target wasm32-unknown-unknown`
+- Build docker image: `docker build -f Dockerfile-client --tag pv281.azurecr.io/stocks-server-client:<tag> .`
+- Run the container: `docker push pv281.azurecr.io/stocks-server-client:<tag> `
+- Login to azure container registry: `docker login pv281.azurecr.io` (user name: `pv281`)
+- Push image: `docker push pv281.azurecr.io/stocks-server-client:<tag>`
+- Run the container in azure portal.
+- The server should run at: `http://pv281-stock.germanywestcentral.azurecontainer.io:8081`
 
