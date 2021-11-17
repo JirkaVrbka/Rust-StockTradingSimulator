@@ -200,5 +200,5 @@ front-end:
 - Login to azure container registry: `docker login pv281.azurecr.io` (user name: `pv281`)
 - Push image: `docker push pv281.azurecr.io/stocks-server-client:<tag>`
 - Run the container in azure portal.
-- The server should run at: `http://pv281-stock.germanywestcentral.azurecontainer.io:8081`
+- The server should run at: `http://pv281-stock-fe.germanywestcentral.azurecontainer.io:5000/`
 
