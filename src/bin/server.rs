@@ -17,10 +17,10 @@ use crate::repos::connection::establish_connection;
 use crate::repos::stock_repo::PostgresStockRepo;
 use crate::repos::stonker_repo::PostgresStonkerRepo;
 use actix_cors::Cors;
+use actix_web::middleware::Logger;
 use actix_web::{http::header, App, HttpServer};
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
-use actix_web::middleware::Logger;
 use env_logger;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
