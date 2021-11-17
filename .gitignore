@@ -21,3 +21,4 @@ Cargo.lock
 
 # trunk
 src/bin/client/dist
+.idea/

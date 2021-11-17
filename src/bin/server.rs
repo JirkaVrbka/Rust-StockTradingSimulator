@@ -59,7 +59,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_company_stocks)
             .service(get_stonker_stocks)
     })
-    .bind(("127.0.0.1", 8081))?
+    .bind(("0.0.0.0", 8081))?
     .run()
     .await
 }

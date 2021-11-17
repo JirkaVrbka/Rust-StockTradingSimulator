@@ -174,3 +174,22 @@ which should alter our tables, we should see the update on container window and 
 
 ## Create migration
 `diesel migration generate <migration_name>`
+
+## Deployment
+
+### Database (Postgresql)
+connection string: postgres://rust:<password>@pv287-stockss.postgres.database.azure.com/postgres?sslmode=require
+If you want to access database directly, you need to add you IP addres in firewall rules
+
+
+### Backend-server
+stock-server:
+- Compile server: `cargo build --bin server --release --features server_deps`
+- Build docker image: `docker build --tag pv281.azurecr.io/stocks-server:<tag> .`
+- Run the container: `docker run -p 8081:8081 pv281.azurecr.io/stocks-server:<tag>`
+- Login to azure container registry: `docker login pv281.azurecr.io` (user name: `pv281`)
+- Run the container in azure portal.
+- The server should run at: `http://pv281-stock.germanywestcentral.azurecontainer.io:8081`
+
+### 
+
