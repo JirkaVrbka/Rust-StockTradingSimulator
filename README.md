@@ -51,33 +51,39 @@ trunk --config ./src/bin/client_data/trunk.toml serve
 
 ## Endpoints
 ### Stonker endpoints
-`GET http://localhost:8081/stonkers`
+- `GET http://localhost:8081/stonkers`  
     - get all stonkers
-`GET http://localhost:8081/stonkers/{id}`
+- `GET http://localhost:8081/stonkers/{id}`  
     - get stonker by id
-`POST http://localhost:8081/stonkers`
+- `GET http://localhost:8081/stonkers/{id}/overview`  
+    - get stonker overview by id
+- `POST http://localhost:8081/stonkers`  
     - create a stonker
     - Request Body: {name: string, balance: number}
-`GET http://localhost:8081/stonkers/{id}/stocks`
+- `GET http://localhost:8081/stonkers/{id}/stocks`
     - get stonker stocks
 
 ### Company endpoints
-`GET http://localhost:8081/companies`
+- `GET http://localhost:8081/companies`  
     - get all companies
-`GET http://localhost:8081/companies/{id}`
+- `GET http://localhost:8081/companies/{id}`  
     - get company by id
-`GET http://localhost:8081/companies/{id}/stocks`
+- `GET http://localhost:8081/companies/{id}/stocks`  
     - get company stocks
 
 
 ### Stock endpoints
-`GET http://localhost:8081/stocks`
-    - get all stocks
-`GET http://localhost:8081/stocks/{id}`
-    - get stock by id
-`POST http://localhost:8081/stocks`
-    - create a stock
+- `GET http://localhost:8081/stocks`  
+  - get all stocks  
+- `GET http://localhost:8081/stocks/{id}`  
+    - get stock by id  
+- `POST http://localhost:8081/stocks`  
+    - create a stock  
     - Request Body: {stonker_id: string, company_id: number}
+
+### News endpoints
+- `GET http://localhost:8081/news`  
+    - get all stocks
 
 ## Install Diesel CLI
 `cargo install diesel_cli --no-default-features --features postgres`

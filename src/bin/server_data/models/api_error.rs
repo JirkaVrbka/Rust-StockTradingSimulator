@@ -1,6 +1,7 @@
 use actix_web::{HttpResponse, Result};
 use log::error;
 use serde::{Deserialize, Serialize};
+use anyhow::Context;
 
 // Used with `.context(<string>)` where string is in format "<code>::::<cause>"
 #[derive(Serialize, Deserialize)]
@@ -9,33 +10,35 @@ pub struct ApiError {
     pub cause: String,
 }
 
-fn api_error_from_string(err: String) -> ApiError {
+fn api_error_from_string(err: String) -> anyhow::Result<ApiError> {
     let err_segments: Vec<&str> = err.split("::::").collect();
     let code: u32 = err_segments
         .get(0)
-        .expect("Use correct format for error messages")
+        .context("Use correct format for error messages")?
         .trim()
         .parse()
-        .expect("First segment should be number");
+        .context("First segment should be number")?;
     let cause: String = String::from(
         *err_segments
             .get(1)
-            .expect("Use correct format for error messages"),
+            .context("Use correct format for error messages")?,
     );
-    ApiError { code, cause }
+
+    Ok(ApiError { code, cause })
 }
 
 fn handle_api_error(e: anyhow::Error) -> Result<HttpResponse> {
-    let api_error = api_error_from_string(e.to_string());
+    let api_error = match api_error_from_string(e.to_string()) {
+        Ok(err) => err,
+        Err(e) => ApiError {code:500, cause: e.to_string()}
+    };
     error!("{}", api_error.cause);
     // TODO: handle more error codes (eg. 400, 404, ...)
     match api_error.code {
         500 => Ok(HttpResponse::InternalServerError().json(api_error)),
         400 => Ok(HttpResponse::BadRequest().json(api_error)),
         404 => Ok(HttpResponse::NotFound().json(api_error)),
-        _ => {
-            panic!("Error not defined yet");
-        }
+        _ => Ok(HttpResponse::InternalServerError().json(ApiError {code:500, cause:"Internal Server Error".to_string()}))
     }
 }
 

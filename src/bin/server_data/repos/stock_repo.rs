@@ -59,6 +59,9 @@ pub fn stock_to_json(
         id: entity.id,
         owner,
         issued_by,
+        bought_for: entity.bought_for,
+        share: entity.share,
+        sold_for: entity.sold_for
     })
 }
 

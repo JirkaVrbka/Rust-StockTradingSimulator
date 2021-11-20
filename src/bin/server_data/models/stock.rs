@@ -13,6 +13,9 @@ pub struct Stock {
     pub id: i32,
     pub stonker_id: i32,
     pub company_id: i32,
+    pub share: i32, // eg.: 50% = 50 * 10000 = 500000
+    pub bought_for: i32,
+    pub sold_for: Option<i32>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -20,6 +23,9 @@ pub struct StockJSON {
     pub id: i32,
     pub owner: Stonker,
     pub issued_by: CompanyJSON,
+    pub share: i32, // eg.: 50% = 50 * 10000 = 500000
+    pub bought_for: i32,
+    pub sold_for: Option<i32>,
 }
 
 #[derive(Insertable, Serialize, Deserialize, Clone)]
@@ -27,4 +33,6 @@ pub struct StockJSON {
 pub struct NewStock {
     pub stonker_id: i32,
     pub company_id: i32,
+    pub share: i32, // eg.: 50% = 50 * 10000 = 500000
+    pub bought_for: i32
 }

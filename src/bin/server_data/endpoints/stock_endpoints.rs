@@ -28,6 +28,8 @@ pub async fn create_stock(
     let new_stock = NewStock {
         stonker_id: stock_data.stonker_id,
         company_id: stock_data.company_id,
+        bought_for: stock_data.bought_for,
+        share: stock_data.share,
     };
     let stock_result = repo.create_stock(new_stock).await;
     handle_api_result(stock_result)

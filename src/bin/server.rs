@@ -8,12 +8,14 @@ extern crate dotenv;
 use std::sync::Arc;
 
 use crate::endpoints::company_endpoints::{get_companies, get_company, get_company_stocks};
+use crate::endpoints::news_endpoints::get_news;
 use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks};
 use crate::endpoints::stonker_endpoints::{
-    create_stonker, get_stonker, get_stonker_stocks, get_stonkers,
+    create_stonker, get_stonker,get_stonker_overview, get_stonker_stocks, get_stonkers,
 };
 use crate::repos::company_repo::PostgresCompanyRepo;
 use crate::repos::connection::establish_connection;
+use crate::repos::news_repo::PostgresNewsRepo;
 use crate::repos::stock_repo::PostgresStockRepo;
 use crate::repos::stonker_repo::PostgresStonkerRepo;
 use actix_cors::Cors;
@@ -43,6 +45,7 @@ async fn main() -> std::io::Result<()> {
     let stonker_repo = PostgresStonkerRepo::new(pool.clone());
     let company_repo = PostgresCompanyRepo::new(pool.clone());
     let stock_repo = PostgresStockRepo::new(pool.clone());
+    let news_repo = PostgresNewsRepo::new(pool.clone());
     println!("Utils: {}", utils::hello());
     HttpServer::new(move || {
         App::new()
@@ -59,8 +62,10 @@ async fn main() -> std::io::Result<()> {
             .data(stonker_repo.clone())
             .data(company_repo.clone())
             .data(stock_repo.clone())
+            .data(news_repo.clone())
             .service(get_stonkers)
             .service(get_stonker)
+            .service(get_stonker_overview)
             .service(get_companies)
             .service(get_company)
             .service(create_stonker)
@@ -69,6 +74,7 @@ async fn main() -> std::io::Result<()> {
             .service(create_stock)
             .service(get_company_stocks)
             .service(get_stonker_stocks)
+            .service(get_news)
     })
     .bind(("0.0.0.0", 8081))?
     .run()

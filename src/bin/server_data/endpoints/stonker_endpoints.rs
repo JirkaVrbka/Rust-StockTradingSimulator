@@ -20,6 +20,15 @@ pub async fn get_stonker(
     handle_api_result(stonker_result)
 }
 
+#[get("/stonkers/{id}/overview")]
+pub async fn get_stonker_overview(
+    repo: web::Data<PostgresStonkerRepo>,
+    id: web::Path<i32>,
+) -> Result<HttpResponse> {
+    let stonker_result = repo.get_stonker_overview(*id).await;
+    handle_api_result(stonker_result)
+}
+
 #[post("stonkers")]
 pub async fn create_stonker(
     repo: web::Data<PostgresStonkerRepo>,

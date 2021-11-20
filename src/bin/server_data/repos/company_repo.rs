@@ -1,11 +1,15 @@
 use crate::diesel::BelongingToDsl;
+use crate::diesel::ExpressionMethods;
 use crate::diesel::QueryDsl;
 use crate::diesel::RunQueryDsl;
 use crate::models::company::Company;
 use crate::models::stock::Stock;
 use crate::repos::connection::PgPool;
+use crate::schema::command;
 use crate::schema::company::dsl::*;
 use crate::schema::stonker::dsl::stonker;
+use crate::server_data::models::command::CommandTypes;
+use crate::server_data::models::company::CheapestStocksJSON;
 use crate::server_data::models::company::CompanyJSON;
 use crate::server_data::models::stock::StockJSON;
 use crate::server_data::models::stonker::Stonker;

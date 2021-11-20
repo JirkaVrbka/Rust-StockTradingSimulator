@@ -41,6 +41,19 @@ table! {
     use diesel::sql_types::*;
     use crate::models::command::*;
 
+    news (id) {
+        id -> Int4,
+        title -> Varchar,
+        description -> Text,
+        author -> Varchar,
+        created_at -> Timestamp,
+    }
+}
+
+table! {
+    use diesel::sql_types::*;
+    use crate::models::command::*;
+
     stock (id) {
         id -> Int4,
         stonker_id -> Int4,
@@ -71,6 +84,7 @@ allow_tables_to_appear_in_same_query!(
     command,
     company,
     history,
+    news,
     stock,
     stonker,
 );

@@ -1,0 +1,9 @@
+-- Your SQL goes here
+ALTER TABLE STONKER ADD COLUMN blocked_balance INTEGER;
+ALTER TABLE STONKER ADD COLUMN invested_balance INTEGER;
+
+UPDATE STONKER SET blocked_balance = 0;
+UPDATE STONKER SET invested_balance = 0;
+
+ALTER TABLE STONKER ALTER COLUMN blocked_balance SET NOT NULL;
+ALTER TABLE STONKER ALTER COLUMN invested_balance SET NOT NULL;
