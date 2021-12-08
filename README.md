@@ -146,11 +146,17 @@ You can check that by typing
 psql -h localhost -p 5432 -U postgres
 ```
 
-You will be prompted with a password, if it doesn't work, you
-also need to alter this file and change the verification to `trust` or `password` or `md5`.
+If no command was found, add `D:\Programs\PostgreSQL\14\bin` to your PATH.
 
+You will be prompted with a password, if it doesn't work, you also need to alter this file a
+nd change the verification of `IPv6 local connections` from `scram-sha-256` to `trust` or `password`.
 ```
 C:\Program Files\PostgreSQL\14\data\pg_hba.conf
+```
+
+To show all running tables run this command
+```
+\list
 ```
 
 Next, continue to disable service "postgres" which runs automatically on 
@@ -173,6 +179,8 @@ docker-compose -f .\stack.yml up
 Now, we should be on the other terminal run
 
 ```
+cargo build
+cargo install diesel_cli --no-default-features --features postgres
 diesel migration run
 ```
 
