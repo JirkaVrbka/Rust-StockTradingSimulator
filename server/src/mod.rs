@@ -1,6 +1,5 @@
 pub mod server_data;
 use server_data::*;
-pub mod utils;
 
 #[macro_use]
 extern crate diesel;

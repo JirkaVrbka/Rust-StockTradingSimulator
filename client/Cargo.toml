@@ -7,10 +7,8 @@ edition = "2018"
 [dependencies]
 yew = "0.18"
 anyhow = { version = "1.0.45" }
-
-[features]
-server_deps = []
+utils = { path = "../utils" }
 
 [[bin]]
 name = "client"
-path = "../client.rs"
+path = "src/mod.rs"

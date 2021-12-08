@@ -1,40 +1,9 @@
-[package]
-name = "Rust-StockTradingSimulator"
-version = "0.1.0"
-edition = "2018"
 
-[dependencies]
-actix-cors = { version = "0.5.4", optional = true }
-actix-web = { version = "3", optional = true }
-actix-web-actors = { version = "3", optional = true }
-anyhow = { version = "1.0.45" }
-async-trait = { version = "0.1.51", optional = true }
-chrono = { version = "0.4", features = ["serde"], optional = true }
-diesel = { version = "1.0.0", features = ["postgres", "r2d2", "chrono"], optional = true }
-diesel-derive-enum = { version = "0.4", features = ["postgres"], optional = true }
-dotenv = { version = "0.15.0", optional = true }
-env_logger = { version = "0.8.4", optional = true }
-log = { version = "0.4.0", optional = true }
-serde = { version = "1.0", features = ["derive"], optional = true }
-serde_json = { version = "1.0", optional = true }
-tokio = { version = "1", features = ["full"], optional = true }
-yew = { version = "0.18" }
-
-[features]
-server_deps = [
-    "actix-cors", 
-    "actix-web",
-    "actix-web-actors",
-    "async-trait",
-    "chrono", 
-    "diesel", 
-    "diesel-derive-enum", 
-    "dotenv", 
-    "env_logger",
-    "log", 
-    "serde", 
-    "serde_json", 
-    "tokio",
+[workspace]
+members = [
+    "server",
+    "client",
+    "utils"
 ]
 
 #cargo build --bin client --target wasm32-unknown-unknown --features client_deps
