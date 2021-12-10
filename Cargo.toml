@@ -1,3 +1,6 @@
+# notice no package tag here, 
+# that means this cargo is only a virtual, 
+# without any code.
 
 [workspace]
 members = [
@@ -5,6 +8,3 @@ members = [
     "client",
     "utils"
 ]
-
-#cargo build --bin client --target wasm32-unknown-unknown --features client_deps
-#cargo run --bin server --features server_deps
