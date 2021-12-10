@@ -1,29 +1,10 @@
-mod ws;
-mod lobby;
-use lobby::Lobby;
-mod messages;
-mod start_connection;
-use start_connection::start_connection as start_connection_route;
+mod websockets;
+use websockets::lobby::Lobby;
+use websockets::start_connection::start_connection as start_connection_route;
 use actix::Actor;
-
 use actix_web::{App, HttpServer};
 
-
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    let chat_server = Lobby::default().start(); //create and spin up a lobby
-
-    HttpServer::new(move || {
-        App::new()
-            .service(start_connection_route) //register our route. rename with "as" import or naming conflict
-            .data(chat_server.clone()) //register the lobby
-    })
-    .bind("127.0.0.1:8081")?
-    .run()
-    .await
-}
-
-/*pub mod server_data;
+pub mod server_data;
 use server_data::*;
 
 #[macro_use]
@@ -44,7 +25,7 @@ use crate::repos::stock_repo::PostgresStockRepo;
 use crate::repos::stonker_repo::PostgresStonkerRepo;
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
-use actix_web::{http::header, App, HttpServer};
+use actix_web::http::header;
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use env_logger;
@@ -70,6 +51,7 @@ async fn main() -> std::io::Result<()> {
     let company_repo = PostgresCompanyRepo::new(pool.clone());
     let stock_repo = PostgresStockRepo::new(pool.clone());
     let news_repo = PostgresNewsRepo::new(pool.clone());
+    let chat_server = Lobby::default().start(); //create and spin up a lobby
     println!("Utils: {}", utils::hello());
     HttpServer::new(move || {
         App::new()
@@ -87,6 +69,7 @@ async fn main() -> std::io::Result<()> {
             .data(company_repo.clone())
             .data(stock_repo.clone())
             .data(news_repo.clone())
+            .data(chat_server.clone()) //register the lobby
             .service(get_stonkers)
             .service(get_stonker)
             .service(get_stonker_overview)
@@ -99,9 +82,9 @@ async fn main() -> std::io::Result<()> {
             .service(get_company_stocks)
             .service(get_stonker_stocks)
             .service(get_news)
+            .service(start_connection_route) //register our route. rename with "as" import or naming conflict
     })
     .bind(("0.0.0.0", 8081))?
     .run()
     .await
 }
-*/

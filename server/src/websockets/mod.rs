@@ -1,6 +1,10 @@
+pub mod lobby;
+pub mod messages;
+pub mod start_connection;
+
 use actix::{fut, ActorContext, WrapFuture, ContextFutureSpawner, ActorFuture};
-use crate::messages::{Disconnect, Connect, WsMessage, ClientActorMessage};
-use crate::lobby::Lobby; 
+use messages::{Disconnect, Connect, WsMessage, ClientActorMessage};
+use lobby::Lobby; 
 use actix::{Actor, Addr, Running, StreamHandler};
 use actix::{AsyncContext, Handler};
 use actix_web_actors::ws;
