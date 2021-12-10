@@ -14,9 +14,8 @@ fn init_pool(database_url: &str) -> Result<PgPool, PoolError> {
 }
 
 pub fn establish_connection() -> anyhow::Result<PgPool> {
-    dotenv().ok();
+    dotenv().expect("Env file was not loaded correctly");
     let database_url = env::var("DATABASE_URL")?;
     PgConnection::establish(&database_url)?;
-
     Ok(init_pool(&database_url)?)
 }
