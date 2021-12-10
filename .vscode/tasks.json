@@ -1,0 +1,72 @@
+{
+    // Tom's setup, primarly for Windows but can be easily extended for Linux
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "docker",
+            "type": "shell",
+            "command": "docker-compose -f stack.yml up",
+            "problemMatcher": []
+        },
+        {
+            "label": "server",
+            "type": "shell",
+            "command": "cargo run --bin server",
+            "problemMatcher": []
+        },
+        {
+            "label": "client",
+            "type": "shell",
+            "command": "trunk --config ./client/trunk.toml serve",
+            "problemMatcher": []
+        },
+        {
+            "label": "sleep",
+            "type": "shell",
+            "command": "sleep 10",
+            "problemMatcher": []
+        },
+        {
+            "label": "sleepy server",
+            "type": "shell",
+            "command": "",
+            "problemMatcher": [],
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "sleep",
+                "server"
+            ]
+        },
+        {
+            "label": "sleepy client",
+            "type": "shell",
+            "command": "",
+            "problemMatcher": [],
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "sleep",
+                "client"
+            ]
+        },
+        {
+            "label": "sleepy windows webpages",
+            "type": "shell",
+            "command": "sleep 15; start chrome http://localhost:8080/; start chrome http://localhost:8081/stonkers; start chrome http://localhost:5000/",
+            "problemMatcher": []
+        },
+        {
+            "label": "windows everything",
+            "type": "shell",
+            "command": "",
+            "dependsOn": [
+                "docker",
+                "sleepy server",
+                "sleepy client",
+                "sleepy windows webpages"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

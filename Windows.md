@@ -90,19 +90,3 @@ Which should alter our tables, we should see the update on container window and 
 cargo install trunk wasm-bindgen-cli
 rustup target add wasm32-unknown-unknown
 ```
-
-## RUN
-Docker first - database and adminer - http://localhost:8080/
-```
-docker-compose -f .\stack.yml up
-```
-
-Server next - server webpage full of json files - http://localhost:8081/stonkers
-```
-cargo run --bin server --features server_deps
-```
-
-Client last - client page with css - http://localhost:5000/
-```
-trunk --config ./src/bin/client_data/trunk.toml serve
-```

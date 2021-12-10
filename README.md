@@ -26,7 +26,7 @@ create database stocks
 
 #### Server page
 ```
-cargo run --bin server --features server_deps
+cargo run --bin server
 ```
 [stonkers.json](http://localhost:8081/stonkers)
 
@@ -36,6 +36,7 @@ cargo run --bin server --features server_deps
 cargo install trunk wasm-bindgen-cli
 rustup target add wasm32-unknown-unknown
 ```
+
 #### Build only
 ```
 cargo build --bin client --target wasm32-unknown-unknown
@@ -43,7 +44,7 @@ cargo build --bin client --target wasm32-unknown-unknown
 
 #### Run and watch
 ```
-trunk --config ./src/bin/client_data/trunk.toml serve
+trunk --config ./client/trunk.toml serve
 ```
 [webpage](http://localhost:5000/)
 
@@ -128,4 +129,3 @@ front-end:
 - Push image: `docker push pv281.azurecr.io/stocks-server-client:<tag>`
 - Run the container in azure portal.
 - The server should run at: `http://pv281-stock-fe.germanywestcentral.azurecontainer.io:5000/`
-
