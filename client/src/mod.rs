@@ -38,7 +38,7 @@ impl Component for Model {
         match msg {
             Msg::Connect => {
                 ConsoleService::log("Connecting");
-                let cbout = self.link.callback(|Json(data)| Msg::Received(data));
+                let cbout = self.link.callback(|data| Msg::Received(data));
                 let cbnot = self.link.callback(|input| {
                     ConsoleService::log(&format!("Notification: {:?}", input));
                     match input {
@@ -49,7 +49,10 @@ impl Component for Model {
                     }
                 });
                 if self.ws.is_none() {
-                    let task = WebSocketService::connect_text("ws://127.0.0.1:8081/stonkers", cbout, cbnot);
+                    // this will connect us to the default chat lobby, 
+                    // later we can replace this to private lobby 
+                    // or graph lobby where chat messages will be buy and sell commands
+                    let task = WebSocketService::connect_text("ws://127.0.0.1:8081/c05554ae-b4ee-4976-ac05-97aaf3c98a23", cbout, cbnot);
                     self.ws = Some(task.unwrap());
                 }
                 true
