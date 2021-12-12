@@ -1,3 +1,4 @@
+#![recursion_limit = "1024"]
 mod fetcher;
 use fetcher::FetchServiceExample;
 
@@ -116,6 +117,21 @@ impl Component for Model {
     }
 }
 
+extern crate web_sys;
+extern crate yew;
+extern crate yew_router;
+extern crate yew_styles;
+
+mod app;
+use app::App;
+mod pages;
+
+pub fn main() {
+    yew::start_app::<App>();
+}
+
+/*
 fn main() {
     yew::start_app::<Model>();
 }
+*/
