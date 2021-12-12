@@ -1,4 +1,5 @@
 use crate::pages::{About, Home};
+use stylist::css;
 use yew::prelude::*;
 use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
 use yew_styles::{
@@ -65,15 +66,15 @@ impl Component for App {
     }
 
     fn view(&self) -> Html {
+        // Sidebar workaround until it is properly implemented inside yew-styles
         html! {
             <Container direction=Direction::Column wrap=Wrap::Wrap>
                 <Text
-                    text_type=TextType::Alert
-                    text_size=Size::Medium
+                    class_name="title"
+                    text_type=TextType::Plain
                     plain_text="STONKER$"
+                    text_size=Size::Big
                     html_text=None
-                    text_style=Style::Regular
-                    text_palette=Palette::Info
                 />
                 <Container direction=Direction::Row wrap=Wrap::Wrap>
                     <Container direction=Direction::Column wrap=Wrap::Wrap>
@@ -87,6 +88,7 @@ impl Component for App {
                         <RouterAnchor<AppRouter>route=AppRouter::AboutPath>
                             <Button 
                                 class_name="navbar-route"
+                                button_style=Style::Regular
                                 onclick_signal = self.link.callback(|_| Msg::ChangeNavbarItem(1))>
                                 {"About"}
                             </Button>
