@@ -6,28 +6,25 @@ use yew::{
 };
 
 #[derive(Deserialize, Debug, Clone)]
-pub struct ISSPosition {
-    latitude: String,
-    longitude: String,
-}
-
-#[derive(Deserialize, Debug, Clone)]
-pub struct ISS {
-    message: String,
-    timestamp: i32,
-    iss_position: ISSPosition,
+// TODO: Add Stonker to Utils
+pub struct Stonker {
+    pub id: i32,
+    pub name: String,
+    pub balance: i32,
+    pub blocked_balance: i32,
+    pub invested_balance: i32,
 }
 
 #[derive(Debug)]
 pub enum FetchMsg {
     GetLocation,
-    ReceiveResponse(Result<ISS, anyhow::Error>),
+    ReceiveResponse(Result<Stonker, anyhow::Error>),
 }
 
 #[derive(Debug)]
 pub struct FetchServiceExample {
     fetch_task: Option<FetchTask>,
-    iss: Option<ISS>,
+    stonker: Option<Stonker>,
     link: ComponentLink<Self>,
     error: Option<String>,
 }
@@ -35,21 +32,21 @@ pub struct FetchServiceExample {
 /// Some of the code to render the UI is split out into smaller functions here to make the code
 /// cleaner and show some useful design patterns.
 impl FetchServiceExample {
-    fn view_iss_location(&self) -> Html {
-        match self.iss {
-            Some(ref space_station) => {
+    fn view_stonker_data(&self) -> Html {
+        match self.stonker {
+            Some(ref investor) => {
                 html! {
                     <>
-                        <p>{ "The ISS is at:" }</p>
-                        <p>{ format!("Latitude: {}", space_station.iss_position.latitude) }</p>
-                        <p>{ format!("Longitude: {}", space_station.iss_position.longitude) }</p>
+                        <p>{ "The Stonker" }</p>
+                        <p>{ format!("Name: {}", investor.name) }</p>
+                        <p>{ format!("Ballance: {}", investor.balance) }</p>
                     </>
                 }
             }
             None => {
                 html! {
                      <button onclick=self.link.callback(|_| FetchMsg::GetLocation)>
-                         { "Where is the ISS?" }
+                         { "Who is the Stonker?" }
                      </button>
                 }
             }
@@ -78,7 +75,7 @@ impl Component for FetchServiceExample {
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
         Self {
             fetch_task: None,
-            iss: None,
+            stonker: None,
             link,
             error: None,
         }
@@ -92,13 +89,13 @@ impl Component for FetchServiceExample {
         match msg {
             GetLocation => {
                 // 1. build the request
-                let request = Request::get("http://api.open-notify.org/iss-now.json")
+                let request = Request::get("http://localhost:8081/stonkers/1")
                     .body(Nothing)
                     .expect("Could not build request.");
                 // 2. construct a callback
                 let callback =
                     self.link
-                        .callback(|response: Response<Json<Result<ISS, anyhow::Error>>>| {
+                        .callback(|response: Response<Json<Result<Stonker, anyhow::Error>>>| {
                             let Json(data) = response.into_body();
                             FetchMsg::ReceiveResponse(data)
                         });
@@ -113,14 +110,14 @@ impl Component for FetchServiceExample {
             ReceiveResponse(response) => {
                 match response {
                     Ok(location) => {
-                        self.iss = Some(location);
+                        self.stonker = Some(location);
                     }
                     Err(error) => {
                         self.error = Some(error.to_string())
                     }
                 }
                 self.fetch_task = None;
-                // we want to redraw so that the page displays the location of the ISS instead of
+                // we want to redraw so that the page displays the location of the Stonker instead of
                 // 'fetching...'
                 true
             }
@@ -130,7 +127,7 @@ impl Component for FetchServiceExample {
         html! {
             <>
                 { self.view_fetching() }
-                { self.view_iss_location() }
+                { self.view_stonker_data() }
                 { self.view_error() }
             </>
         }
