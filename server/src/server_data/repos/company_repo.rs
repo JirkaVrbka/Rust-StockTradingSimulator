@@ -6,8 +6,6 @@ use crate::models::stock::Stock;
 use crate::repos::connection::PgPool;
 use crate::schema::company::dsl::*;
 use crate::schema::stonker::dsl::stonker;
-use crate::server_data::models::company::CompanyJSON;
-use crate::server_data::models::stock::StockJSON;
 use crate::server_data::models::stonker::Stonker;
 use crate::server_data::repos::stock_repo::stocks_to_json;
 use anyhow::Context;
@@ -15,7 +13,12 @@ use async_trait::async_trait;
 use diesel::r2d2::ConnectionManager;
 use diesel::r2d2::PooledConnection;
 use diesel::PgConnection;
+use utils::json::CompanyJSON;
+use utils::json::StockJSON;
+use utils::json::StonkerJSON;
 use std::sync::Arc;
+
+use super::stonker_repo::stonker_to_json;
 
 #[async_trait]
 pub trait CompanyRepo {
@@ -39,13 +42,13 @@ pub fn company_to_json(
     connection: &PooledConnection<ConnectionManager<PgConnection>>,
     entity: &Company,
 ) -> anyhow::Result<CompanyJSON> {
-    let performer: Stonker = stonker
+    let performer: StonkerJSON = stonker_to_json(connection, &stonker
         .find(entity.performer_id)
         .get_result::<Stonker>(connection)
         .context(format!(
             "404::::Cannot find performer {} of company {}",
             entity.performer_id, entity.id
-        ))?;
+        ))?)?;
     Ok(CompanyJSON {
         id: entity.id,
         name: entity.name.clone(),

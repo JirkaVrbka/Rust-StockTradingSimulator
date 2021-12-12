@@ -1,30 +1,20 @@
-use serde::Deserialize;
+use utils::json::StonkerJSON;
 use yew::{
     format::{Json, Nothing},
     prelude::*,
     services::fetch::{FetchService, FetchTask, Request, Response},
 };
 
-#[derive(Deserialize, Debug, Clone)]
-// TODO: Add Stonker to Utils
-pub struct Stonker {
-    pub id: i32,
-    pub name: String,
-    pub balance: i32,
-    pub blocked_balance: i32,
-    pub invested_balance: i32,
-}
-
 #[derive(Debug)]
 pub enum FetchMsg {
     GetLocation,
-    ReceiveResponse(Result<Stonker, anyhow::Error>),
+    ReceiveResponse(Result<StonkerJSON, anyhow::Error>),
 }
 
 #[derive(Debug)]
 pub struct FetchServiceExample {
     fetch_task: Option<FetchTask>,
-    stonker: Option<Stonker>,
+    stonker: Option<StonkerJSON>,
     link: ComponentLink<Self>,
     error: Option<String>,
 }
@@ -95,7 +85,7 @@ impl Component for FetchServiceExample {
                 // 2. construct a callback
                 let callback =
                     self.link
-                        .callback(|response: Response<Json<Result<Stonker, anyhow::Error>>>| {
+                        .callback(|response: Response<Json<Result<StonkerJSON, anyhow::Error>>>| {
                             let Json(data) = response.into_body();
                             FetchMsg::ReceiveResponse(data)
                         });
