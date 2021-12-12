@@ -52,7 +52,6 @@ async fn main() -> std::io::Result<()> {
     let stock_repo = PostgresStockRepo::new(pool.clone());
     let news_repo = PostgresNewsRepo::new(pool.clone());
     let chat_server = Lobby::default().start(); //create and spin up a lobby
-    println!("Utils: {}", utils::hello());
     HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())

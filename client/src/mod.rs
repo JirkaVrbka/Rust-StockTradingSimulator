@@ -117,6 +117,5 @@ impl Component for Model {
 }
 
 fn main() {
-    println!("{}", utils::hello());
     yew::start_app::<Model>();
 }
