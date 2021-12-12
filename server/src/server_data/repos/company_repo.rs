@@ -43,7 +43,7 @@ pub fn company_to_json(
         .find(entity.performer_id)
         .get_result::<Stonker>(connection)
         .context(format!(
-            "404::::Cannot find perfomer {} of company {}",
+            "404::::Cannot find performer {} of company {}",
             entity.performer_id, entity.id
         ))?;
     Ok(CompanyJSON {
