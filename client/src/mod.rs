@@ -1,9 +1,12 @@
-use anyhow::Error;
+mod fetcher;
+use fetcher::FetchServiceExample;
 
-use yew::prelude::*;
-use yew::format::Json;
-use yew::services::ConsoleService;
-use yew::services::websocket::{WebSocketService, WebSocketStatus, WebSocketTask};
+use anyhow::Error;
+use yew::{
+    format::Json,
+    prelude::*,
+    services::{ConsoleService, websocket::{WebSocketService, WebSocketStatus, WebSocketTask}}
+};
 
 struct Model {
     ws: Option<WebSocketTask>,
@@ -97,6 +100,7 @@ impl Component for Model {
     fn view(&self) -> Html {
         html! {
             <div>
+                <FetchServiceExample />
                 // connect button
                 <p><button onclick=self.link.callback(|_| Msg::Connect)>{ "Connect" }</button></p><br/>
                 // text showing whether we're connected or not
