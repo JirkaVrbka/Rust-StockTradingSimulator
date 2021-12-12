@@ -1,6 +1,6 @@
 use crate::models::stonker::NewStonker;
 use crate::repos::stonker_repo::StonkerRepo;
-use crate::server_data::models::api_error::handle_api_result;
+use crate::server_data::api_error::handle_api_result;
 use crate::PostgresStonkerRepo;
 use actix_web::web;
 use actix_web::{get, post, HttpResponse, Result};

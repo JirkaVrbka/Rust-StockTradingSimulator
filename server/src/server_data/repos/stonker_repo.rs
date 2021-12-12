@@ -93,9 +93,9 @@ impl StonkerRepo for PostgresStonkerRepo {
         };
 
         // TODO: After you check why "BUY_IF_LOW" is not recognized, delete this variable
-        let s1: Vec<(Command)> = command
+        let s1: Vec<Command> = command
         .filter(stonker_id.eq(s_id))
-        .load::<(Command)>(&connection).unwrap();
+        .load::<Command>(&connection).unwrap();
 
 
         let stonker_commands: Vec<(Command, Company)> = command
