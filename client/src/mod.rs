@@ -1,6 +1,5 @@
 #![recursion_limit = "1024"]
 mod fetcher;
-use fetcher::FetchServiceExample;
 
 use anyhow::Error;
 use yew::{
@@ -8,12 +7,38 @@ use yew::{
     prelude::*,
     services::{ConsoleService, websocket::{WebSocketService, WebSocketStatus, WebSocketTask}}
 };
+use crate::pages::{About, Home};
+use stylist::css;
+use yew::prelude::*;
+use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
+use yew_styles::{
+    navbar::{
+        navbar_component::{Fixed, Navbar},
+        navbar_container::NavbarContainer,
+        navbar_item::NavbarItem,
+    },
+    styles::{Palette, Style},
+    button::Button,
+};
+use yew_styles::layouts::{
+    container::{AlignItems, Container, Direction, Mode, Wrap},
+    item::{Item, ItemLayout},
+};
+use yew_styles::styles::Size;
+use yew_styles::text::{Header, Text, TextType};
+extern crate web_sys;
+extern crate yew;
+extern crate yew_router;
+extern crate yew_styles;
+
+mod pages;
 
 struct Model {
     ws: Option<WebSocketTask>,
     link: ComponentLink<Self>,
     text: String,
     server_data: String,
+    navbar_items: Vec<bool>,
 }
 
 enum Msg {
@@ -23,7 +48,19 @@ enum Msg {
     TextInput(String),
     SendText,
     Received(Result<String, Error>),
+    ChangeNavbarItem(usize),
 }
+
+#[derive(Switch, Debug, Clone)]
+pub enum AppRouter {
+    #[to = "/!"]
+    RootPath,
+    #[to = "/about!"]
+    AboutPath,
+    #[to = "/page-not-found"]
+    PageNotFound(Permissive<String>),
+}
+
 
 impl Component for Model {
     type Message = Msg;
@@ -32,6 +69,7 @@ impl Component for Model {
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
         Self {
             ws: None,
+            navbar_items: vec![true, false],
             link: link,
             text: String::new(),
             server_data: String::new(),
@@ -91,6 +129,13 @@ impl Component for Model {
                 self.server_data.push_str(&format!("Error when reading from server: {}\n", &s.to_string()));
                 true
             }
+            Msg::ChangeNavbarItem(index) => {
+                for (i, _) in self.navbar_items.clone().into_iter().enumerate() {
+                    self.navbar_items[i] = false;
+                }
+                self.navbar_items[index] = true;
+                true
+            }
         }
     }
 
@@ -100,38 +145,56 @@ impl Component for Model {
 
     fn view(&self) -> Html {
         html! {
-            <div>
-                <FetchServiceExample />
-                // connect button
-                <p><button onclick=self.link.callback(|_| Msg::Connect)>{ "Connect" }</button></p><br/>
-                // text showing whether we're connected or not
-                <p>{ "Connected: "}{ !self.ws.is_none() } </p><br/>
-                // input box for sending text
-                <p><input type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| Msg::TextInput(e.value))/></p><br/>
-                // button for sending text
-                <p><button onclick=self.link.callback(|_| Msg::SendText)>{ "Send" }</button></p><br/>
-                // text area for showing data from the server
-                <p><textarea value=self.server_data.clone()></textarea></p><br/>
-            </div>
+            <Container direction=Direction::Column wrap=Wrap::Wrap>
+                <Text
+                    class_name="title"
+                    text_type=TextType::Plain
+                    plain_text="STONKER$"
+                    text_size=Size::Big
+                    html_text=None
+                />
+                <Container direction=Direction::Row wrap=Wrap::Wrap>
+                    <Container direction=Direction::Column wrap=Wrap::Wrap>
+                        <RouterAnchor<AppRouter>route=AppRouter::RootPath>
+                            <Button
+                                class_name="navbar-route"
+                                onclick_signal = self.link.callback(|_| Msg::ChangeNavbarItem(0))>
+                                {"Home"}
+                            </Button>
+                        </RouterAnchor<AppRouter>>
+                        <RouterAnchor<AppRouter>route=AppRouter::AboutPath>
+                            <Button 
+                                class_name="navbar-route"
+                                button_style=Style::Regular
+                                onclick_signal = self.link.callback(|_| Msg::ChangeNavbarItem(1))>
+                                {"About"}
+                            </Button>
+                        </RouterAnchor<AppRouter>>
+                    </Container>
+                    <Router<AppRouter, ()>
+                        render = Router::render(|switch: AppRouter | {
+                            match switch {
+                                AppRouter::RootPath => html!{
+                                    <Home/>
+                                },
+                                AppRouter::AboutPath => html!{
+                                    <About/>
+                                },
+                                AppRouter::PageNotFound(Permissive(None)) => html!{"Page not found"},
+                                AppRouter::PageNotFound(Permissive(Some(missed_route))) => html!{format!("Page '{}' not found", missed_route)}
+                            }
+                        } )
+                        redirect = Router::redirect(|route: Route<()>| {
+                            AppRouter::PageNotFound(Permissive(Some(route.route)))
+                        })
+                    />
+                </Container>
+            </Container>
         }
     }
 }
 
-extern crate web_sys;
-extern crate yew;
-extern crate yew_router;
-extern crate yew_styles;
-
-mod app;
-use app::App;
-mod pages;
-
 pub fn main() {
-    yew::start_app::<App>();
-}
-
-/*
-fn main() {
     yew::start_app::<Model>();
 }
-*/
+

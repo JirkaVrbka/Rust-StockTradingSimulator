@@ -28,6 +28,7 @@ impl Component for Home {
                 <Item layouts=vec!(ItemLayout::ItXs(12))>
                     <h2>{"Yew Parcel Template"}</h2>
                 </Item>
+                <FetchServiceExample />
                 <Item layouts=vec!(ItemLayout::ItXs(12))>
                     <h3>{"Libraries used in this template"}</h3>
                 </Item>
