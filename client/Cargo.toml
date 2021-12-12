@@ -11,7 +11,7 @@ wasm-bindgen = "0.2.78"
 yew = { version="0.18", features = ["toml", "yaml", "msgpack", "cbor", "web_sys"]}
 yew-router = { version = "0.15", features = ["web_sys"]}
 web-sys = "0.3"
-yew_styles = { version="0.11", features = ["navbar"]}
+yew_styles = { version="0.11", features = ["full"]}
 stylist = "0.9"
 utils = { path = "../utils" }
 
