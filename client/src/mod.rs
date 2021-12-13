@@ -1,12 +1,7 @@
 #![recursion_limit = "1024"]
 mod fetcher;
 
-use anyhow::Error;
-use yew::{
-    format::Json,
-    prelude::*,
-    services::{ConsoleService, websocket::{WebSocketService, WebSocketStatus, WebSocketTask}}
-};
+use yew::prelude::*;
 use crate::pages::{About, Home};
 use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
 use yew_styles::{
@@ -24,20 +19,11 @@ extern crate yew_styles;
 mod pages;
 
 struct Model {
-    ws: Option<WebSocketTask>,
     link: ComponentLink<Self>,
-    text: String,
-    server_data: String,
     navbar_items: Vec<bool>,
 }
 
 enum Msg {
-    Connect,
-    Disconnected,
-    Ignore,
-    TextInput(String),
-    SendText,
-    Received(Result<String, Error>),
     ChangeNavbarItem(usize),
 }
 
@@ -58,67 +44,13 @@ impl Component for Model {
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
         Self {
-            ws: None,
-            navbar_items: vec![true, false],
             link: link,
-            text: String::new(),
-            server_data: String::new(),
+            navbar_items: vec![true, false],
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Connect => {
-                ConsoleService::log("Connecting");
-                let cbout = self.link.callback(|data| Msg::Received(data));
-                let cbnot = self.link.callback(|input| {
-                    ConsoleService::log(&format!("Notification: {:?}", input));
-                    match input {
-                        WebSocketStatus::Closed | WebSocketStatus::Error => {
-                            Msg::Disconnected
-                        }
-                        _ => Msg::Ignore,
-                    }
-                });
-                if self.ws.is_none() {
-                    // this will connect us to the default chat lobby, 
-                    // later we can replace this to private lobby 
-                    // or graph lobby where chat messages will be buy and sell commands
-                    let task = WebSocketService::connect_text("ws://127.0.0.1:8081/c05554ae-b4ee-4976-ac05-97aaf3c98a23", cbout, cbnot);
-                    self.ws = Some(task.unwrap());
-                }
-                true
-            }
-            Msg::Disconnected => {
-                self.ws = None;
-                true
-            }
-            Msg::Ignore => {
-                false
-            }
-            Msg::TextInput(e) => {
-                self.text = e;
-                true
-            }
-            Msg::SendText => {
-                match self.ws {
-                    Some(ref mut task) => {
-                        task.send(Json(&self.text));
-                        true
-                    }
-                    None => {
-                        false
-                    }
-                }
-            }
-            Msg::Received(Ok(s)) => {
-                self.server_data.push_str(&format!("{}\n", &s));
-                true
-            }
-            Msg::Received(Err(s)) => {
-                self.server_data.push_str(&format!("Error when reading from server: {}\n", &s.to_string()));
-                true
-            }
             Msg::ChangeNavbarItem(index) => {
                 for (i, _) in self.navbar_items.clone().into_iter().enumerate() {
                     self.navbar_items[i] = false;
