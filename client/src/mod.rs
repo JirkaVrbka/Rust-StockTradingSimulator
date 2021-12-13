@@ -8,24 +8,14 @@ use yew::{
     services::{ConsoleService, websocket::{WebSocketService, WebSocketStatus, WebSocketTask}}
 };
 use crate::pages::{About, Home};
-use stylist::css;
-use yew::prelude::*;
 use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
 use yew_styles::{
-    navbar::{
-        navbar_component::{Fixed, Navbar},
-        navbar_container::NavbarContainer,
-        navbar_item::NavbarItem,
-    },
-    styles::{Palette, Style},
+    styles::{Style},
     button::Button,
 };
-use yew_styles::layouts::{
-    container::{AlignItems, Container, Direction, Mode, Wrap},
-    item::{Item, ItemLayout},
-};
+use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::styles::Size;
-use yew_styles::text::{Header, Text, TextType};
+use yew_styles::text::{Text, TextType};
 extern crate web_sys;
 extern crate yew;
 extern crate yew_router;

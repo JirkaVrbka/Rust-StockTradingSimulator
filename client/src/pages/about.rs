@@ -1,8 +1,5 @@
 use yew::prelude::*;
-use yew_styles::layouts::{
-    container::{Container, Direction, Wrap},
-    item::{Item, ItemLayout},
-};
+use yew_styles::layouts::container::{Container, Direction, Wrap};
 use crate::fetcher::FetchServiceExample;
 
 pub struct About;

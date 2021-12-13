@@ -1,27 +1,9 @@
-#![recursion_limit = "1024"]
 use anyhow::Error;
 use yew::{
     format::Json,
     prelude::*,
     services::{ConsoleService, websocket::{WebSocketService, WebSocketStatus, WebSocketTask}}
 };
-use yew::prelude::*;
-use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
-use yew_styles::{
-    navbar::{
-        navbar_component::{Fixed, Navbar},
-        navbar_container::NavbarContainer,
-        navbar_item::NavbarItem,
-    },
-    styles::{Palette, Style},
-    button::Button,
-};
-use yew_styles::layouts::{
-    container::{AlignItems, Container, Direction, Mode, Wrap},
-    item::{Item, ItemLayout},
-};
-use yew_styles::styles::Size;
-use yew_styles::text::{Header, Text, TextType};
 extern crate web_sys;
 extern crate yew;
 extern crate yew_router;
