@@ -8,6 +8,7 @@ use yew_styles::button::Button;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::styles::Size;
 use yew_styles::text::{Text, TextType};
+
 extern crate web_sys;
 extern crate yew;
 extern crate yew_router;
@@ -70,7 +71,7 @@ impl Component for Model {
 
     fn view(&self) -> Html {
         html! {
-            <Container direction=Direction::Column wrap=Wrap::Wrap>
+            <Container direction=Direction::Column wrap=Wrap::Nowrap>
                 <Text
                     class_name="title"
                     text_type=TextType::Plain
@@ -78,7 +79,7 @@ impl Component for Model {
                     text_size=Size::Big
                     html_text=None
                 />
-                <Container direction=Direction::Row wrap=Wrap::Wrap>
+                <Container direction=Direction::Row wrap=Wrap::Nowrap>
                     <Container direction=Direction::Column wrap=Wrap::Wrap>
                         <RouterAnchor<AppRouter>route=AppRouter::Root>
                             <Button
@@ -97,21 +98,21 @@ impl Component for Model {
                         <RouterAnchor<AppRouter>route=AppRouter::History>
                             <Button 
                                 class_name="navbar-route"
-                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(1))>
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(2))>
                                 {"History"}
                             </Button>
                         </RouterAnchor<AppRouter>>
                         <RouterAnchor<AppRouter>route=AppRouter::Search>
                             <Button 
                                 class_name="navbar-route"
-                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(1))>
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(3))>
                                 {"Search"}
                             </Button>
                         </RouterAnchor<AppRouter>>
                         <RouterAnchor<AppRouter>route=AppRouter::News>
                             <Button 
                                 class_name="navbar-route"
-                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(1))>
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(4))>
                                 {"News"}
                             </Button>
                         </RouterAnchor<AppRouter>>

@@ -4,6 +4,13 @@ use yew::{
     prelude::*,
     services::fetch::{FetchService, FetchTask, Request, Response},
 };
+use yew_styles::spinner::{Spinner, SpinnerType};
+use yew_styles::styles::{Palette, Size};
+use yew_styles::button::Button;
+use yew_styles::layouts::container::{Container, Direction, Wrap};
+use yew_styles::text::{Text, TextType};
+use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
+
 
 #[derive(Debug)]
 pub enum FetchMsg {
@@ -26,27 +33,39 @@ impl FetchServiceExample {
         match self.stonker {
             Some(ref investor) => {
                 html! {
-                    <>
-                        <p>{ "The Stonker" }</p>
-                        <p>{ format!("Name: {}", investor.name) }</p>
-                        <p>{ format!("Ballance: {}", investor.balance) }</p>
-                    </>
+                    <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
+                        <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
+                            <Text plain_text="The Stonker" text_type=TextType::Plain/>
+                        </Item>
+                        <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
+                            <Text plain_text=format!("Name: {}", investor.name) text_type=TextType::Plain/>
+                        </Item>
+                        <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
+                            <Text plain_text=format!("Ballance: {}", investor.balance) text_type=TextType::Plain/>
+                        </Item>
+                    </Container>
                 }
             }
             None => {
                 html! {
-                     <button onclick=self.link.callback(|_| FetchMsg::GetLocation)>
+                     <Button onclick_signal=self.link.callback(|_| FetchMsg::GetLocation)>
                          { "Who is the Stonker?" }
-                     </button>
+                     </Button>
                 }
             }
         }
     }
     fn view_fetching(&self) -> Html {
         if self.fetch_task.is_some() {
-            html! { <p>{ "Fetching data..." }</p> }
+            html! {  
+                <Spinner
+                    spinner_type=SpinnerType::Circle
+                    spinner_size=Size::Medium
+                    spinner_palette=Palette::Info
+                /> 
+            }
         } else {
-            html! { <p></p> }
+            html! { }
         }
     }
     fn view_error(&self) -> Html {
