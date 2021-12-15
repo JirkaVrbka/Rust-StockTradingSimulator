@@ -6,7 +6,7 @@ $red: #A12525
 $green: #A2BD51
 $blue: #60AEBA
 $font-stack: Helvetica, sans-serif
-
+$title-height: 12vh
 
 body
     padding: 0
@@ -22,24 +22,28 @@ body
     background-color: $dark-gray
 
 .plain-text.big
-    font-size: 8em
+    font-size: 10vh
 
 .plain-text.medium
-    font-size: 2em
+    font-size: 2vh
 
 .button.regular.standard, .button.regular.standard:focus, .button.regular.standard:active
     background-color: $dark-gray
-    font-size: 3em
+    font-size: 3vh
 
 .button.regular.standard:hover
     background-color: $blue
 
 .title
     border-radius: 0px
-    height: 1.5em
+    height: $title-height
     background-color: $gray
     color: $white
     font: 100% Impact
     display: flex
     padding-left: 1%
     align-items: center
+
+.navigation
+    height: 100-$title-height
+    background-color: $dark-gray

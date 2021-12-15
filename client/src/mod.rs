@@ -80,7 +80,7 @@ impl Component for Model {
                     html_text=None
                 />
                 <Container direction=Direction::Row wrap=Wrap::Nowrap>
-                    <Container direction=Direction::Column wrap=Wrap::Wrap>
+                    <Container class_name="navigation" direction=Direction::Column wrap=Wrap::Wrap>
                         <RouterAnchor<AppRouter>route=AppRouter::Root>
                             <Button
                                 class_name="navbar-route"
@@ -118,7 +118,7 @@ impl Component for Model {
                         </RouterAnchor<AppRouter>>
                     </Container>
                     <Router<AppRouter, ()>
-                        render = Router::render(|switch: AppRouter | {
+                        render=Router::render(|switch: AppRouter | {
                             match switch {
                                 AppRouter::Root => html!{
                                     <Home/>
@@ -138,8 +138,8 @@ impl Component for Model {
                                 AppRouter::NotFound(Permissive(None)) => html!{"Page not found"},
                                 AppRouter::NotFound(Permissive(Some(missed_route))) => html!{format!("Page '{}' not found", missed_route)}
                             }
-                        } )
-                        redirect = Router::redirect(|route: Route<()>| {
+                        })
+                        redirect=Router::redirect(|route: Route<()>| {
                             AppRouter::NotFound(Permissive(Some(route.route)))
                         })
                     />
