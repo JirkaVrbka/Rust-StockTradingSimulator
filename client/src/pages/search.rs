@@ -1,15 +1,16 @@
 use yew::prelude::*;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
+use yew_styles::text::{Text, TextType};
 use crate::fetcher::FetchServiceExample;
 
-pub struct About;
+pub struct Search;
 
-impl Component for About {
+impl Component for Search {
     type Message = ();
     type Properties = ();
 
     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        About {}
+        Search {}
     }
 
     fn update(&mut self, _: Self::Message) -> ShouldRender {
@@ -22,8 +23,12 @@ impl Component for About {
 
     fn view(&self) -> Html {
         html! {
-            <Container direction=Direction::Row wrap=Wrap::Wrap class_name="content">
-                <FetchServiceExample/>
+            <Container direction=Direction::Column wrap=Wrap::Wrap class_name="content">
+            <Text
+                plain_text="Search"
+                text_type=TextType::Plain
+            />
+            <FetchServiceExample/>
             </Container>
         }
     }

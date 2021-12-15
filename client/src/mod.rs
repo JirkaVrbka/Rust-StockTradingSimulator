@@ -2,12 +2,9 @@
 mod fetcher;
 
 use yew::prelude::*;
-use crate::pages::{About, Home};
+use crate::pages::{Home, Stocks, History, Search, News};
 use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
-use yew_styles::{
-    styles::{Style},
-    button::Button,
-};
+use yew_styles::button::Button;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::styles::Size;
 use yew_styles::text::{Text, TextType};
@@ -30,11 +27,17 @@ enum Msg {
 #[derive(Switch, Debug, Clone)]
 pub enum AppRouter {
     #[to = "/!"]
-    RootPath,
-    #[to = "/about!"]
-    AboutPath,
+    Root,
+    #[to = "/stocks!"]
+    Stocks,
+    #[to = "/history!"]
+    History,
+    #[to = "/search!"]
+    Search,
+    #[to = "/news!"]
+    News,
     #[to = "/page-not-found"]
-    PageNotFound(Permissive<String>),
+    NotFound(Permissive<String>),
 }
 
 
@@ -45,7 +48,7 @@ impl Component for Model {
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
         Self {
             link: link,
-            navbar_items: vec![true, false],
+            navbar_items: vec![true, false, false, false, false],
         }
     }
 
@@ -77,37 +80,66 @@ impl Component for Model {
                 />
                 <Container direction=Direction::Row wrap=Wrap::Wrap>
                     <Container direction=Direction::Column wrap=Wrap::Wrap>
-                        <RouterAnchor<AppRouter>route=AppRouter::RootPath>
+                        <RouterAnchor<AppRouter>route=AppRouter::Root>
                             <Button
                                 class_name="navbar-route"
-                                onclick_signal = self.link.callback(|_| Msg::ChangeNavbarItem(0))>
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(0))>
                                 {"Home"}
                             </Button>
                         </RouterAnchor<AppRouter>>
-                        <RouterAnchor<AppRouter>route=AppRouter::AboutPath>
+                        <RouterAnchor<AppRouter>route=AppRouter::Stocks>
                             <Button 
                                 class_name="navbar-route"
-                                button_style=Style::Regular
-                                onclick_signal = self.link.callback(|_| Msg::ChangeNavbarItem(1))>
-                                {"About"}
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(1))>
+                                {"Stocks"}
+                            </Button>
+                        </RouterAnchor<AppRouter>>
+                        <RouterAnchor<AppRouter>route=AppRouter::History>
+                            <Button 
+                                class_name="navbar-route"
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(1))>
+                                {"History"}
+                            </Button>
+                        </RouterAnchor<AppRouter>>
+                        <RouterAnchor<AppRouter>route=AppRouter::Search>
+                            <Button 
+                                class_name="navbar-route"
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(1))>
+                                {"Search"}
+                            </Button>
+                        </RouterAnchor<AppRouter>>
+                        <RouterAnchor<AppRouter>route=AppRouter::News>
+                            <Button 
+                                class_name="navbar-route"
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(1))>
+                                {"News"}
                             </Button>
                         </RouterAnchor<AppRouter>>
                     </Container>
                     <Router<AppRouter, ()>
                         render = Router::render(|switch: AppRouter | {
                             match switch {
-                                AppRouter::RootPath => html!{
+                                AppRouter::Root => html!{
                                     <Home/>
                                 },
-                                AppRouter::AboutPath => html!{
-                                    <About/>
+                                AppRouter::Stocks => html!{
+                                    <Stocks/>
                                 },
-                                AppRouter::PageNotFound(Permissive(None)) => html!{"Page not found"},
-                                AppRouter::PageNotFound(Permissive(Some(missed_route))) => html!{format!("Page '{}' not found", missed_route)}
+                                AppRouter::History => html!{
+                                    <History/>
+                                },
+                                AppRouter::Search => html!{
+                                    <Search/>
+                                },
+                                AppRouter::News => html!{
+                                    <News/>
+                                },
+                                AppRouter::NotFound(Permissive(None)) => html!{"Page not found"},
+                                AppRouter::NotFound(Permissive(Some(missed_route))) => html!{format!("Page '{}' not found", missed_route)}
                             }
                         } )
                         redirect = Router::redirect(|route: Route<()>| {
-                            AppRouter::PageNotFound(Permissive(Some(route.route)))
+                            AppRouter::NotFound(Permissive(Some(route.route)))
                         })
                     />
                 </Container>
