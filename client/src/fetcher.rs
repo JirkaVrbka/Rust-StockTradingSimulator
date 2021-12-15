@@ -14,7 +14,7 @@ use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 
 #[derive(Debug)]
 pub enum FetchMsg {
-    GetLocation,
+    GetStonker,
     ReceiveResponse(Result<StonkerJSON, anyhow::Error>),
 }
 
@@ -47,10 +47,14 @@ impl FetchServiceExample {
                 }
             }
             None => {
-                html! {
-                     <Button onclick_signal=self.link.callback(|_| FetchMsg::GetLocation)>
-                         { "Who is the Stonker?" }
-                     </Button>
+                if self.fetch_task.is_none() {
+                    html! {
+                        <Button onclick_signal=self.link.callback(|_| FetchMsg::GetStonker)>
+                            { "Who is the Stonker?" }
+                        </Button>
+                    }
+                } else {
+                    html! { }
                 }
             }
         }
@@ -61,7 +65,7 @@ impl FetchServiceExample {
                 <Spinner
                     spinner_type=SpinnerType::Circle
                     spinner_size=Size::Medium
-                    spinner_palette=Palette::Info
+                    spinner_palette=Palette::Standard
                 /> 
             }
         } else {
@@ -96,7 +100,7 @@ impl Component for FetchServiceExample {
         use FetchMsg::*;
 
         match msg {
-            GetLocation => {
+            GetStonker => {
                 // 1. build the request
                 let request = Request::get("http://localhost:8081/stonkers/1")
                     .body(Nothing)
