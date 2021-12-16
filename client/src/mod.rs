@@ -1,25 +1,46 @@
-use anyhow::Error;
+#![recursion_limit = "1024"]
+mod fetcher;
 
 use yew::prelude::*;
-use yew::format::Json;
-use yew::services::ConsoleService;
-use yew::services::websocket::{WebSocketService, WebSocketStatus, WebSocketTask};
+use crate::pages::{Home, Stocks, History, Search, News};
+use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
+use yew_styles::button::Button;
+use yew_styles::layouts::container::{Container, Direction, Wrap};
+use yew_styles::styles::Size;
+use yew_styles::text::{Text, TextType};
+
+extern crate web_sys;
+extern crate yew;
+extern crate yew_router;
+extern crate yew_styles;
+
+mod pages;
 
 struct Model {
-    ws: Option<WebSocketTask>,
     link: ComponentLink<Self>,
-    text: String,
-    server_data: String,
+    navbar_items: Vec<bool>,
 }
 
 enum Msg {
-    Connect,
-    Disconnected,
-    Ignore,
-    TextInput(String),
-    SendText,
-    Received(Result<String, Error>),
+    ChangeNavbarItem(usize),
 }
+
+#[derive(Switch, Debug, Clone)]
+pub enum AppRouter {
+    #[to = "/!"]
+    Root,
+    #[to = "/stocks!"]
+    Stocks,
+    #[to = "/history!"]
+    History,
+    #[to = "/search!"]
+    Search,
+    #[to = "/news!"]
+    News,
+    #[to = "/page-not-found"]
+    NotFound(Permissive<String>),
+}
+
 
 impl Component for Model {
     type Message = Msg;
@@ -27,61 +48,18 @@ impl Component for Model {
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
         Self {
-            ws: None,
             link: link,
-            text: String::new(),
-            server_data: String::new(),
+            navbar_items: vec![true, false, false, false, false],
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Connect => {
-                ConsoleService::log("Connecting");
-                let cbout = self.link.callback(|Json(data)| Msg::Received(data));
-                let cbnot = self.link.callback(|input| {
-                    ConsoleService::log(&format!("Notification: {:?}", input));
-                    match input {
-                        WebSocketStatus::Closed | WebSocketStatus::Error => {
-                            Msg::Disconnected
-                        }
-                        _ => Msg::Ignore,
-                    }
-                });
-                if self.ws.is_none() {
-                    let task = WebSocketService::connect_text("ws://127.0.0.1:8081/stonkers", cbout, cbnot);
-                    self.ws = Some(task.unwrap());
+            Msg::ChangeNavbarItem(index) => {
+                for (i, _) in self.navbar_items.clone().into_iter().enumerate() {
+                    self.navbar_items[i] = false;
                 }
-                true
-            }
-            Msg::Disconnected => {
-                self.ws = None;
-                true
-            }
-            Msg::Ignore => {
-                false
-            }
-            Msg::TextInput(e) => {
-                self.text = e;
-                true
-            }
-            Msg::SendText => {
-                match self.ws {
-                    Some(ref mut task) => {
-                        task.send(Json(&self.text));
-                        true
-                    }
-                    None => {
-                        false
-                    }
-                }
-            }
-            Msg::Received(Ok(s)) => {
-                self.server_data.push_str(&format!("{}\n", &s));
-                true
-            }
-            Msg::Received(Err(s)) => {
-                self.server_data.push_str(&format!("Error when reading from server: {}\n", &s.to_string()));
+                self.navbar_items[index] = true;
                 true
             }
         }
@@ -93,23 +71,85 @@ impl Component for Model {
 
     fn view(&self) -> Html {
         html! {
-            <div>
-                // connect button
-                <p><button onclick=self.link.callback(|_| Msg::Connect)>{ "Connect" }</button></p><br/>
-                // text showing whether we're connected or not
-                <p>{ "Connected: "}{ !self.ws.is_none() } </p><br/>
-                // input box for sending text
-                <p><input type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| Msg::TextInput(e.value))/></p><br/>
-                // button for sending text
-                <p><button onclick=self.link.callback(|_| Msg::SendText)>{ "Send" }</button></p><br/>
-                // text area for showing data from the server
-                <p><textarea value=self.server_data.clone()></textarea></p><br/>
-            </div>
+            <Container direction=Direction::Column wrap=Wrap::Nowrap>
+                <Text
+                    class_name="title"
+                    text_type=TextType::Plain
+                    plain_text="STONKER$"
+                    text_size=Size::Big
+                    html_text=None
+                />
+                <Container direction=Direction::Row wrap=Wrap::Nowrap>
+                    <Container class_name="navigation" direction=Direction::Column wrap=Wrap::Wrap>
+                        <RouterAnchor<AppRouter>route=AppRouter::Root>
+                            <Button
+                                class_name="navbar-route"
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(0))>
+                                {"Home"}
+                            </Button>
+                        </RouterAnchor<AppRouter>>
+                        <RouterAnchor<AppRouter>route=AppRouter::Stocks>
+                            <Button 
+                                class_name="navbar-route"
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(1))>
+                                {"Stocks"}
+                            </Button>
+                        </RouterAnchor<AppRouter>>
+                        <RouterAnchor<AppRouter>route=AppRouter::History>
+                            <Button 
+                                class_name="navbar-route"
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(2))>
+                                {"History"}
+                            </Button>
+                        </RouterAnchor<AppRouter>>
+                        <RouterAnchor<AppRouter>route=AppRouter::Search>
+                            <Button 
+                                class_name="navbar-route"
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(3))>
+                                {"Search"}
+                            </Button>
+                        </RouterAnchor<AppRouter>>
+                        <RouterAnchor<AppRouter>route=AppRouter::News>
+                            <Button 
+                                class_name="navbar-route"
+                                onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(4))>
+                                {"News"}
+                            </Button>
+                        </RouterAnchor<AppRouter>>
+                    </Container>
+                    <Router<AppRouter, ()>
+                        render=Router::render(|switch: AppRouter | {
+                            match switch {
+                                AppRouter::Root => html!{
+                                    <Home/>
+                                },
+                                AppRouter::Stocks => html!{
+                                    <Stocks/>
+                                },
+                                AppRouter::History => html!{
+                                    <History/>
+                                },
+                                AppRouter::Search => html!{
+                                    <Search/>
+                                },
+                                AppRouter::News => html!{
+                                    <News/>
+                                },
+                                AppRouter::NotFound(Permissive(None)) => html!{"Page not found"},
+                                AppRouter::NotFound(Permissive(Some(missed_route))) => html!{format!("Page '{}' not found", missed_route)}
+                            }
+                        })
+                        redirect=Router::redirect(|route: Route<()>| {
+                            AppRouter::NotFound(Permissive(Some(route.route)))
+                        })
+                    />
+                </Container>
+            </Container>
         }
     }
 }
 
-fn main() {
-    println!("{}", utils::hello());
+pub fn main() {
     yew::start_app::<Model>();
 }
+

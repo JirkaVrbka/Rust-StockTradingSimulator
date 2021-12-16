@@ -12,17 +12,21 @@ use crate::schema::stonker::dsl::*;
 use crate::server_data::models::command::Command;
 use crate::server_data::models::command::CommandTypes;
 use crate::server_data::models::company::Company;
-use crate::server_data::models::stock::StockJSON;
-use crate::server_data::models::stonker::PortfolioJSON;
-use crate::server_data::models::stonker::StonkerHistoryJSON;
-use crate::server_data::models::stonker::StonkerOverviewJSON;
-use crate::server_data::models::stonker::UsageJSON;
 use crate::server_data::repos::stock_repo::stocks_to_json;
 use crate::{models::stonker::Stonker, repos::connection::PgPool};
 use anyhow::Context;
 use async_trait::async_trait;
 use chrono::Datelike;
+use diesel::PgConnection;
 use diesel::dsl::min;
+use diesel::r2d2::ConnectionManager;
+use diesel::r2d2::PooledConnection;
+use utils::json::PortfolioJSON;
+use utils::json::StockJSON;
+use utils::json::StonkerHistoryJSON;
+use utils::json::StonkerJSON;
+use utils::json::StonkerOverviewJSON;
+use utils::json::UsageJSON;
 use std::sync::Arc;
 use crate::schema::command::company_id;
 use crate::schema::command::kind;
@@ -32,8 +36,8 @@ use crate::schema::command::threshold;
 pub trait StonkerRepo {
     async fn get_stonkers(&self) -> anyhow::Result<Vec<Stonker>>;
     async fn get_stonker_overview(&self, s_id: i32) -> anyhow::Result<StonkerOverviewJSON>;
-    async fn get_stonker_by_id(&self, s_id: i32) -> anyhow::Result<Stonker>;
-    async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<Stonker>;
+    async fn get_stonker_by_id(&self, s_id: i32) -> anyhow::Result<StonkerJSON>;
+    async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<StonkerJSON>;
     async fn get_stonker_stocks(&self, s_id: i32) -> anyhow::Result<Vec<StockJSON>>;
 }
 
@@ -62,16 +66,15 @@ impl StonkerRepo for PostgresStonkerRepo {
         Ok(results)
     }
 
-    async fn get_stonker_by_id(&self, s_id: i32) -> anyhow::Result<Stonker> {
+    async fn get_stonker_by_id(&self, s_id: i32) -> anyhow::Result<StonkerJSON> {
         let connection = self
             .pg_pool
             .get()
             .context("500::::Cannot get connection from pool")?;
-        let result = stonker
+        let result = stonker_to_json(&connection, &stonker
             .find(s_id)
-            .first(&connection)
-            .context(format!("404::::Could not find stonker with id {}", s_id))?;
-
+            .first::<Stonker>(&connection)
+            .context(format!("404::::Could not find stonker with id {}", s_id))?)?;
         Ok(result)
     }
 
@@ -93,9 +96,9 @@ impl StonkerRepo for PostgresStonkerRepo {
         };
 
         // TODO: After you check why "BUY_IF_LOW" is not recognized, delete this variable
-        let s1: Vec<(Command)> = command
+        let s1: Vec<Command> = command
         .filter(stonker_id.eq(s_id))
-        .load::<(Command)>(&connection).unwrap();
+        .load::<Command>(&connection).unwrap();
 
 
         let stonker_commands: Vec<(Command, Company)> = command
@@ -111,7 +114,7 @@ impl StonkerRepo for PostgresStonkerRepo {
             .iter()
             .map(|(cmd, comp)| StonkerHistoryJSON {
                 day: format!("{}.{}", cmd.created_at.date().day(), cmd.created_at.date().month()),
-                action: cmd.kind.clone(),
+                action: cmd.kind.to_json(),
                 stock: comp.name.clone(),
                 money: cmd.threshold,
             })
@@ -155,16 +158,16 @@ impl StonkerRepo for PostgresStonkerRepo {
         Ok(result)
     }
 
-    async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<Stonker> {
+    async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<StonkerJSON> {
         let connection = self
             .pg_pool
             .get()
             .context("500::::Cannot get connection from pool")?;
 
-        let result = diesel::insert_into(stonker::table)
+        let result = stonker_to_json(&connection, &diesel::insert_into(stonker::table)
             .values(&new_stonker)
-            .get_result(&connection)
-            .context("500::::Error saving new message")?;
+            .get_result::<Stonker>(&connection)
+            .context("500::::Error saving new message")?)?;
 
         Ok(result)
     }
@@ -189,3 +192,17 @@ impl StonkerRepo for PostgresStonkerRepo {
         Ok(stocks_to_json(&connection, &stonker_stocks)?)
     }
 }
+
+pub fn stonker_to_json(
+    _connection: &PooledConnection<ConnectionManager<PgConnection>>,
+    entity: &Stonker,
+) -> anyhow::Result<StonkerJSON> {
+    Ok(StonkerJSON {
+        id: entity.id,
+        name: entity.name.clone(),
+        balance: entity.balance,
+        blocked_balance: entity.blocked_balance,
+        invested_balance: entity.invested_balance,
+    })
+}
+

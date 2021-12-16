@@ -7,8 +7,6 @@ use crate::schema::company::dsl::company;
 use crate::schema::stock;
 use crate::schema::stock::dsl::*;
 use crate::schema::stonker::dsl::stonker;
-use crate::server_data::models::company::CompanyJSON;
-use crate::server_data::models::stock::StockJSON;
 use crate::server_data::repos::company_repo::company_to_json;
 use crate::{models::stock::Stock, repos::connection::PgPool};
 use anyhow::Context;
@@ -16,7 +14,12 @@ use async_trait::async_trait;
 use diesel::r2d2::ConnectionManager;
 use diesel::r2d2::PooledConnection;
 use diesel::PgConnection;
+use utils::json::CompanyJSON;
+use utils::json::StockJSON;
+use utils::json::StonkerJSON;
 use std::sync::Arc;
+
+use super::stonker_repo::stonker_to_json;
 
 #[async_trait]
 pub trait StockRepo {
@@ -48,13 +51,13 @@ pub fn stock_to_json(
             entity.company_id, entity.id
         ))?;
     let issued_by: CompanyJSON = company_to_json(connection, &c)?;
-    let owner: Stonker = stonker
+    let owner: StonkerJSON = stonker_to_json(connection, &stonker
         .find(entity.stonker_id)
         .get_result::<Stonker>(connection)
         .context(format!(
             "404::::Cannot find owner {} of stock {}",
             entity.stonker_id, entity.id
-        ))?;
+        ))?)?;
     Ok(StockJSON {
         id: entity.id,
         owner,
