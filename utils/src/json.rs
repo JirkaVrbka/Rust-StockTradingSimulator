@@ -10,6 +10,24 @@ pub enum CommandTypesJSON {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum Effect {
+    FALL,
+    NEUTRAL,
+    RISE,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct NewsJSON {
+    pub id: i32,
+    pub title: String,
+    pub description: String,
+    pub author: String,
+    #[serde(with = "ts_seconds")]
+    pub created_at: chrono::NaiveDateTime,
+    pub effect: Effect,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StonkerJSON {
     pub id: i32,
     pub name: String,
