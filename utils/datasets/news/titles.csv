@@ -1,20 +1,20 @@
-effect,title
+effect;text
 -1;Fall of {}
 0;Background for {}
 1;Rise of {}
 -1;{} in flames
 0;Position of {}
 1;{} in heaven
--1;{} embarrassment of 
-0;{} inspection 
+-1;{} embarrassment of
+0;{} inspection
 1;{} victory
 -1;Rapid {} sells
 0;Double deal of {}
 1;{} sky rockets
 -1;{} hits ground
-0;{} secrets 
+0;{} secrets
 1;Promising {} buys
--1;Downhill {} 
+-1;Downhill {}
 0;Something about {}
 1;Strong Sell {}
 -1;Strong Buy {}
@@ -24,8 +24,14 @@ effect,title
 0;{} report
 1;Promising {}
 -1;Failing {}
-0;What is happening
+0;What happened with {}
 1;Happiness of {}
 -1;{} is crying
 0;Unclear {} vision
 1;Unbelievable {}
+-1; Market decline
+0; {} analyzed
+1; Market achievement
+-1; Rapid {} decay
+0; New {} findings
+1; {} growth

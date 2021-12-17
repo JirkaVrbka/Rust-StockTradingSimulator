@@ -1,5 +1,7 @@
 use serde::{Serialize, Deserialize};
 use chrono::naive::serde::ts_seconds;
+use serde_repr::{Serialize_repr, Deserialize_repr};
+use strum::{EnumIter};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum CommandTypesJSON {
@@ -9,11 +11,12 @@ pub enum CommandTypesJSON {
     BUY_IF_LOW,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(PartialEq, Eq, Hash, Debug, Serialize_repr, Deserialize_repr, Clone, EnumIter)]
+#[repr(i8)]
 pub enum Effect {
-    FALL,
-    NEUTRAL,
-    RISE,
+    FALL = -1,
+    NEUTRAL = 0,
+    RISE = 1,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
