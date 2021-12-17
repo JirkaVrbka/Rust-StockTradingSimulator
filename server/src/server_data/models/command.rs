@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use utils::json::CommandTypesJSON;
 
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug)]
-#[DieselType = "Commandtypes"]
+#[DieselType = "Commandtypesdb"]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CommandTypes {
     SELL,

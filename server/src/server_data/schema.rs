@@ -1,6 +1,7 @@
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::*;
+    use crate::models::command::Commandtypesdb;
+    use crate::models::news::Effectdb;
 
     command (id) {
         id -> Int4,
@@ -8,14 +9,15 @@ table! {
         company_id -> Int4,
         threshold -> Int4,
         share -> Int4,
-        kind -> Commandtypes,
+        kind -> Commandtypesdb,
         created_at -> Timestamp,
     }
 }
 
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::*;
+    use crate::models::command::Commandtypesdb;
+    use crate::models::news::Effectdb;
 
     company (id) {
         id -> Int4,
@@ -26,7 +28,8 @@ table! {
 
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::*;
+    use crate::models::command::Commandtypesdb;
+    use crate::models::news::Effectdb;
 
     history (id) {
         id -> Int4,
@@ -40,7 +43,8 @@ table! {
 
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::*;
+    use crate::models::command::Commandtypesdb;
+    use crate::models::news::Effectdb;
 
     news (id) {
         id -> Int4,
@@ -48,14 +52,15 @@ table! {
         description -> Text,
         author -> Varchar,
         created_at -> Timestamp,
-        kind -> Effect,
+        kind -> Effectdb,
         company_id -> Int4,
     }
 }
 
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::*;
+    use crate::models::command::Commandtypesdb;
+    use crate::models::news::Effectdb;
 
     stock (id) {
         id -> Int4,
@@ -69,7 +74,8 @@ table! {
 
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::*;
+    use crate::models::command::Commandtypesdb;
+    use crate::models::news::Effectdb;
 
     stonker (id) {
         id -> Int4,
