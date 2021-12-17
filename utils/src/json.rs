@@ -28,6 +28,7 @@ pub struct NewsJSON {
     #[serde(with = "ts_seconds")]
     pub created_at: chrono::NaiveDateTime,
     pub effect: EffectJSON,
+    pub company: CompanyJSON,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

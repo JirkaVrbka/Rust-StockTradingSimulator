@@ -3,7 +3,7 @@ use rand::Rng;
 use serde::Deserialize;
 use chrono::{NaiveDateTime, Utc};
 use crate::datagen::read_csv;
-use crate::json::NewsJSON;
+use crate::json::{NewsJSON, CompanyJSON, StonkerJSON};
 use anyhow::Error;
 use rand::seq::SliceRandom;
 use crate::json::EffectJSON;
@@ -75,7 +75,18 @@ impl Generator {
             description: format!("{}{}", headline, glue),
             author,
             effect,
-            created_at: NaiveDateTime::from_timestamp(at, 0)
+            created_at: NaiveDateTime::from_timestamp(at, 0),
+            company: CompanyJSON {
+                id: 1,
+                name: "Netflix".to_string(),
+                performer: StonkerJSON {
+                    id: 0,
+                    name: "Netflixer".to_string(),
+                    balance: 0,
+                    blocked_balance: 0,
+                    invested_balance: 0,
+                }
+            }
         }
     }
 }

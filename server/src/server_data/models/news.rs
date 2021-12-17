@@ -2,7 +2,7 @@ use crate::schema::news;
 use diesel_derive_enum::DbEnum;
 use chrono::naive::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
-use utils::json::EffectJSON;
+use utils::json::{EffectJSON, NewsJSON};
 
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug, PartialEq)]
 #[DieselType = "Effectdb"]
