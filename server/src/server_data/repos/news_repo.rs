@@ -2,7 +2,6 @@ use crate::models::news::News;
 use crate::repos::connection::PgPool;
 use crate::schema::news::dsl::*;
 use crate::server_data::models::company::Company;
-use crate::server_data::models::news::Effect;
 use crate::schema::company::dsl::company;
 use crate::diesel::QueryDsl;
 use anyhow::Context;
@@ -11,8 +10,6 @@ use diesel::{RunQueryDsl, PgConnection};
 use diesel::r2d2::{PooledConnection, ConnectionManager};
 use utils::json::{NewsJSON, CompanyJSON};
 use std::sync::Arc;
-
-
 use super::company_repo::company_to_json;
 
 #[async_trait]

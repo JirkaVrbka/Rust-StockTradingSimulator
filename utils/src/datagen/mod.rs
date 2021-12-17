@@ -1,4 +1,5 @@
 pub mod news;
+pub mod stonkers;
 
 use std::fs::File;
 use std::io::BufReader;
