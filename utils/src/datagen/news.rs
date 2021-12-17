@@ -1,11 +1,8 @@
 use std::collections::HashMap;
-use rand::Rng;
 use serde::Deserialize;
-use chrono::{NaiveDateTime, Utc};
 use crate::datagen::read_csv;
 use crate::json::{NewsJSON, CompanyJSON, StonkerJSON};
 use anyhow::Error;
-use rand::seq::SliceRandom;
 use crate::json::EffectJSON;
 use strum::IntoEnumIterator;
 

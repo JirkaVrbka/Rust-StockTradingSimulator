@@ -1,5 +1,6 @@
 pub mod news;
 pub mod stonkers;
+pub mod company;
 
 use std::collections::HashMap;
 use std::fs::File;

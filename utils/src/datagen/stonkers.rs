@@ -1,10 +1,6 @@
-use std::fmt::format;
-
 use rand::Rng;
 use serde::Deserialize;
-
 use crate::json::StonkerJSON;
-
 use super::{read_csv, Generator};
 
 #[derive(Deserialize)]
