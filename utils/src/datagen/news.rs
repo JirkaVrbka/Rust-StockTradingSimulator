@@ -1,6 +1,7 @@
 use std::collections::HashMap;
+use rand::Rng;
 use serde::Deserialize;
-use chrono::NaiveDateTime;
+use chrono::{NaiveDateTime, Utc};
 use crate::datagen::read_csv;
 use crate::json::NewsJSON;
 use anyhow::Error;
@@ -65,15 +66,16 @@ impl Generator {
         let headline = self.headlines.choose(&mut self.rng).expect("Headlines are empty").text.clone();
         let first_char = headline.chars().next().expect("Headline is empty");
         let headline = format!("{}{}", first_char.to_uppercase(), headline.chars().skip(1).collect::<String>());
-        let description = format!("{}{}", headline, glue);
-        let created_at = NaiveDateTime::from_timestamp(0, 0);
+        let three_days = 3*24*60*60;
+        let now = Utc::now().naive_utc().timestamp();
+        let at = self.rng.gen_range((now-three_days)..now);
         NewsJSON {
             id: self.last_id,
             title,
-            description,
+            description: format!("{}{}", headline, glue),
             author,
             effect,
-            created_at
+            created_at: NaiveDateTime::from_timestamp(at, 0)
         }
     }
 }
