@@ -1,45 +1,44 @@
 use crate::schema::news;
-use chrono::naive::serde::ts_seconds;
 use diesel_derive_enum::DbEnum;
+use chrono::naive::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 use utils::json::EffectJSON;
 
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug, PartialEq)]
 #[DieselType = "Effectdb"]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[DbValueStyle = "SCREAMING_SNAKE_CASE"]
 pub enum Effect {
-    FALL,
-    NEUTRAL,
-    RISE,
+    Fall,
+    Neutral,
+    Rise,
 }
 
 impl Effect {
     pub fn from_json(json: EffectJSON) -> Effect {
         match json {
-            EffectJSON::FALL => Effect::FALL,
-            EffectJSON::NEUTRAL => Effect::NEUTRAL,
-            EffectJSON::RISE => Effect::RISE,
+            EffectJSON::Fall => Effect::Fall,
+            EffectJSON::Neutral => Effect::Neutral,
+            EffectJSON::Rise => Effect::Rise,
         }
     }
     pub fn to_json(&self) -> EffectJSON {
         match self {
-            Effect::FALL => EffectJSON::FALL,
-            Effect::NEUTRAL => EffectJSON::NEUTRAL,
-            Effect::RISE => EffectJSON::RISE,
+            Effect::Fall => EffectJSON::Fall,
+            Effect::Neutral => EffectJSON::Neutral,
+            Effect::Rise => EffectJSON::Rise,
         }
     }
 }
 
-
-#[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
+#[derive(Debug, Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
 #[table_name = "news"]
 pub struct News {
     pub id: i32,
-    pub company_id: i32,
     pub title: String,
     pub description: String,
     pub author: String,
     #[serde(with = "ts_seconds")]
     pub created_at: chrono::NaiveDateTime,
-    pub effect: Effect,
+    pub kind: Effect,
+    pub company_id: i32,
 }

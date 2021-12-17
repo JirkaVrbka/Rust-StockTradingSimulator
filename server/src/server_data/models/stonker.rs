@@ -1,8 +1,6 @@
 use crate::schema::stonker;
 use serde::{Deserialize, Serialize};
 
-use super::command::CommandTypes;
-
 #[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
 #[table_name = "stonker"]
 pub struct Stonker {

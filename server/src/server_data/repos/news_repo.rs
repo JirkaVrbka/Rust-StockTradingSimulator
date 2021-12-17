@@ -1,6 +1,7 @@
 use crate::models::news::News;
 use crate::repos::connection::PgPool;
 use crate::schema::news::dsl::*;
+use crate::server_data::models::news::Effect;
 use anyhow::Context;
 use async_trait::async_trait;
 use diesel::RunQueryDsl;

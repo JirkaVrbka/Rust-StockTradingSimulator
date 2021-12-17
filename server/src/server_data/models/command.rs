@@ -33,7 +33,7 @@ impl CommandTypes {
     }
 }
 
-#[derive(Queryable,Serialize, Deserialize,Clone, Associations, Identifiable)]
+#[derive(Queryable, Serialize, Deserialize,Clone, Associations, Identifiable)]
 #[table_name = "command"]
 pub struct Command {
     pub id: i32,

@@ -14,9 +14,9 @@ pub enum CommandTypesJSON {
 #[derive(PartialEq, Eq, Hash, Debug, Serialize_repr, Deserialize_repr, Clone, EnumIter)]
 #[repr(i8)]
 pub enum EffectJSON {
-    FALL = -1,
-    NEUTRAL = 0,
-    RISE = 1,
+    Fall = -1,
+    Neutral = 0,
+    Rise = 1,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
