@@ -1,43 +1,42 @@
+use std::fmt::format;
+
 use rand::Rng;
 use serde::Deserialize;
 
 use crate::json::StonkerJSON;
 
-use super::read_csv;
+use super::{read_csv, Generator};
 
 #[derive(Deserialize)]
 struct Name {
-    name: String
+    first: String,
+    last: String,
 }
 
-pub struct Generator {
-    last_id: i32,
-    names: Vec<Name>,
-    random: rand::rngs::ThreadRng,
+pub struct StonkerGenerator {
+    generator: Generator,
+    first_names: Vec<String>,
+    last_names: Vec<String>,
 }
 
-impl Generator {
-    pub fn new() -> anyhow::Result<Generator> {
-        Ok(Generator {
-            names: read_csv::<Name>("names.csv", b';')?,
-            last_id: -1,
-            random: rand::thread_rng()
+impl StonkerGenerator {
+    pub fn new() -> anyhow::Result<StonkerGenerator> {
+        let names = read_csv::<Name>("names.csv", b' ')?;
+        Ok(StonkerGenerator {
+            generator: Generator::new(),
+            first_names: names.iter().map(|name| name.first.clone()).collect(),
+            last_names: names.iter().map(|name| name.last.clone()).collect(),
         })
     }
 
-    pub fn generate(&mut self) -> Vec<StonkerJSON> {
-        let mut stonkers = Vec::new();
-        for name in &self.names {
-            self.last_id += 1;
-            stonkers.push(StonkerJSON {
-                id: self.last_id,
-                name: name.name.clone(),
-                balance: self.random.gen_range(100..100000),
-                blocked_balance: 0,
-                invested_balance: 0
-            })
+    pub fn create(&mut self) -> StonkerJSON {
+        StonkerJSON {
+            id: self.generator.next(),
+            name: format!("{} {}", self.generator.choose(&self.first_names), self.generator.choose(&self.last_names)),
+            balance: self.generator.random.gen_range(100..100000),
+            blocked_balance: 0,
+            invested_balance: 0
         }
-        stonkers
     }
 }
 

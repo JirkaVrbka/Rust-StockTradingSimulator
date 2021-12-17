@@ -9,6 +9,8 @@ use rand::seq::SliceRandom;
 use crate::json::EffectJSON;
 use strum::IntoEnumIterator;
 
+use super::Generator;
+
 #[derive(Debug, Deserialize)]
 struct Info {
     effect: EffectJSON,
@@ -27,13 +29,12 @@ struct Newspaper {
 }
 
 #[derive(Debug)]
-pub struct Generator {
-    last_id: i32,
+pub struct NewsGenerator {
+    generator: Generator,
     glues: HashMap<EffectJSON, Vec<String>>,
     titles: HashMap<EffectJSON, Vec<String>>,
     newspapers: Vec<Newspaper>,
     headlines: Vec<Headline>,
-    rng: rand::rngs::ThreadRng,
 }
 
 fn into_map(vec: Vec<Info>) -> HashMap<EffectJSON, Vec<String>> {
@@ -44,38 +45,32 @@ fn into_map(vec: Vec<Info>) -> HashMap<EffectJSON, Vec<String>> {
     map
 }
 
-impl Generator {
-    pub fn new() -> Result<Generator, Error>  {
-        Ok(Generator {
-            last_id: -1,
+impl NewsGenerator {
+    pub fn new() -> Result<NewsGenerator, Error>  {
+        Ok(NewsGenerator {
+            generator: Generator::new(),
             glues: into_map(read_csv::<Info>("news/glue.csv", b';')?),
             titles: into_map(read_csv::<Info>("news/titles.csv", b';')?),
             newspapers: read_csv::<Newspaper>("news/newspapers.csv", b',')?,
             headlines: read_csv::<Headline>("news/headlines.csv", b',')?,
-            rng: rand::thread_rng()
         })
     }
 
     pub fn create(&mut self) -> NewsJSON {
-        self.last_id += 1;
         let effects = EffectJSON::iter().collect::<Vec<EffectJSON>>();
-        let effect = effects.choose(&mut self.rng).expect("Effects are empty").clone();
-        let title = self.titles.get(&effect).expect(format!("No title for {:?}", effect).as_str()).choose(&mut self.rng).expect("Titles are empty").clone();
-        let glue = self.glues.get(&effect).expect(format!("No glue for {:?}", effect).as_str()).choose(&mut self.rng).expect("Glues are empty").clone();
-        let author = self.newspapers.choose(&mut self.rng).expect("Newspapers are empty").name.clone();
-        let headline = self.headlines.choose(&mut self.rng).expect("Headlines are empty").text.clone();
+        let effect = self.generator.choose(&effects).clone();
+        let glue = self.generator.choose_from(&self.glues, &effect).clone();
+        let headline = self.generator.choose(&self.headlines).text.clone();
         let first_char = headline.chars().next().expect("Headline is empty");
         let headline = format!("{}{}", first_char.to_uppercase(), headline.chars().skip(1).collect::<String>());
-        let three_days = 3*24*60*60;
-        let now = Utc::now().naive_utc().timestamp();
-        let at = self.rng.gen_range((now-three_days)..now);
+        let recently = self.generator.date_from_days(3);
         NewsJSON {
-            id: self.last_id,
-            title,
+            id: self.generator.next(),
+            title: self.generator.choose_from(&self.titles, &effect).clone(),
             description: format!("{}{}", headline, glue),
-            author,
+            author: self.generator.choose(&self.newspapers).name.clone(),
             effect,
-            created_at: NaiveDateTime::from_timestamp(at, 0),
+            created_at: recently,
             company: CompanyJSON {
                 id: 1,
                 name: "Netflix".to_string(),
