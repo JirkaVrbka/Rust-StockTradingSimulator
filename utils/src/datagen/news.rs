@@ -5,7 +5,7 @@ use crate::json::{NewsJSON, CompanyJSON, StonkerJSON};
 use anyhow::Error;
 use crate::json::EffectJSON;
 use strum::IntoEnumIterator;
-use super::{IndexVec, convert};
+use super::{IndexVec, convert, push_back};
 use super::Generator;
 
 #[derive(Debug, Deserialize)]
@@ -32,7 +32,8 @@ pub struct NewsGenerator {
     titles: HashMap<EffectJSON, IndexVec<String>>,
     newspapers: IndexVec<Newspaper>,
     headlines: IndexVec<Headline>,
-    effects: IndexVec<EffectJSON>
+    effects: IndexVec<EffectJSON>,
+    spawned: IndexVec<NewsJSON>,
 }
 
 fn into_map(vec: IndexVec<Info>) -> HashMap<EffectJSON, IndexVec<String>> {
@@ -52,17 +53,18 @@ impl NewsGenerator {
             newspapers: read_csv::<Newspaper>("news/newspapers.csv", b',')?,
             headlines: read_csv::<Headline>("news/headlines.csv", b',')?,
             effects: convert(EffectJSON::iter().collect::<Vec<EffectJSON>>()),
+            spawned: IndexVec::new(),
         })
     }
 
-    pub fn create(&mut self) -> NewsJSON {
+    pub fn create(&mut self) -> &NewsJSON {
         let effect = self.generator.choose(&mut self.effects).clone();
         let glue = self.generator.choose_from(&mut self.glues, &effect).clone();
         let headline = self.generator.choose(&mut self.headlines).text.clone();
         let first_char = headline.chars().next().expect("Headline is empty");
         let headline = format!("{}{}", first_char.to_uppercase(), headline.chars().skip(1).collect::<String>());
         let recently = self.generator.date_from_days(3);
-        NewsJSON {
+        push_back(&mut self.spawned, NewsJSON {
             id: self.generator.next(),
             title: self.generator.choose_from(&mut self.titles, &effect).clone(),
             description: format!("{}{}", headline, glue),
@@ -80,6 +82,6 @@ impl NewsGenerator {
                     invested_balance: 0,
                 }
             }
-        }
+        })
     }
 }

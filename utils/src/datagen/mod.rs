@@ -1,6 +1,8 @@
 pub mod news;
 pub mod stonkers;
 pub mod company;
+pub mod history;
+
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::BufReader;
@@ -26,6 +28,10 @@ fn convert<T>(vec: Vec<T>) -> IndexVec<T> {
     converted
 }
 
+pub fn push_back<'a, T: 'a> (vec: &'a mut IndexVec<T>, item: T) -> &'a T {
+    vec.push((item, false));
+    &vec.last().unwrap().0
+}
 
 impl Generator {
     pub fn new() -> Generator {
