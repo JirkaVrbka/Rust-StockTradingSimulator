@@ -46,7 +46,7 @@ impl Generator {
         for i in 0..vec.len() {
             let (_, used) = &vec[index + i];
             if !used {
-                return Some(i);
+                return Some(index + i);
             }
         }
         None
