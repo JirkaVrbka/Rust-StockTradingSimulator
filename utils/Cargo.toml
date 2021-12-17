@@ -15,4 +15,4 @@ rand = "0.8.4"
 
 [[bin]]
 name = "news"
-path = "src/mod.rs"
+path = "src/lib.rs"

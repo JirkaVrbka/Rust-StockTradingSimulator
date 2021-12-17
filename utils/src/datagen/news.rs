@@ -6,12 +6,12 @@ use crate::datagen::read_csv;
 use crate::json::NewsJSON;
 use anyhow::Error;
 use rand::seq::SliceRandom;
-use crate::json::Effect;
+use crate::json::EffectJSON;
 use strum::IntoEnumIterator;
 
 #[derive(Debug, Deserialize)]
 struct Info {
-    effect: Effect,
+    effect: EffectJSON,
     text: String
 }
 
@@ -29,14 +29,14 @@ struct Newspaper {
 #[derive(Debug)]
 pub struct Generator {
     last_id: i32,
-    glues: HashMap<Effect, Vec<String>>,
-    titles: HashMap<Effect, Vec<String>>,
+    glues: HashMap<EffectJSON, Vec<String>>,
+    titles: HashMap<EffectJSON, Vec<String>>,
     newspapers: Vec<Newspaper>,
     headlines: Vec<Headline>,
     rng: rand::rngs::ThreadRng,
 }
 
-fn into_map(vec: Vec<Info>) -> HashMap<Effect, Vec<String>> {
+fn into_map(vec: Vec<Info>) -> HashMap<EffectJSON, Vec<String>> {
     let mut map = HashMap::new();
     for Info { effect, text } in vec {
         map.entry(effect).or_insert_with(Vec::new).push(text)
@@ -58,7 +58,7 @@ impl Generator {
 
     pub fn create(&mut self) -> NewsJSON {
         self.last_id += 1;
-        let effects = Effect::iter().collect::<Vec<Effect>>();
+        let effects = EffectJSON::iter().collect::<Vec<EffectJSON>>();
         let effect = effects.choose(&mut self.rng).expect("Effects are empty").clone();
         let title = self.titles.get(&effect).expect(format!("No title for {:?}", effect).as_str()).choose(&mut self.rng).expect("Titles are empty").clone();
         let glue = self.glues.get(&effect).expect(format!("No glue for {:?}", effect).as_str()).choose(&mut self.rng).expect("Glues are empty").clone();
