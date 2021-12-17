@@ -5,7 +5,7 @@ use crate::json::{NewsJSON, CompanyJSON, StonkerJSON};
 use anyhow::Error;
 use crate::json::EffectJSON;
 use strum::IntoEnumIterator;
-
+use super::{IndexVec, convert};
 use super::Generator;
 
 #[derive(Debug, Deserialize)]
@@ -28,16 +28,17 @@ struct Newspaper {
 #[derive(Debug)]
 pub struct NewsGenerator {
     generator: Generator,
-    glues: HashMap<EffectJSON, Vec<String>>,
-    titles: HashMap<EffectJSON, Vec<String>>,
-    newspapers: Vec<Newspaper>,
-    headlines: Vec<Headline>,
+    glues: HashMap<EffectJSON, IndexVec<String>>,
+    titles: HashMap<EffectJSON, IndexVec<String>>,
+    newspapers: IndexVec<Newspaper>,
+    headlines: IndexVec<Headline>,
+    effects: IndexVec<EffectJSON>
 }
 
-fn into_map(vec: Vec<Info>) -> HashMap<EffectJSON, Vec<String>> {
+fn into_map(vec: IndexVec<Info>) -> HashMap<EffectJSON, IndexVec<String>> {
     let mut map = HashMap::new();
-    for Info { effect, text } in vec {
-        map.entry(effect).or_insert_with(Vec::new).push(text)
+    for (Info { effect, text }, used) in vec {
+        map.entry(effect).or_insert_with(Vec::new).push((text, used))
     }
     map
 }
@@ -50,22 +51,22 @@ impl NewsGenerator {
             titles: into_map(read_csv::<Info>("news/titles.csv", b';')?),
             newspapers: read_csv::<Newspaper>("news/newspapers.csv", b',')?,
             headlines: read_csv::<Headline>("news/headlines.csv", b',')?,
+            effects: convert(EffectJSON::iter().collect::<Vec<EffectJSON>>()),
         })
     }
 
     pub fn create(&mut self) -> NewsJSON {
-        let effects = EffectJSON::iter().collect::<Vec<EffectJSON>>();
-        let effect = self.generator.choose(&effects).clone();
-        let glue = self.generator.choose_from(&self.glues, &effect).clone();
-        let headline = self.generator.choose(&self.headlines).text.clone();
+        let effect = self.generator.choose(&mut self.effects).clone();
+        let glue = self.generator.choose_from(&mut self.glues, &effect).clone();
+        let headline = self.generator.choose(&mut self.headlines).text.clone();
         let first_char = headline.chars().next().expect("Headline is empty");
         let headline = format!("{}{}", first_char.to_uppercase(), headline.chars().skip(1).collect::<String>());
         let recently = self.generator.date_from_days(3);
         NewsJSON {
             id: self.generator.next(),
-            title: self.generator.choose_from(&self.titles, &effect).clone(),
+            title: self.generator.choose_from(&mut self.titles, &effect).clone(),
             description: format!("{}{}", headline, glue),
-            author: self.generator.choose(&self.newspapers).name.clone(),
+            author: self.generator.choose(&mut self.newspapers).name.clone(),
             effect,
             created_at: recently,
             company: CompanyJSON {

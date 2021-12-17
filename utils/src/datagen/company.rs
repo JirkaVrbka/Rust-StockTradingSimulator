@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use crate::json::{CompanyJSON, StonkerJSON};
 
-use super::{Generator, read_csv};
+use super::{Generator, read_csv, IndexVec};
 
 #[derive(Debug, Deserialize)]
 struct Stock {
@@ -13,7 +13,7 @@ struct Stock {
 
 pub struct CompanyGenerator {
     generator: Generator,
-    stocks: Vec<Stock>
+    stocks: IndexVec<Stock>
 }
 
 impl CompanyGenerator {
@@ -24,7 +24,7 @@ impl CompanyGenerator {
         })
     }
     pub fn create(&mut self) -> CompanyJSON {
-        let stock = self.generator.choose(&self.stocks);
+        let stock = self.generator.choose(&mut self.stocks);
         let id = self.generator.next();
         CompanyJSON {
             id,
