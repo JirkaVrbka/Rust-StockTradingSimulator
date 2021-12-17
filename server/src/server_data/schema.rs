@@ -15,6 +15,7 @@ table! {
 
 table! {
     use diesel::sql_types::*;
+    use crate::models::command::*;
 
     company (id) {
         id -> Int4,
@@ -25,6 +26,7 @@ table! {
 
 table! {
     use diesel::sql_types::*;
+    use crate::models::command::*;
 
     history (id) {
         id -> Int4,
@@ -38,6 +40,7 @@ table! {
 
 table! {
     use diesel::sql_types::*;
+    use crate::models::command::*;
 
     news (id) {
         id -> Int4,
@@ -45,11 +48,14 @@ table! {
         description -> Text,
         author -> Varchar,
         created_at -> Timestamp,
+        kind -> Effect,
+        company_id -> Int4,
     }
 }
 
 table! {
     use diesel::sql_types::*;
+    use crate::models::command::*;
 
     stock (id) {
         id -> Int4,
@@ -63,6 +69,7 @@ table! {
 
 table! {
     use diesel::sql_types::*;
+    use crate::models::command::*;
 
     stonker (id) {
         id -> Int4,
@@ -78,6 +85,7 @@ joinable!(command -> stonker (stonker_id));
 joinable!(company -> stonker (performer_id));
 joinable!(history -> stock (stock_id));
 joinable!(history -> stonker (stonker_id));
+joinable!(news -> company (company_id));
 joinable!(stock -> company (company_id));
 joinable!(stock -> stonker (stonker_id));
 
