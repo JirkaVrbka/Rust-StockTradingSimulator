@@ -24,7 +24,6 @@ use utils::json::StonkerHistoryJSON;
 use utils::json::StonkerJSON;
 use utils::json::StonkerOverviewJSON;
 use utils::json::UsageJSON;
-use std::sync::Arc;
 use crate::schema::command::company_id;
 use crate::schema::command::kind;
 use crate::schema::command::threshold;

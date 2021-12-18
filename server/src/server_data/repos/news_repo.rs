@@ -1,5 +1,4 @@
 use crate::models::news::News;
-use crate::repos::connection::PgPool;
 use crate::schema::news::dsl::*;
 use crate::server_data::models::ToJson;
 use anyhow::Context;

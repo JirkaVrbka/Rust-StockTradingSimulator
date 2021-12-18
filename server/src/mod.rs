@@ -18,7 +18,6 @@ use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks};
 use crate::endpoints::stonker_endpoints::{
     create_stonker, get_stonker,get_stonker_overview, get_stonker_stocks, get_stonkers,
 };
-use crate::repos::connection::establish_connection;
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::http::header;
@@ -39,12 +38,7 @@ fn init_logger() {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     init_logger();
-
-    let pool = match establish_connection() {
-        Ok(p) => Arc::new(p),
-        Err(_) => panic!("Cannot establish connection"),
-    };
-    let repo = Repo::new(pool.clone());
+    let repo = Repo::new();
     let chat_server = Lobby::default().start(); //create and spin up a lobby
     HttpServer::new(move || {
         App::new()
@@ -52,7 +46,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(
                 Cors::default()
                     .allowed_origin("http://localhost:5000")
-                    .allowed_methods(vec!["GET", "POST", "DELETE", "PUT"])
+                .allowed_methods(vec!["GET", "POST", "DELETE", "PUT"])
                     .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
                     .allowed_header(header::CONTENT_TYPE)
                     .supports_credentials()
