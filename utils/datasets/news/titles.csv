@@ -29,9 +29,9 @@ effect;text
 -1;{} is crying
 0;Unclear {} vision
 1;Unbelievable {}
--1; Market decline
-0; {} analyzed
-1; Market achievement
--1; Rapid {} decay
-0; New {} findings
-1; {} growth
+-1;Market decline
+0;{} analyzed
+1;Market achievement
+-1;Rapid {} decay
+0;New {} findings
+1;{} growth
