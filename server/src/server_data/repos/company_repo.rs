@@ -21,10 +21,7 @@ pub trait CompanyRepo {
 #[async_trait]
 impl CompanyRepo for Repo {
     async fn get_companies(&self) -> anyhow::Result<Vec<CompanyJSON>> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
         let company_entities = company
             .load::<Company>(&connection)
             .context(format!("404::::Could not get companies"))?;
@@ -38,10 +35,7 @@ impl CompanyRepo for Repo {
     }
 
     async fn get_company_by_id(&self, company_id: i32) -> anyhow::Result<CompanyJSON> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
 
         let result: Company = company
             .find(company_id)
@@ -55,10 +49,8 @@ impl CompanyRepo for Repo {
     }
 
     async fn get_company_stocks(&self, company_id: i32) -> anyhow::Result<Vec<StockJSON>> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::::Cannot not get connection from pool")?;
+        let connection = self.connect()?;
+
         let c: Company = company
             .find(company_id)
             .first(&connection)

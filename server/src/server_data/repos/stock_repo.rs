@@ -20,10 +20,8 @@ pub trait StockRepo {
 #[async_trait]
 impl StockRepo for Repo {
     async fn get_stocks(&self) -> anyhow::Result<Vec<StockJSON>> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
+
         let stock_entities = &stock
             .load::<Stock>(&connection)
             .context("404::::Could not find stocks")?;
@@ -31,10 +29,8 @@ impl StockRepo for Repo {
     }
 
     async fn get_stock_by_id(&self, stock_id: i32) -> anyhow::Result<StockJSON> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
+
         let result: &Stock = &stock
             .find(stock_id)
             .first(&connection)
@@ -43,10 +39,7 @@ impl StockRepo for Repo {
     }
 
     async fn create_stock(&self, new_stock: NewStock) -> anyhow::Result<StockJSON> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
 
         let result: &Stock = &diesel::insert_into(stock::table)
             .values(&new_stock)

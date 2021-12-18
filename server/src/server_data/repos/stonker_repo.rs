@@ -42,10 +42,8 @@ pub trait StonkerRepo {
 #[async_trait]
 impl StonkerRepo for Repo {
     async fn get_stonkers(&self) -> anyhow::Result<Vec<Stonker>> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
+
         let results = stonker
             .load::<Stonker>(&connection)
             .context("404::::Could not find stonkers")?;
@@ -54,10 +52,8 @@ impl StonkerRepo for Repo {
     }
 
     async fn get_stonker_by_id(&self, s_id: i32) -> anyhow::Result<StonkerJSON> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
+
         let result: &Stonker = &stonker
             .find(s_id)
             .first::<Stonker>(&connection)
@@ -66,10 +62,7 @@ impl StonkerRepo for Repo {
     }
 
     async fn get_stonker_overview(&self, s_id: i32) -> anyhow::Result<StonkerOverviewJSON> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
 
         let stonker_entity: Stonker = stonker
             .find(s_id)
@@ -146,10 +139,7 @@ impl StonkerRepo for Repo {
     }
 
     async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<StonkerJSON> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
 
         let result = &diesel::insert_into(stonker::table)
             .values(&new_stonker)
@@ -160,10 +150,8 @@ impl StonkerRepo for Repo {
     }
 
     async fn get_stonker_stocks(&self, s_id: i32) -> anyhow::Result<Vec<StockJSON>> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
+
         let s: Stonker = stonker
             .find(s_id)
             .first(&connection)

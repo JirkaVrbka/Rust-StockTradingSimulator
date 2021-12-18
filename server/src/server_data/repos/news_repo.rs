@@ -15,10 +15,7 @@ pub trait NewsRepo {
 #[async_trait]
 impl NewsRepo for Repo {
     async fn get_news(&self) -> anyhow::Result<Vec<NewsJSON>> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
 
         let news_entities: &Vec<News> = &news
             .load::<News>(&connection)

@@ -10,7 +10,6 @@ use server_data::*;
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
-use std::sync::Arc;
 
 use crate::endpoints::company_endpoints::{get_companies, get_company, get_company_stocks};
 use crate::endpoints::news_endpoints::get_news;

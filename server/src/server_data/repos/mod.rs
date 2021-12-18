@@ -9,6 +9,7 @@ use diesel::r2d2::{ConnectionManager, Pool, PoolError, PooledConnection};
 use dotenv::dotenv;
 use std::env;
 use std::sync::Arc;
+use anyhow::Context;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
@@ -37,5 +38,12 @@ impl Repo {
             Err(_) => panic!("Cannot establish connection"),
         };
         Self { pg_pool }
+    }
+
+    pub fn connect(&self) -> anyhow::Result<PgPooledConnection> {
+        self
+            .pg_pool
+            .get()
+            .context("500::::Cannot get connection from pool")
     }
 }
