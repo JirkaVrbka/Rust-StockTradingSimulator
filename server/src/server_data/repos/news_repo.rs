@@ -1,6 +1,7 @@
 use crate::models::news::News;
 use crate::repos::connection::PgPool;
 use crate::schema::news::dsl::*;
+use crate::server_data::models::ToJson;
 use crate::server_data::models::company::Company;
 use crate::schema::company::dsl::company;
 use crate::diesel::QueryDsl;
@@ -10,7 +11,6 @@ use diesel::{RunQueryDsl, PgConnection};
 use diesel::r2d2::{PooledConnection, ConnectionManager};
 use utils::json::{NewsJSON, CompanyJSON};
 use std::sync::Arc;
-use super::company_repo::company_to_json;
 
 #[async_trait]
 pub trait NewsRepo {
@@ -32,21 +32,21 @@ fn new_to_json(
     connection: &PooledConnection<ConnectionManager<PgConnection>>,
     entity: &News,
 ) -> anyhow::Result<NewsJSON> {
-    let affected: CompanyJSON = company_to_json(connection, &company
+    let affected: &Company = &company
         .find(entity.company_id)
         .get_result::<Company>(connection)
         .context(format!(
             "404::::Cannot find company {} of news {}",
             entity.company_id, entity.id
-        ))?)?;
+        ))?;
     Ok(NewsJSON {
         id: entity.id,
         title: entity.title.clone(),
         description: entity.description.clone(),
         author: entity.author.clone(),
         created_at: entity.created_at,
-        effect: entity.kind.to_json(),
-        company: affected
+        effect: entity.kind.to_json(connection)?,
+        company: affected.to_json(connection)?
     })
 }
 

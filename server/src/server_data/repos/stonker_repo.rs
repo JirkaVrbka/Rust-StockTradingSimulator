@@ -9,6 +9,7 @@ use crate::schema::command::stonker_id;
 use crate::schema::company::dsl::*;
 use crate::schema::stonker;
 use crate::schema::stonker::dsl::*;
+use crate::server_data::models::ToJson;
 use crate::server_data::models::command::Command;
 use crate::server_data::models::command::CommandTypes;
 use crate::server_data::models::company::Company;
@@ -21,6 +22,7 @@ use diesel::PgConnection;
 use diesel::dsl::min;
 use diesel::r2d2::ConnectionManager;
 use diesel::r2d2::PooledConnection;
+use utils::json::CommandTypesJSON;
 use utils::json::PortfolioJSON;
 use utils::json::StockJSON;
 use utils::json::StonkerHistoryJSON;
@@ -112,12 +114,12 @@ impl StonkerRepo for PostgresStonkerRepo {
 
         let stonker_history: Vec<StonkerHistoryJSON> = stonker_commands
             .iter()
-            .map(|(cmd, comp)| StonkerHistoryJSON {
+            .filter_map(|(cmd, comp)| Some(StonkerHistoryJSON {
                 day: format!("{}.{}", cmd.created_at.date().day(), cmd.created_at.date().month()),
-                action: cmd.kind.to_json(),
+                action: cmd.kind.to_json(&connection).ok()?,
                 stock: comp.name.clone(),
                 money: cmd.threshold,
-            })
+            }))
             .collect();
 
         let stonker_stocks: Vec<(Stock, Company)> = Stock::belonging_to(&stonker_entity).inner_join(company)

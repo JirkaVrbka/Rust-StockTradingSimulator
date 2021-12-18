@@ -7,7 +7,7 @@ use crate::schema::company::dsl::company;
 use crate::schema::stock;
 use crate::schema::stock::dsl::*;
 use crate::schema::stonker::dsl::stonker;
-use crate::server_data::repos::company_repo::company_to_json;
+use crate::server_data::models::ToJson;
 use crate::{models::stock::Stock, repos::connection::PgPool};
 use anyhow::Context;
 use async_trait::async_trait;
@@ -50,7 +50,7 @@ pub fn stock_to_json(
             "404::::Cannot find company {} of stock {}",
             entity.company_id, entity.id
         ))?;
-    let issued_by: CompanyJSON = company_to_json(connection, &c)?;
+    let issued_by: CompanyJSON = c.to_json(connection)?;
     let owner: StonkerJSON = stonker_to_json(connection, &stonker
         .find(entity.stonker_id)
         .get_result::<Stonker>(connection)

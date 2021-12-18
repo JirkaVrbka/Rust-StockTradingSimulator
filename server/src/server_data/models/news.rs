@@ -4,6 +4,8 @@ use chrono::naive::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 use utils::json::EffectJSON;
 
+use super::ToJson;
+
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug, PartialEq)]
 #[DieselType = "Effectdb"]
 #[DbValueStyle = "SCREAMING_SNAKE_CASE"]
@@ -13,19 +15,12 @@ pub enum Effect {
     Rise,
 }
 
-impl Effect {
-    pub fn from_json(json: EffectJSON) -> Effect {
-        match json {
-            EffectJSON::Fall => Effect::Fall,
-            EffectJSON::Neutral => Effect::Neutral,
-            EffectJSON::Rise => Effect::Rise,
-        }
-    }
-    pub fn to_json(&self) -> EffectJSON {
+impl ToJson<EffectJSON> for Effect {
+    fn to_json(&self, _: &super::Connection) -> anyhow::Result<EffectJSON> {
         match self {
-            Effect::Fall => EffectJSON::Fall,
-            Effect::Neutral => EffectJSON::Neutral,
-            Effect::Rise => EffectJSON::Rise,
+            Effect::Fall => Ok(EffectJSON::Fall),
+            Effect::Neutral => Ok(EffectJSON::Neutral),
+            Effect::Rise => Ok(EffectJSON::Rise),
         }
     }
 }

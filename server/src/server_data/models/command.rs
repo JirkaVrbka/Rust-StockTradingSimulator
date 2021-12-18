@@ -4,6 +4,8 @@ use diesel_derive_enum::DbEnum;
 use serde::{Deserialize, Serialize};
 use utils::json::CommandTypesJSON;
 
+use super::ToJson;
+
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug)]
 #[DieselType = "Commandtypesdb"]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -14,21 +16,13 @@ pub enum CommandTypes {
     BUY_IF_LOW,
 }
 
-impl CommandTypes {
-    pub fn from_json(json: CommandTypesJSON) -> CommandTypes {
-        match json {
-            CommandTypesJSON::SELL => CommandTypes::SELL,
-            CommandTypesJSON::SELL_IF_HIGH => CommandTypes::SELL_IF_HIGH,
-            CommandTypesJSON::SELL_IF_LOW => CommandTypes::SELL_IF_LOW,
-            CommandTypesJSON::BUY_IF_LOW => CommandTypes::BUY_IF_LOW,
-        }
-    }
-    pub fn to_json(&self) -> CommandTypesJSON {
+impl ToJson<CommandTypesJSON> for CommandTypes {
+    fn to_json(&self, _: &super::Connection) -> anyhow::Result<CommandTypesJSON> {
         match self {
-            CommandTypes::SELL => CommandTypesJSON::SELL,
-            CommandTypes::SELL_IF_HIGH => CommandTypesJSON::SELL_IF_HIGH,
-            CommandTypes::SELL_IF_LOW => CommandTypesJSON::SELL_IF_LOW,
-            CommandTypes::BUY_IF_LOW => CommandTypesJSON::BUY_IF_LOW,
+            CommandTypes::SELL => Ok(CommandTypesJSON::SELL),
+            CommandTypes::SELL_IF_HIGH => Ok(CommandTypesJSON::SELL_IF_HIGH),
+            CommandTypes::SELL_IF_LOW => Ok(CommandTypesJSON::SELL_IF_LOW),
+            CommandTypes::BUY_IF_LOW => Ok(CommandTypesJSON::BUY_IF_LOW),
         }
     }
 }
