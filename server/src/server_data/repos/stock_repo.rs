@@ -1,4 +1,3 @@
-use crate::diesel::QueryDsl;
 use crate::diesel::RunQueryDsl;
 use crate::models::stock::NewStock;
 use crate::schema::stock;
@@ -21,20 +20,22 @@ pub trait StockRepo {
 impl StockRepo for Repo {
     async fn get_stocks(&self) -> anyhow::Result<Vec<StockJSON>> {
         let connection = self.connect()?;
-
-        let stock_entities = &stock
-            .load::<Stock>(&connection)
-            .context("404::::Could not find stocks")?;
+        let stock_entities = Repo::all::<Stock, _>(
+            &connection,
+            stock,
+            "stocks"
+        )?;
         stock_entities.to_json(&connection)
     }
 
     async fn get_stock_by_id(&self, stock_id: i32) -> anyhow::Result<StockJSON> {
         let connection = self.connect()?;
-
-        let result: &Stock = &stock
-            .find(stock_id)
-            .first(&connection)
-            .context(format!("404::::Could not find stock with id {}", stock_id))?;
+        let result = Repo::find::<Stock, _>(
+            &connection,
+            stock,
+            stock_id,
+            "stock"
+        )?;
         result.to_json(&connection)
     }
 

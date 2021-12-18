@@ -3,16 +3,19 @@ pub mod news_repo;
 pub mod stock_repo;
 pub mod stonker_repo;
 
+use diesel::dsl::Find;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
+use diesel::query_dsl::LoadQuery;
+use diesel::query_dsl::methods::{FindDsl, LimitDsl};
 use diesel::r2d2::{ConnectionManager, Pool, PoolError, PooledConnection};
 use dotenv::dotenv;
 use std::env;
 use std::sync::Arc;
 use anyhow::Context;
-
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
+use diesel::helper_types::Limit;
 
 #[derive(std::clone::Clone)]
 pub struct Repo {
@@ -45,5 +48,27 @@ impl Repo {
             .pg_pool
             .get()
             .context("500::::Cannot get connection from pool")
+    }
+
+    // table is immediately used as result, therefore its type is restricted only by LoadQuery
+    pub fn all<Model, Table>(connection: &PgPooledConnection, table: Table, what: &str) -> anyhow::Result<Vec<Model>>
+      where Table: LoadQuery<PgPooledConnection, Model> {
+        table
+            .load::<Model>(&connection)
+            .context(format!("404::::Could not find {}", what))
+    }
+
+    // first is table search through using i32, therefore Table has bound FindDsl<i32>,
+    // then it is limited, therefore Find<Table, i32> has bound LimitDsl,
+    // lastly there's result, therefore Limit<Find<Table, i32>> has bound LoadQuery<PgPooledConnection, Model>
+    pub fn find<Model, Table>(connection: &PgPooledConnection, table: Table, id: i32, what: &str) -> anyhow::Result<Model>
+      where Table: FindDsl<i32>,
+            Find<Table, i32>: LimitDsl,
+            Limit<Find<Table, i32>>: LoadQuery<PgPooledConnection, Model> {
+        table
+            .find(id)
+            .limit(1) // same as first()
+            .get_result::<Model>(connection)
+            .context(format!("404::::Could not find {} with id {}", what, id))
     }
 }

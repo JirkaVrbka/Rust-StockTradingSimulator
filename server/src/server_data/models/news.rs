@@ -1,13 +1,10 @@
-use crate::schema::news;
+use crate::{schema::news, server_data::repos::Repo};
 use diesel_derive_enum::DbEnum;
 use chrono::naive::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 use utils::json::{EffectJSON, NewsJSON};
 use crate::server_data::models::company::Company;
 use crate::schema::company::dsl::company;
-use crate::diesel::QueryDsl;
-use anyhow::Context;
-use diesel::RunQueryDsl;
 
 use super::{ToJson, Connection};
 
@@ -45,13 +42,12 @@ pub struct News {
 
 impl ToJson<NewsJSON> for News {
     fn to_json(&self, connection: &Connection) -> anyhow::Result<NewsJSON> {
-        let affected: &Company = &company
-            .find(self.company_id)
-            .get_result::<Company>(connection)
-            .context(format!(
-                "404::::Cannot find company {} of news {}",
-                self.company_id, self.id
-            ))?;
+        let affected = Repo::find::<Company, _>(
+            &connection,
+            company,
+            self.company_id,
+            format!("company of news {}", self.id).as_str()
+        )?;
         Ok(NewsJSON {
             id: self.id,
             title: self.title.clone(),

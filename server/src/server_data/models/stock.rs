@@ -1,12 +1,10 @@
 use crate::models::company::Company;
 use crate::models::stonker::Stonker;
 use crate::schema::stock;
-use crate::diesel::QueryDsl;
-use crate::diesel::RunQueryDsl;
 use crate::schema::company::dsl::company;
 use crate::schema::stonker::dsl::stonker;
 use crate::server_data::models::{ToJson, Connection};
-use anyhow::Context;
+use crate::server_data::repos::Repo;
 use serde::{Deserialize, Serialize};
 use utils::json::StockJSON;
 
@@ -25,20 +23,18 @@ pub struct Stock {
 
 impl ToJson<StockJSON> for Stock {
     fn to_json(&self, connection: &Connection) -> anyhow::Result<StockJSON> {
-        let c: &Company = &company
-            .find(self.company_id)
-            .get_result::<Company>(connection)
-            .context(format!(
-                "404::::Cannot find company {} of stock {}",
-                self.company_id, self.id
-            ))?;
-        let owner: &Stonker = &stonker
-            .find(self.stonker_id)
-            .get_result::<Stonker>(connection)
-            .context(format!(
-                "404::::Cannot find owner {} of stock {}",
-                self.stonker_id, self.id
-            ))?;
+        let c = Repo::find::<Company, _>(
+            &connection,
+            company,
+            self.company_id,
+            format!("company of stock {}", self.id).as_str()
+        )?;
+        let owner = Repo::find::<Stonker, _>(
+            &connection,
+            stonker,
+            self.company_id,
+            format!("owner of stock {}", self.id).as_str()
+        )?;
         Ok(StockJSON {
             id: self.id,
             owner: owner.to_json(connection)?,

@@ -43,31 +43,33 @@ pub trait StonkerRepo {
 impl StonkerRepo for Repo {
     async fn get_stonkers(&self) -> anyhow::Result<Vec<Stonker>> {
         let connection = self.connect()?;
-
-        let results = stonker
-            .load::<Stonker>(&connection)
-            .context("404::::Could not find stonkers")?;
-
+        let results = Repo::all::<Stonker, _>(
+            &connection,
+            stonker,
+            "stonkers"
+        )?;
         Ok(results)
     }
 
     async fn get_stonker_by_id(&self, s_id: i32) -> anyhow::Result<StonkerJSON> {
         let connection = self.connect()?;
-
-        let result: &Stonker = &stonker
-            .find(s_id)
-            .first::<Stonker>(&connection)
-            .context(format!("404::::Could not find stonker with id {}", s_id))?;
+        let result = Repo::find::<Stonker, _>(
+            &connection,
+            stonker,
+            s_id,
+            "stonker"
+        )?;
         result.to_json(&connection)
     }
 
     async fn get_stonker_overview(&self, s_id: i32) -> anyhow::Result<StonkerOverviewJSON> {
         let connection = self.connect()?;
-
-        let stonker_entity: Stonker = stonker
-            .find(s_id)
-            .first(&connection)
-            .context(format!("404::::Could not find stonker with id {}", s_id))?;
+        let stonker_entity = Repo::find::<Stonker, _>(
+            &connection,
+            stonker,
+            s_id,
+            "stonker"
+        )?;
 
         let usage = UsageJSON {
             free: stonker_entity.balance,
@@ -80,15 +82,11 @@ impl StonkerRepo for Repo {
         .filter(stonker_id.eq(s_id))
         .load::<Command>(&connection).unwrap();
 
-
-        let stonker_commands: Vec<(Command, Company)> = command
-            .filter(stonker_id.eq(s_id))
-            .inner_join(company)
-            .load::<(Command, Company)>(&connection)
-            .context(format!(
-                "404::::Could not find commands for stonker {}",
-                s_id
-            ))?;
+        let stonker_commands = Repo::all::<(Command, Company), _>(
+            &connection,
+            command.filter(stonker_id.eq(s_id)).inner_join(company),
+            format!("commands for stonker {}", s_id).as_str()
+        )?;
 
         let stonker_history: Vec<StonkerHistoryJSON> = stonker_commands
             .iter()
@@ -100,21 +98,23 @@ impl StonkerRepo for Repo {
             }))
             .collect();
 
-        let stonker_stocks: Vec<(Stock, Company)> = Stock::belonging_to(&stonker_entity).inner_join(company)
-            .load::<(Stock, Company)>(&connection)
-            .context(format!(
-                "404::::Could not find stocks belonging to stonker with id {}",
-                s_id
-        ))?;
+        let stonker_stocks = Repo::all::<(Stock, Company), _>(
+            &connection,
+            Stock::belonging_to(&stonker_entity).inner_join(company),
+            format!("stocks belonging to stonker with id {}", s_id).as_str()
+        )?;
 
         let portfolio: anyhow::Result<Vec<PortfolioJSON>> = stonker_stocks
         .iter()
         .map(|(st, comp)| {
-            let cheapest_company_stocks: Vec<Option<i32>> = command
+            let cheapest_company_stocks = Repo::all::<Option<i32>, _>(
+                &connection,
+                command
                 .filter(company_id.eq(comp.id))
                 .filter(kind.eq(CommandTypes::SELL))
-                .select(min(threshold))
-                .load::<Option<i32>>(&connection)?;
+                .select(min(threshold)),
+                "cheapest company stocks"
+            )?;
             let cheapest_company_stock = match cheapest_company_stocks.len() {
                 0 => st.bought_for,
                 _ => cheapest_company_stocks.get(0).unwrap().unwrap(),
@@ -151,19 +151,17 @@ impl StonkerRepo for Repo {
 
     async fn get_stonker_stocks(&self, s_id: i32) -> anyhow::Result<Vec<StockJSON>> {
         let connection = self.connect()?;
-
-        let s: Stonker = stonker
-            .find(s_id)
-            .first(&connection)
-            .context(format!("404::::Could not find stonker with id {}", s_id))?;
-
-        let stonker_stocks: &Vec<Stock> = &Stock::belonging_to(&s)
-            .load::<Stock>(&connection)
-            .context(format!(
-                "404::::Could not find stock belonging to stonker with id {}",
-                s_id
-            ))?;
-
+        let s = Repo::find::<Stonker, _>(
+            &connection,
+            stonker,
+            s_id,
+            "stonker"
+        )?;
+        let stonker_stocks = Repo::all::<Stock, _>(
+            &connection,
+            Stock::belonging_to(&s),
+            format!("stocks belonging to stonker with id {}", s_id).as_str()
+        )?;
         stonker_stocks.to_json(&connection)
     }
 }
