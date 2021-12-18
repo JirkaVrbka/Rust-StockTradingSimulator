@@ -1,5 +1,5 @@
 use crate::models::stock::NewStock;
-use crate::server_data::api_error::handle_api_result;
+use crate::server_data::endpoints::handle_api_result;
 use crate::server_data::repos::Repo;
 use crate::server_data::repos::stock_repo::StockRepo;
 use actix_web::web;

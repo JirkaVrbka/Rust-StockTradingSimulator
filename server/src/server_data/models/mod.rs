@@ -15,9 +15,9 @@ pub trait ToJson<T> {
 
 impl<T, J: ToJson<T>> ToJson<Vec<T>> for Vec<J> {
     fn to_json(&self, connection: &Connection) -> anyhow::Result<Vec<T>> {
-        Ok(self
+        self
             .iter()
-            .filter_map(|entity| entity.to_json(connection).ok())
-            .collect())
+            .map(|entity| entity.to_json(connection))
+            .collect()
     }
 }

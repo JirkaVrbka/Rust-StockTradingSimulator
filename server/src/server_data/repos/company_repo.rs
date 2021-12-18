@@ -26,12 +26,7 @@ impl CompanyRepo for Repo {
             .load::<Company>(&connection)
             .context(format!("404::::Could not get companies"))?;
 
-        let company_jsons: anyhow::Result<Vec<CompanyJSON>> = company_entities
-            .iter()
-            .map(|entity| entity.to_json(&connection))
-            .collect();
-
-        company_jsons
+        company_entities.to_json(&connection)
     }
 
     async fn get_company_by_id(&self, company_id: i32) -> anyhow::Result<CompanyJSON> {
