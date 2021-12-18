@@ -63,12 +63,3 @@ impl ToJson<NewsJSON> for News {
         })
     }
 }
-
-impl ToJson<Vec<NewsJSON>> for Vec<News> {
-    fn to_json(&self, connection: &Connection) -> anyhow::Result<Vec<NewsJSON>> {
-        Ok(self
-            .iter()
-            .filter_map(|entity| entity.to_json(&connection).ok())
-            .collect())
-    }
-}

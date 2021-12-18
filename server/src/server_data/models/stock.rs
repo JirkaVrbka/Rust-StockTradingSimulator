@@ -50,18 +50,6 @@ impl ToJson<StockJSON> for Stock {
     }
 }
 
-impl ToJson<Vec<StockJSON>> for Vec<Stock> {
-    fn to_json(
-        &self,
-        connection: &Connection,
-    ) -> anyhow::Result<Vec<StockJSON>> {
-        Ok(self
-            .iter()
-            .filter_map(|entity| entity.to_json(connection).ok())
-            .collect())
-    }
-}
-
 #[derive(Insertable, Serialize, Deserialize, Clone)]
 #[table_name = "stock"]
 pub struct NewStock {

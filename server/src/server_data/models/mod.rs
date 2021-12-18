@@ -12,3 +12,12 @@ pub type Connection = PooledConnection<ConnectionManager<PgConnection>>;
 pub trait ToJson<T> {
     fn to_json(&self, connection: &Connection) -> anyhow::Result<T>;
 }
+
+impl<T, J: ToJson<T>> ToJson<Vec<T>> for Vec<J> {
+    fn to_json(&self, connection: &Connection) -> anyhow::Result<Vec<T>> {
+        Ok(self
+            .iter()
+            .filter_map(|entity| entity.to_json(connection).ok())
+            .collect())
+    }
+}
