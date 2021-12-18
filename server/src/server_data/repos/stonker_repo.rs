@@ -13,7 +13,7 @@ use crate::server_data::models::ToJson;
 use crate::server_data::models::command::Command;
 use crate::server_data::models::command::CommandTypes;
 use crate::server_data::models::company::Company;
-use crate::{models::stonker::Stonker, repos::connection::PgPool};
+use crate::server_data::models::stonker::Stonker;
 use anyhow::Context;
 use async_trait::async_trait;
 use chrono::Datelike;
@@ -29,6 +29,8 @@ use crate::schema::command::company_id;
 use crate::schema::command::kind;
 use crate::schema::command::threshold;
 
+use super::Repo;
+
 #[async_trait]
 pub trait StonkerRepo {
     async fn get_stonkers(&self) -> anyhow::Result<Vec<Stonker>>;
@@ -38,19 +40,8 @@ pub trait StonkerRepo {
     async fn get_stonker_stocks(&self, s_id: i32) -> anyhow::Result<Vec<StockJSON>>;
 }
 
-#[derive(std::clone::Clone)]
-pub struct PostgresStonkerRepo {
-    pg_pool: Arc<PgPool>,
-}
-
-impl PostgresStonkerRepo {
-    pub fn new(pg_pool: Arc<PgPool>) -> Self {
-        Self { pg_pool: pg_pool }
-    }
-}
-
 #[async_trait]
-impl StonkerRepo for PostgresStonkerRepo {
+impl StonkerRepo for Repo {
     async fn get_stonkers(&self) -> anyhow::Result<Vec<Stonker>> {
         let connection = self
             .pg_pool

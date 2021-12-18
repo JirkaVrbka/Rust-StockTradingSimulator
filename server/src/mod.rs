@@ -18,17 +18,14 @@ use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks};
 use crate::endpoints::stonker_endpoints::{
     create_stonker, get_stonker,get_stonker_overview, get_stonker_stocks, get_stonkers,
 };
-use crate::repos::company_repo::PostgresCompanyRepo;
 use crate::repos::connection::establish_connection;
-use crate::repos::news_repo::PostgresNewsRepo;
-use crate::repos::stock_repo::PostgresStockRepo;
-use crate::repos::stonker_repo::PostgresStonkerRepo;
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::http::header;
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use env_logger;
+use crate::repos::Repo;
 
 pub type PgPool = Pool<ConnectionManager<PgConnection>>;
 pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
@@ -47,10 +44,7 @@ async fn main() -> std::io::Result<()> {
         Ok(p) => Arc::new(p),
         Err(_) => panic!("Cannot establish connection"),
     };
-    let stonker_repo = PostgresStonkerRepo::new(pool.clone());
-    let company_repo = PostgresCompanyRepo::new(pool.clone());
-    let stock_repo = PostgresStockRepo::new(pool.clone());
-    let news_repo = PostgresNewsRepo::new(pool.clone());
+    let repo = Repo::new(pool.clone());
     let chat_server = Lobby::default().start(); //create and spin up a lobby
     HttpServer::new(move || {
         App::new()
@@ -64,10 +58,10 @@ async fn main() -> std::io::Result<()> {
                     .supports_credentials()
                     .max_age(3600),
             )
-            .data(stonker_repo.clone())
-            .data(company_repo.clone())
-            .data(stock_repo.clone())
-            .data(news_repo.clone())
+            .data(repo.clone())
+            .data(repo.clone())
+            .data(repo.clone())
+            .data(repo.clone())
             .data(chat_server.clone()) //register the lobby
             .service(get_stonkers)
             .service(get_stonker)

@@ -3,14 +3,13 @@ use crate::diesel::QueryDsl;
 use crate::diesel::RunQueryDsl;
 use crate::models::company::Company;
 use crate::models::stock::Stock;
-use crate::repos::connection::PgPool;
 use crate::schema::company::dsl::*;
 use crate::server_data::models::ToJson;
 use anyhow::Context;
 use async_trait::async_trait;
 use utils::json::CompanyJSON;
 use utils::json::StockJSON;
-use std::sync::Arc;
+use super::Repo;
 
 #[async_trait]
 pub trait CompanyRepo {
@@ -19,19 +18,8 @@ pub trait CompanyRepo {
     async fn get_company_stocks(&self, company_id: i32) -> anyhow::Result<Vec<StockJSON>>;
 }
 
-#[derive(std::clone::Clone)]
-pub struct PostgresCompanyRepo {
-    pg_pool: Arc<PgPool>,
-}
-
-impl PostgresCompanyRepo {
-    pub fn new(pg_pool: Arc<PgPool>) -> Self {
-        Self { pg_pool: pg_pool }
-    }
-}
-
 #[async_trait]
-impl CompanyRepo for PostgresCompanyRepo {
+impl CompanyRepo for Repo {
     async fn get_companies(&self) -> anyhow::Result<Vec<CompanyJSON>> {
         let connection = self
             .pg_pool

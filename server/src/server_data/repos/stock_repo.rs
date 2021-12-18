@@ -4,12 +4,11 @@ use crate::models::stock::NewStock;
 use crate::schema::stock;
 use crate::schema::stock::dsl::*;
 use crate::server_data::models::ToJson;
-use crate::{models::stock::Stock, repos::connection::PgPool};
+use crate::models::stock::Stock;
 use anyhow::Context;
 use async_trait::async_trait;
 use utils::json::StockJSON;
-use std::sync::Arc;
-
+use super::Repo;
 
 #[async_trait]
 pub trait StockRepo {
@@ -18,19 +17,8 @@ pub trait StockRepo {
     async fn create_stock(&self, new_stock: NewStock) -> anyhow::Result<StockJSON>;
 }
 
-#[derive(std::clone::Clone)]
-pub struct PostgresStockRepo {
-    pg_pool: Arc<PgPool>,
-}
-
-impl PostgresStockRepo {
-    pub fn new(pg_pool: Arc<PgPool>) -> Self {
-        Self { pg_pool }
-    }
-}
-
 #[async_trait]
-impl StockRepo for PostgresStockRepo {
+impl StockRepo for Repo {
     async fn get_stocks(&self) -> anyhow::Result<Vec<StockJSON>> {
         let connection = self
             .pg_pool

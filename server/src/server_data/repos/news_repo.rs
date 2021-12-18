@@ -6,26 +6,15 @@ use anyhow::Context;
 use async_trait::async_trait;
 use diesel::RunQueryDsl;
 use utils::json::NewsJSON;
-use std::sync::Arc;
+use super::Repo;
 
 #[async_trait]
 pub trait NewsRepo {
     async fn get_news(&self) -> anyhow::Result<Vec<NewsJSON>>;
 }
 
-#[derive(std::clone::Clone)]
-pub struct PostgresNewsRepo {
-    pg_pool: Arc<PgPool>,
-}
-
-impl PostgresNewsRepo {
-    pub fn new(pg_pool: Arc<PgPool>) -> Self {
-        Self { pg_pool: pg_pool }
-    }
-}
-
 #[async_trait]
-impl NewsRepo for PostgresNewsRepo {
+impl NewsRepo for Repo {
     async fn get_news(&self) -> anyhow::Result<Vec<NewsJSON>> {
         let connection = self
             .pg_pool

@@ -1,19 +1,19 @@
 use crate::models::stonker::NewStonker;
 use crate::repos::stonker_repo::StonkerRepo;
 use crate::server_data::api_error::handle_api_result;
-use crate::PostgresStonkerRepo;
+use crate::server_data::repos::Repo;
 use actix_web::web;
 use actix_web::{get, post, HttpResponse, Result};
 
 #[get("/stonkers")]
-pub async fn get_stonkers(repo: web::Data<PostgresStonkerRepo>) -> Result<HttpResponse> {
+pub async fn get_stonkers(repo: web::Data<Repo>) -> Result<HttpResponse> {
     let stonkers_result = repo.get_stonkers().await;
     handle_api_result(stonkers_result)
 }
 
 #[get("/stonkers/{id}")]
 pub async fn get_stonker(
-    repo: web::Data<PostgresStonkerRepo>,
+    repo: web::Data<Repo>,
     id: web::Path<i32>,
 ) -> Result<HttpResponse> {
     let stonker_result = repo.get_stonker_by_id(*id).await;
@@ -22,7 +22,7 @@ pub async fn get_stonker(
 
 #[get("/stonkers/{id}/overview")]
 pub async fn get_stonker_overview(
-    repo: web::Data<PostgresStonkerRepo>,
+    repo: web::Data<Repo>,
     id: web::Path<i32>,
 ) -> Result<HttpResponse> {
     let stonker_result = repo.get_stonker_overview(*id).await;
@@ -31,7 +31,7 @@ pub async fn get_stonker_overview(
 
 #[post("stonkers")]
 pub async fn create_stonker(
-    repo: web::Data<PostgresStonkerRepo>,
+    repo: web::Data<Repo>,
     stonker_data: web::Json<NewStonker>,
 ) -> Result<HttpResponse> {
     let new_stonker = NewStonker {
@@ -44,7 +44,7 @@ pub async fn create_stonker(
 
 #[get("/stonkers/{id}/stocks")]
 pub async fn get_stonker_stocks(
-    repo: web::Data<PostgresStonkerRepo>,
+    repo: web::Data<Repo>,
     id: web::Path<i32>,
 ) -> Result<HttpResponse> {
     let stonker_stocks = repo.get_stonker_stocks(*id).await;
