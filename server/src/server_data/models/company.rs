@@ -1,6 +1,6 @@
-use crate::{schema::company, server_data::repos::stonker_repo::stonker_to_json};
+use crate::schema::company;
 use serde::{Deserialize, Serialize};
-use utils::json::{CompanyJSON, StonkerJSON};
+use utils::json::CompanyJSON;
 use crate::schema::stonker::dsl::stonker;
 use crate::server_data::models::stonker::Stonker;
 use anyhow::Context;
@@ -19,17 +19,17 @@ pub struct Company {
 
 impl ToJson<CompanyJSON> for Company {
     fn to_json(&self, connection: &Connection) -> anyhow::Result<CompanyJSON> {
-        let performer: StonkerJSON = stonker_to_json(connection, &stonker
+        let performer: &Stonker = &stonker
             .find(self.performer_id)
             .get_result::<Stonker>(connection)
             .context(format!(
                 "404::::Cannot find performer {} of company {}",
                 self.performer_id, self.id
-            ))?)?;
+            ))?;
         Ok(CompanyJSON {
             id: self.id,
             name: self.name.clone(),
-            performer,
+            performer: performer.to_json(connection)?,
         })
     }
 }

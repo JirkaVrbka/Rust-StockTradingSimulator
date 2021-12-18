@@ -6,7 +6,6 @@ use crate::models::stock::Stock;
 use crate::repos::connection::PgPool;
 use crate::schema::company::dsl::*;
 use crate::server_data::models::ToJson;
-use crate::server_data::repos::stock_repo::stocks_to_json;
 use anyhow::Context;
 use async_trait::async_trait;
 use utils::json::CompanyJSON;
@@ -47,7 +46,7 @@ impl CompanyRepo for PostgresCompanyRepo {
             .map(|entity| entity.to_json(&connection))
             .collect();
 
-        Ok(company_jsons?)
+        company_jsons
     }
 
     async fn get_company_by_id(&self, company_id: i32) -> anyhow::Result<CompanyJSON> {
@@ -64,7 +63,7 @@ impl CompanyRepo for PostgresCompanyRepo {
                 company_id
             ))?;
 
-        Ok(result.to_json(&connection)?)
+        result.to_json(&connection)
     }
 
     async fn get_company_stocks(&self, company_id: i32) -> anyhow::Result<Vec<StockJSON>> {
@@ -80,13 +79,13 @@ impl CompanyRepo for PostgresCompanyRepo {
                 company_id
             ))?;
 
-        let company_stocks: Vec<Stock> = Stock::belonging_to(&c)
+        let company_stocks: &Vec<Stock> = &Stock::belonging_to(&c)
             .load::<Stock>(&connection)
             .context(format!(
                 "404::::Could not find stock belonging to company with id {}",
                 company_id
             ))?;
 
-        Ok(stocks_to_json(&connection, &company_stocks)?)
+        company_stocks.to_json(&connection)
     }
 }

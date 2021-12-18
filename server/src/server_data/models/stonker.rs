@@ -1,5 +1,7 @@
 use crate::schema::stonker;
 use serde::{Deserialize, Serialize};
+use utils::json::StonkerJSON;
+use super::{Connection, ToJson};
 
 #[derive(Queryable, Serialize, Deserialize, Clone, Associations, Identifiable, PartialEq)]
 #[table_name = "stonker"]
@@ -11,10 +13,24 @@ pub struct Stonker {
     pub invested_balance: i32,
 }
 
+impl ToJson<StonkerJSON> for Stonker {
+    fn to_json(
+        &self,
+        _connection: &Connection,
+    ) -> anyhow::Result<StonkerJSON> {
+        Ok(StonkerJSON {
+            id: self.id,
+            name: self.name.clone(),
+            balance: self.balance,
+            blocked_balance: self.blocked_balance,
+            invested_balance: self.invested_balance,
+        })
+    }
+}
+
 #[derive(Insertable, Serialize, Deserialize, Clone)]
 #[table_name = "stonker"]
 pub struct NewStonker {
     pub name: String,
     pub balance: i32,
 }
-

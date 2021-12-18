@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use serde::Deserialize;
 use crate::datagen::read_csv;
-use crate::json::{NewsJSON, CompanyJSON, StonkerJSON};
+use crate::json::{NewsJSON, CompanyJSON};
 use anyhow::Error;
 use crate::json::EffectJSON;
 use strum::IntoEnumIterator;
-use super::{IndexVec, convert, push_back, company};
+use super::{IndexVec, convert, push_back};
 use super::Generator;
 
 #[derive(Debug, Deserialize)]

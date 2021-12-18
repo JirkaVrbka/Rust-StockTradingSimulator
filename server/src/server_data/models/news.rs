@@ -2,9 +2,14 @@ use crate::schema::news;
 use diesel_derive_enum::DbEnum;
 use chrono::naive::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
-use utils::json::EffectJSON;
+use utils::json::{EffectJSON, NewsJSON};
+use crate::server_data::models::company::Company;
+use crate::schema::company::dsl::company;
+use crate::diesel::QueryDsl;
+use anyhow::Context;
+use diesel::RunQueryDsl;
 
-use super::ToJson;
+use super::{ToJson, Connection};
 
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug, PartialEq)]
 #[DieselType = "Effectdb"]
@@ -36,4 +41,34 @@ pub struct News {
     pub created_at: chrono::NaiveDateTime,
     pub kind: Effect,
     pub company_id: i32,
+}
+
+impl ToJson<NewsJSON> for News {
+    fn to_json(&self, connection: &Connection) -> anyhow::Result<NewsJSON> {
+        let affected: &Company = &company
+            .find(self.company_id)
+            .get_result::<Company>(connection)
+            .context(format!(
+                "404::::Cannot find company {} of news {}",
+                self.company_id, self.id
+            ))?;
+        Ok(NewsJSON {
+            id: self.id,
+            title: self.title.clone(),
+            description: self.description.clone(),
+            author: self.author.clone(),
+            created_at: self.created_at,
+            effect: self.kind.to_json(connection)?,
+            company: affected.to_json(connection)?
+        })
+    }
+}
+
+impl ToJson<Vec<NewsJSON>> for Vec<News> {
+    fn to_json(&self, connection: &Connection) -> anyhow::Result<Vec<NewsJSON>> {
+        Ok(self
+            .iter()
+            .filter_map(|entity| entity.to_json(&connection).ok())
+            .collect())
+    }
 }

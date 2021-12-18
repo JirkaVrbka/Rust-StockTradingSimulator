@@ -13,16 +13,11 @@ use crate::server_data::models::ToJson;
 use crate::server_data::models::command::Command;
 use crate::server_data::models::command::CommandTypes;
 use crate::server_data::models::company::Company;
-use crate::server_data::repos::stock_repo::stocks_to_json;
 use crate::{models::stonker::Stonker, repos::connection::PgPool};
 use anyhow::Context;
 use async_trait::async_trait;
 use chrono::Datelike;
-use diesel::PgConnection;
 use diesel::dsl::min;
-use diesel::r2d2::ConnectionManager;
-use diesel::r2d2::PooledConnection;
-use utils::json::CommandTypesJSON;
 use utils::json::PortfolioJSON;
 use utils::json::StockJSON;
 use utils::json::StonkerHistoryJSON;
@@ -73,11 +68,11 @@ impl StonkerRepo for PostgresStonkerRepo {
             .pg_pool
             .get()
             .context("500::::Cannot get connection from pool")?;
-        let result = stonker_to_json(&connection, &stonker
+        let result: &Stonker = &stonker
             .find(s_id)
             .first::<Stonker>(&connection)
-            .context(format!("404::::Could not find stonker with id {}", s_id))?)?;
-        Ok(result)
+            .context(format!("404::::Could not find stonker with id {}", s_id))?;
+        result.to_json(&connection)
     }
 
     async fn get_stonker_overview(&self, s_id: i32) -> anyhow::Result<StonkerOverviewJSON> {
@@ -166,12 +161,12 @@ impl StonkerRepo for PostgresStonkerRepo {
             .get()
             .context("500::::Cannot get connection from pool")?;
 
-        let result = stonker_to_json(&connection, &diesel::insert_into(stonker::table)
+        let result = &diesel::insert_into(stonker::table)
             .values(&new_stonker)
             .get_result::<Stonker>(&connection)
-            .context("500::::Error saving new message")?)?;
+            .context("500::::Error saving new message")?;
 
-        Ok(result)
+        result.to_json(&connection)
     }
 
     async fn get_stonker_stocks(&self, s_id: i32) -> anyhow::Result<Vec<StockJSON>> {
@@ -184,27 +179,13 @@ impl StonkerRepo for PostgresStonkerRepo {
             .first(&connection)
             .context(format!("404::::Could not find stonker with id {}", s_id))?;
 
-        let stonker_stocks: Vec<Stock> = Stock::belonging_to(&s)
+        let stonker_stocks: &Vec<Stock> = &Stock::belonging_to(&s)
             .load::<Stock>(&connection)
             .context(format!(
                 "404::::Could not find stock belonging to stonker with id {}",
                 s_id
             ))?;
 
-        Ok(stocks_to_json(&connection, &stonker_stocks)?)
+        stonker_stocks.to_json(&connection)
     }
 }
-
-pub fn stonker_to_json(
-    _connection: &PooledConnection<ConnectionManager<PgConnection>>,
-    entity: &Stonker,
-) -> anyhow::Result<StonkerJSON> {
-    Ok(StonkerJSON {
-        id: entity.id,
-        name: entity.name.clone(),
-        balance: entity.balance,
-        blocked_balance: entity.blocked_balance,
-        invested_balance: entity.invested_balance,
-    })
-}
-
