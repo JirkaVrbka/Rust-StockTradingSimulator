@@ -1,5 +1,5 @@
 # Rust-StockTradingSimulator
-![diagram](diagram.svg)
+[![diagram](diagram.png)](http://localhost:8080/?pgsql=db&username=postgres&db=stocks&ns=public&schema=history%3A16.5278x9.0278_company%3A38.6806x19.7223_command%3A11.5278x17.9167_news%3A25.6945x18.5417_stock%3A26.6667x9.2361_stonker%3A32.9167x-2.1528)
 
 ## Installation
 * Unix - follow instructions in this file
