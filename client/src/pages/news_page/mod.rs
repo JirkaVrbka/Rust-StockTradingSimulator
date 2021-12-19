@@ -4,7 +4,7 @@ use yew::prelude::*;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 use yew_styles::text::{Text, TextType};
-use crate::fetcher::FetchServiceExample;
+use crate::fetcher::immediate::ImmediateFetcher;
 use news::NewsComponent;
 
 pub struct NewsPage;
@@ -54,7 +54,7 @@ impl Component for NewsPage {
                     <NewsComponent data=data/>
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
-                    <FetchServiceExample/>
+                    <ImmediateFetcher/>
                 </Item>
             </Container>
         }

@@ -19,7 +19,7 @@ pub enum FetchMsg {
 }
 
 #[derive(Debug)]
-pub struct FetchServiceExample {
+pub struct ButtonFetcher {
     fetch_task: Option<FetchTask>,
     stonker: Option<StonkerJSON>,
     link: ComponentLink<Self>,
@@ -28,7 +28,7 @@ pub struct FetchServiceExample {
 
 /// Some of the code to render the UI is split out into smaller functions here to make the code
 /// cleaner and show some useful design patterns.
-impl FetchServiceExample {
+impl ButtonFetcher {
     fn view_stonker_data(&self) -> Html {
         match self.stonker {
             Some(ref investor) => {
@@ -61,12 +61,12 @@ impl FetchServiceExample {
     }
     fn view_fetching(&self) -> Html {
         if self.fetch_task.is_some() {
-            html! {  
+            html! {
                 <Spinner
                     spinner_type=SpinnerType::Circle
                     spinner_size=Size::Medium
                     spinner_palette=Palette::Standard
-                /> 
+                />
             }
         } else {
             html! { }
@@ -81,7 +81,7 @@ impl FetchServiceExample {
     }
 }
 
-impl Component for FetchServiceExample {
+impl Component for ButtonFetcher {
     type Message = FetchMsg;
     type Properties = ();
 

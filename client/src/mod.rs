@@ -1,5 +1,5 @@
 #![recursion_limit = "1024"]
-mod fetcher;
+pub mod fetcher;
 
 use yew::prelude::*;
 use crate::pages::{Home, Stocks, History, Search, NewsPage};

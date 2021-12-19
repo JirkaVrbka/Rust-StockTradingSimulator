@@ -2,7 +2,7 @@ use yew::prelude::*;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 use yew_styles::text::{Text, TextType};
-use crate::fetcher::FetchServiceExample;
+use crate::fetcher::immediate::ImmediateFetcher;
 
 pub struct History;
 
@@ -29,7 +29,7 @@ impl Component for History {
                     <Text plain_text="History" text_type=TextType::Plain />
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-                    <FetchServiceExample/>
+                    <ImmediateFetcher/>
                 </Item>
             </Container>
         }
