@@ -5,10 +5,24 @@ $white: #FAF9F9
 $red: #A12525
 $green: #A2BD51
 $blue: #60AEBA
-$font-stack: Helvetica, sans-serif
+$font-sans: 100% Helvetica, sans-serif
+$font-serif: 100% Times New Roman, serif
+$font-georgia: 100% Georgia, Times New Roman, serif
+$font-impact: 100% Impact, Helvetica
 $title-height: 12vh
 
 @mixin card($color)
+    .card-header
+        font: $font-georgia
+        font-size: 1.5vw
+    .card-body
+        font: $font-serif
+        font-size: 1vw
+    .card-footer
+        font: $font-georgia
+        font-style: italic
+        font-size: 1vw
+        text-align: right
     &:hover
         background-color: rgba($color, .5)
     background-color: rgba($color, .27)
@@ -22,7 +36,7 @@ body
     margin: 5% 40%
 
 .navbar-route
-    font: 100% $font-stack
+    font: $font-sans
     border-radius: 0px
     width: 15vw
     background-color: $dark-gray
@@ -54,7 +68,7 @@ body
     height: $title-height
     background-color: $gray
     color: $white
-    font: 100% Impact
+    font: $font-impact
     display: flex
     padding-left: 1%
     align-items: center
