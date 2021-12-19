@@ -1,3 +1,5 @@
+use std::error::Error;
+
 use utils::json::StonkerJSON;
 use yew::{
     format::{Json, Nothing},
@@ -17,11 +19,16 @@ pub enum FetchMsg {
 }
 
 #[derive(Debug)]
+enum Fetch {
+    Err(anyhow::Error),
+    Data(StonkerJSON),
+    Fetching(FetchTask)
+}
+
+#[derive(Debug)]
 pub struct ImmediateFetcher {
-    fetch_task: FetchTask,
-    stonker: Option<StonkerJSON>,
+    fetch: Fetch,
     link: ComponentLink<Self>,
-    error: Option<String>,
 }
 
 impl Component for ImmediateFetcher {
@@ -40,10 +47,8 @@ impl Component for ImmediateFetcher {
                 });
         let task = FetchService::fetch(request, callback).expect("failed to start request");
         Self {
-            fetch_task: task,
-            stonker: None,
+            fetch: Fetch::Fetching(task),
             link,
-            error: None,
         }
     }
     fn change(&mut self, _props: Self::Properties) -> bool {
@@ -53,20 +58,21 @@ impl Component for ImmediateFetcher {
         match msg {
             FetchMsg::ReceiveResponse(response) => {
                 match response {
-                    Ok(location) => {
-                        self.stonker = Some(location);
+                    Ok(data) => {
+                        self.fetch = Fetch::Data(data);
                     }
                     Err(error) => {
-                        self.error = Some(error.to_string())
+                        self.fetch = Fetch::Err(error);
                     }
                 }
                 true
             }
         }
+
     }
     fn view(&self) -> Html {
-        match self.stonker {
-            Some(ref investor) => {
+        match &self.fetch {
+            Fetch::Data(ref investor) => {
                 html! {
                     <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
                         <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
@@ -80,20 +86,16 @@ impl Component for ImmediateFetcher {
                         </Item>
                     </Container>
                 }
-            }
-            None => {
-                match self.error {
-                    Some(ref error) => html! {
-                        <p>{ error.clone() }</p>
-                    },
-                    None => html! {
-                        <Spinner
-                            spinner_type=SpinnerType::Circle
-                            spinner_size=Size::Medium
-                            spinner_palette=Palette::Standard
-                        />
-                    },
-                }
+            },
+            Fetch::Err(error) => html! {
+                <p>{ error.to_string().clone() }</p>
+            },
+            Fetch::Fetching(_) => html! {
+                <Spinner
+                    spinner_type=SpinnerType::Circle
+                    spinner_size=Size::Medium
+                    spinner_palette=Palette::Standard
+                />
             }
         }
     }
