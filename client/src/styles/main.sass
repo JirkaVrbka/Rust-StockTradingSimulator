@@ -8,6 +8,12 @@ $blue: #60AEBA
 $font-stack: Helvetica, sans-serif
 $title-height: 12vh
 
+@mixin card($color)
+    &:hover
+        background-color: rgba($color, .5)
+    background-color: rgba($color, .27)
+    color: $black
+
 body
     padding: 0
     margin: 0
@@ -33,6 +39,15 @@ body
 
 .button.regular.standard:hover
     background-color: $blue
+
+.card.interaction.regular.info
+    @include card($gray)
+
+.card.interaction.regular.danger
+    @include card($red)
+
+.card.interaction.regular.success
+    @include card($green)
 
 .title
     border-radius: 0px
