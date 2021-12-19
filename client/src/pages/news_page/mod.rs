@@ -54,7 +54,7 @@ impl Component for NewsPage {
                     <NewsComponent data=data/>
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
-                    <ImmediateFetcher/>
+                    <ImmediateFetcher::<StonkerJSON>/>
                 </Item>
             </Container>
         }

@@ -1,6 +1,3 @@
-use std::error::Error;
-
-use utils::json::StonkerJSON;
 use yew::{
     format::{Json, Nothing},
     prelude::*,
@@ -8,40 +5,39 @@ use yew::{
 };
 use yew_styles::spinner::{Spinner, SpinnerType};
 use yew_styles::styles::{Palette, Size};
-use yew_styles::layouts::container::{Container, Direction, Wrap};
-use yew_styles::text::{Text, TextType};
-use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 
+use super::ToHtml;
 
 #[derive(Debug)]
-pub enum FetchMsg {
-    ReceiveResponse(Result<StonkerJSON, anyhow::Error>),
+pub enum FetchMsg<T> {
+    ReceiveResponse(Result<T, anyhow::Error>),
 }
 
 #[derive(Debug)]
-enum Fetch {
+enum Fetch<T> {
     Err(anyhow::Error),
-    Data(StonkerJSON),
+    Data(T),
     Fetching(FetchTask)
 }
 
 #[derive(Debug)]
-pub struct ImmediateFetcher {
-    fetch: Fetch,
+pub struct ImmediateFetcher<T: ToHtml> {
+    fetch: Fetch<T>,
     link: ComponentLink<Self>,
 }
 
-impl Component for ImmediateFetcher {
-    type Message = FetchMsg;
+impl<T: ToHtml> Component for ImmediateFetcher<T> {
+    type Message = FetchMsg<T>;
     type Properties = ();
 
-    fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self where
+        Json<Result<T, anyhow::Error>>: From<Result<String, anyhow::Error>> {
         let request = Request::get("http://localhost:8081/stonkers/1")
             .body(Nothing)
             .expect("Could not build request.");
         let callback =
             link
-                .callback(|response: Response<Json<Result<StonkerJSON, anyhow::Error>>>| {
+                .callback(|response: Response<Json<Result<T, anyhow::Error>>>| {
                     let Json(data) = response.into_body();
                     FetchMsg::ReceiveResponse(data)
                 });
@@ -68,24 +64,11 @@ impl Component for ImmediateFetcher {
                 true
             }
         }
-
     }
     fn view(&self) -> Html {
         match &self.fetch {
             Fetch::Data(ref investor) => {
-                html! {
-                    <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
-                        <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
-                            <Text plain_text="The Stonker" text_type=TextType::Plain/>
-                        </Item>
-                        <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
-                            <Text plain_text=format!("Name: {}", investor.name) text_type=TextType::Plain/>
-                        </Item>
-                        <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
-                            <Text plain_text=format!("Ballance: {}", investor.balance) text_type=TextType::Plain/>
-                        </Item>
-                    </Container>
-                }
+                investor.to_html()
             },
             Fetch::Err(error) => html! {
                 <p>{ error.to_string().clone() }</p>

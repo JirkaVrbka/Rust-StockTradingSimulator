@@ -11,15 +11,14 @@ pub struct NewsProps {
 
 pub struct NewsComponent {
     json: NewsJSON,
-    link: ComponentLink<Self>,
 }
 
 impl Component for NewsComponent {
     type Message = ();
     type Properties = NewsProps;
 
-    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        NewsComponent{json: props.data, link}
+    fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
+        NewsComponent{json: props.data}
     }
 
     fn update(&mut self, _: Self::Message) -> ShouldRender {
