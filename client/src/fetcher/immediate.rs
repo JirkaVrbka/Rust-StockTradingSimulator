@@ -9,8 +9,8 @@ use yew_styles::styles::{Palette, Size};
 use super::ToHtml;
 
 #[derive(Clone, Properties)]
-pub struct FetchProps<'a> {
-    pub port: &'a str
+pub struct FetchProps {
+    pub port: &'static str
 }
 
 #[derive(Debug)]
@@ -33,10 +33,9 @@ pub struct ImmediateFetcher<T: ToHtml> {
 
 impl<T: ToHtml> Component for ImmediateFetcher<T> {
     type Message = FetchMsg<T>;
-    type Properties = FetchProps<'static>;
+    type Properties = FetchProps;
 
-    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self where
-        Json<Result<T, anyhow::Error>>: From<Result<String, anyhow::Error>> {
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         let request = Request::get(format!("http://localhost:8081/{}", props.port))
             .body(Nothing)
             .expect("Could not build request.");

@@ -1,11 +1,57 @@
-pub mod news;
+use std::convert::TryInto;
+
 use utils::json::{NewsJSON, StonkerJSON};
 use yew::prelude::*;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 use yew_styles::text::{Text, TextType};
+use crate::fetcher::ToHtml;
 use crate::fetcher::immediate::ImmediateFetcher;
-use news::NewsComponent;
+use yew_styles::styles::{Size, Palette, Style};
+use yew_styles::card::Card;
+
+impl ToHtml for NewsJSON {
+    fn to_html(&self) -> Html {
+        let header = &self.title;
+        let body = &self.description;
+        let footer = &self.author;
+        let palette = match self.effect {
+            utils::json::EffectJSON::Fall => Palette::Danger,
+            utils::json::EffectJSON::Neutral => Palette::Info,
+            utils::json::EffectJSON::Rise => Palette::Success,
+        };
+        html! {
+            <Card
+                card_size=Size::Medium
+                card_palette=palette
+                card_style=Style::Regular
+                header=Some(html!{
+                    <div>{header}</div>
+                })
+                body=Some(html!{
+                    <div>{body}</div>
+                })
+                footer=Some(html!{
+                    <div>{footer}</div>
+                })
+            />
+        }
+    }
+}
+
+impl ToHtml for Vec<NewsJSON> {
+    fn to_html(&self) -> Html {
+        html! {
+            <Container direction=Direction::Row wrap=Wrap::Wrap> {
+                self.iter().map(|el| html!{
+                    <Item layouts=vec!(ItemLayout::ItXs(self.len().try_into().unwrap())) align_self=AlignSelf::FlexStart>
+                        { el.to_html() }
+                    </Item>
+                }).collect::<Html>()
+            } </Container>
+        }
+    }
+}
 
 pub struct NewsPage;
 
@@ -26,35 +72,13 @@ impl Component for NewsPage {
     }
 
     fn view(&self) -> Html {
-        let data = NewsJSON {
-            id: 1,
-            title: "News title".to_string(),
-            description: "News description".to_string(),
-            author: "News author".to_string(),
-            created_at: chrono::NaiveDate::from_ymd(2016, 7, 8).and_hms(9, 10, 11),
-            effect: utils::json::EffectJSON::Neutral,
-            company: utils::json::CompanyJSON {
-                id: 0,
-                name: "Company".to_string(),
-                performer: StonkerJSON{
-                    id: 0,
-                    name: "Company representative".to_string(),
-                    balance: 5000,
-                    blocked_balance: 0,
-                    invested_balance: 0,
-                }
-            },
-        };
         html! {
             <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
                 <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
                     <Text plain_text="News" text_type=TextType::Plain />
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
-                    <NewsComponent data=data/>
-                </Item>
-                <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
-                    <ImmediateFetcher::<StonkerJSON> port="stonkers/1"/>
+                    <ImmediateFetcher::<Vec<NewsJSON>> port="news"/>
                 </Item>
             </Container>
         }
