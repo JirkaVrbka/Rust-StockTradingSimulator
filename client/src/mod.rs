@@ -89,28 +89,28 @@ impl Component for Model {
                             </Button>
                         </RouterAnchor<AppRouter>>
                         <RouterAnchor<AppRouter>route=AppRouter::Stocks>
-                            <Button 
+                            <Button
                                 class_name="navbar-route"
                                 onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(1))>
                                 {"Stocks"}
                             </Button>
                         </RouterAnchor<AppRouter>>
                         <RouterAnchor<AppRouter>route=AppRouter::History>
-                            <Button 
+                            <Button
                                 class_name="navbar-route"
                                 onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(2))>
                                 {"History"}
                             </Button>
                         </RouterAnchor<AppRouter>>
                         <RouterAnchor<AppRouter>route=AppRouter::Search>
-                            <Button 
+                            <Button
                                 class_name="navbar-route"
                                 onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(3))>
                                 {"Search"}
                             </Button>
                         </RouterAnchor<AppRouter>>
                         <RouterAnchor<AppRouter>route=AppRouter::News>
-                            <Button 
+                            <Button
                                 class_name="navbar-route"
                                 onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(4))>
                                 {"News"}
