@@ -47,11 +47,13 @@ impl Component for NewsPage {
         };
         html! {
             <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
-                <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
+                <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
                     <Text plain_text="News" text_type=TextType::Plain />
                 </Item>
-                <NewsComponent data=data/>
-                <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
+                <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
+                    <NewsComponent data=data/>
+                </Item>
+                <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
                     <FetchServiceExample/>
                 </Item>
             </Container>
