@@ -17,8 +17,7 @@ pub struct Stock {
     pub stonker_id: i32,
     pub company_id: i32,
     pub share: i32, // eg.: 50% = 50 * 10000 = 500000
-    pub bought_for: i32,
-    pub sold_for: Option<i32>,
+    pub bought_for: i32
 }
 
 impl ToJson<StockJSON> for Stock {
@@ -40,8 +39,7 @@ impl ToJson<StockJSON> for Stock {
             owner: owner.to_json(connection)?,
             issued_by: c.to_json(connection)?,
             bought_for: self.bought_for,
-            share: self.share,
-            sold_for: self.sold_for
+            share: self.share
         })
     }
 }

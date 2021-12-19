@@ -60,7 +60,6 @@ pub struct StockJSON {
     pub issued_by: CompanyJSON,
     pub share: i32, // eg.: 50% = 50 * 10000 = 500000
     pub bought_for: i32,
-    pub sold_for: Option<i32>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -81,10 +80,10 @@ pub struct HistoryJSON {
     pub id: i32,
     pub owned_by: StonkerJSON,
     pub issued_by: CompanyJSON,
-    pub bought_for: Option<i32>,
+    pub bought_for: i32,
     #[serde(with = "ts_seconds")]
     pub created_at: chrono::NaiveDateTime,
-    pub sold_for: Option<i32>,
+    pub sold_for: i32,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
