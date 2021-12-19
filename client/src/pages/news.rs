@@ -1,6 +1,6 @@
 use std::convert::TryInto;
 
-use utils::json::{NewsJSON, StonkerJSON};
+use utils::json::NewsJSON;
 use yew::prelude::*;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
@@ -53,14 +53,14 @@ impl ToHtml for Vec<NewsJSON> {
     }
 }
 
-pub struct NewsPage;
+pub struct News;
 
-impl Component for NewsPage {
+impl Component for News {
     type Message = ();
     type Properties = ();
 
     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        NewsPage {}
+        News {}
     }
 
     fn update(&mut self, _: Self::Message) -> ShouldRender {
@@ -74,10 +74,10 @@ impl Component for NewsPage {
     fn view(&self) -> Html {
         html! {
             <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
-                <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
+                <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
                     <Text plain_text="News" text_type=TextType::Plain />
                 </Item>
-                <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>
+                <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
                     <ImmediateFetcher::<Vec<NewsJSON>> port="news"/>
                 </Item>
             </Container>

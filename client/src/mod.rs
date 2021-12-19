@@ -2,7 +2,7 @@
 pub mod fetcher;
 
 use yew::prelude::*;
-use crate::pages::{Home, Stocks, History, Search, NewsPage};
+use crate::pages::{Home, Stocks, History, Search, News};
 use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
 use yew_styles::button::Button;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
@@ -133,7 +133,7 @@ impl Component for Model {
                                     <Search/>
                                 },
                                 AppRouter::News => html!{
-                                    <NewsPage/>
+                                    <News/>
                                 },
                                 AppRouter::NotFound(Permissive(None)) => html!{"Page not found"},
                                 AppRouter::NotFound(Permissive(Some(missed_route))) => html!{format!("Page '{}' not found", missed_route)}
