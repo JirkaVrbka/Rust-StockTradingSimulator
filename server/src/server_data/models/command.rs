@@ -8,21 +8,21 @@ use super::ToJson;
 
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug)]
 #[DieselType = "Commandtypesdb"]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[DbValueStyle = "SCREAMING_SNAKE_CASE"]
 pub enum CommandTypes {
-    SELL,
-    SELL_IF_HIGH,
-    SELL_IF_LOW,
-    BUY_IF_LOW,
+    Sell,
+    SellIfHigh,
+    SellIfLow,
+    BuyIfLow,
 }
 
 impl ToJson<CommandTypesJSON> for CommandTypes {
     fn to_json(&self, _: &super::Connection) -> anyhow::Result<CommandTypesJSON> {
         match self {
-            CommandTypes::SELL => Ok(CommandTypesJSON::SELL),
-            CommandTypes::SELL_IF_HIGH => Ok(CommandTypesJSON::SELL_IF_HIGH),
-            CommandTypes::SELL_IF_LOW => Ok(CommandTypesJSON::SELL_IF_LOW),
-            CommandTypes::BUY_IF_LOW => Ok(CommandTypesJSON::BUY_IF_LOW),
+            CommandTypes::Sell => Ok(CommandTypesJSON::Sell),
+            CommandTypes::SellIfHigh => Ok(CommandTypesJSON::SellIfHigh),
+            CommandTypes::SellIfLow => Ok(CommandTypesJSON::SellIfLow),
+            CommandTypes::BuyIfLow => Ok(CommandTypesJSON::BuyIfLow),
         }
     }
 }

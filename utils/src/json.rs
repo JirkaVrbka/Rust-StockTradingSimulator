@@ -4,11 +4,12 @@ use serde_repr::{Serialize_repr, Deserialize_repr};
 use strum::{EnumIter};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CommandTypesJSON {
-    SELL,
-    SELL_IF_HIGH,
-    SELL_IF_LOW,
-    BUY_IF_LOW,
+    Sell,
+    SellIfHigh,
+    SellIfLow,
+    BuyIfLow,
 }
 
 #[derive(PartialEq, Eq, Hash, Debug, Serialize_repr, Deserialize_repr, Clone, EnumIter)]

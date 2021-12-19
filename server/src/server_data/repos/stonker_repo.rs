@@ -111,7 +111,7 @@ impl StonkerRepo for Repo {
                 &connection,
                 command
                 .filter(company_id.eq(comp.id))
-                .filter(kind.eq(CommandTypes::SELL))
+                .filter(kind.eq(CommandTypes::Sell))
                 .select(min(threshold)),
                 "cheapest company stocks"
             )?;
