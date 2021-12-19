@@ -30,7 +30,7 @@ impl Component for Stocks {
                     <Text plain_text="Stocks" text_type=TextType::Plain />
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-                    <ImmediateFetcher::<StonkerJSON>/>
+                    <ImmediateFetcher::<StonkerJSON> port="stonkers/1"/>
                 </Item>
             </Container>
         }

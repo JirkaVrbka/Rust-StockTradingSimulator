@@ -8,6 +8,11 @@ use yew_styles::styles::{Palette, Size};
 
 use super::ToHtml;
 
+#[derive(Clone, Properties)]
+pub struct FetchProps<'a> {
+    pub port: &'a str
+}
+
 #[derive(Debug)]
 pub enum FetchMsg<T> {
     ReceiveResponse(Result<T, anyhow::Error>),
@@ -28,11 +33,11 @@ pub struct ImmediateFetcher<T: ToHtml> {
 
 impl<T: ToHtml> Component for ImmediateFetcher<T> {
     type Message = FetchMsg<T>;
-    type Properties = ();
+    type Properties = FetchProps<'static>;
 
-    fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self where
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self where
         Json<Result<T, anyhow::Error>>: From<Result<String, anyhow::Error>> {
-        let request = Request::get("http://localhost:8081/stonkers/1")
+        let request = Request::get(format!("http://localhost:8081/{}", props.port))
             .body(Nothing)
             .expect("Could not build request.");
         let callback =

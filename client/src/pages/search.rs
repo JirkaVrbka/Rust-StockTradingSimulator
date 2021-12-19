@@ -30,7 +30,7 @@ impl Component for Search {
                     <Text plain_text="Search" text_type=TextType::Plain />
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-                    <ImmediateFetcher::<StonkerJSON>/>
+                    <ImmediateFetcher::<StonkerJSON> port="stonkers/1"/>
                 </Item>
             </Container>
         }
