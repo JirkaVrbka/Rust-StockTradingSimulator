@@ -1,11 +1,10 @@
 use std::collections::HashMap;
 use serde::Deserialize;
-use crate::datagen::read_csv;
 use crate::json::{NewsJSON, CompanyJSON};
 use anyhow::Error;
 use crate::json::EffectJSON;
 use strum::IntoEnumIterator;
-use super::{IndexVec, convert, push_back};
+use super::IndexVec;
 use super::Generator;
 
 #[derive(Debug, Deserialize)]
@@ -38,8 +37,8 @@ pub struct NewsGenerator {
 
 fn into_map(vec: IndexVec<Info>) -> HashMap<EffectJSON, IndexVec<String>> {
     let mut map = HashMap::new();
-    for (Info { effect, text }, used) in vec {
-        map.entry(effect).or_insert_with(Vec::new).push((text, used))
+    for Info { effect, text } in vec {
+        map.entry(effect).or_insert_with(IndexVec::new).push_back(text);
     }
     map
 }
@@ -48,11 +47,11 @@ impl NewsGenerator {
     pub fn new() -> Result<NewsGenerator, Error>  {
         Ok(NewsGenerator {
             generator: Generator::new(),
-            glues: into_map(read_csv::<Info>("news/glue.csv", b';')?),
-            titles: into_map(read_csv::<Info>("news/titles.csv", b';')?),
-            newspapers: read_csv::<Newspaper>("news/newspapers.csv", b',')?,
-            headlines: read_csv::<Headline>("news/headlines.csv", b',')?,
-            effects: convert(EffectJSON::iter().collect::<Vec<EffectJSON>>()),
+            glues: into_map(IndexVec::read_csv("news/glue.csv", b';')?),
+            titles: into_map(IndexVec::read_csv("news/titles.csv", b';')?),
+            newspapers: IndexVec::read_csv("news/newspapers.csv", b',')?,
+            headlines: IndexVec::read_csv("news/headlines.csv", b',')?,
+            effects: IndexVec::convert(EffectJSON::iter().collect::<Vec<EffectJSON>>()),
             spawned: IndexVec::new(),
         })
     }
@@ -65,7 +64,7 @@ impl NewsGenerator {
         let first_char = headline.chars().next().expect("Headline is empty");
         let headline = format!("{}{}", first_char.to_uppercase(), headline.chars().skip(1).collect::<String>());
         let recently = self.generator.date_from_days(3);
-        push_back(&mut self.spawned, NewsJSON {
+        self.spawned.push_back(NewsJSON {
             id: self.generator.next(),
             title: self.generator.choose_from(&mut self.titles, &effect).replace("{}", company.name.as_str()).clone(),
             description: format!("{}{}", headline, glue),
