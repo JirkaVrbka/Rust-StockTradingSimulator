@@ -1,6 +1,6 @@
 use crate::models::news::News;
 use crate::schema::news::dsl::*;
-use crate::server_data::models::ConvertJson;
+use crate::server_data::models::ToJson;
 use async_trait::async_trait;
 use utils::json::NewsJSON;
 use super::Repo;

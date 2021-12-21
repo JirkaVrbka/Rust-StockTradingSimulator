@@ -9,7 +9,7 @@ use crate::schema::command::stonker_id;
 use crate::schema::company::dsl::*;
 use crate::schema::stonker;
 use crate::schema::stonker::dsl::*;
-use crate::server_data::models::ConvertJson;
+use crate::server_data::models::ToJson;
 use crate::server_data::models::command::Command;
 use crate::server_data::models::command::CommandTypes;
 use crate::server_data::models::company::Company;

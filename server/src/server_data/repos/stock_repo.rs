@@ -2,7 +2,7 @@ use crate::diesel::RunQueryDsl;
 use crate::models::stock::NewStock;
 use crate::schema::stock;
 use crate::schema::stock::dsl::*;
-use crate::server_data::models::ConvertJson;
+use crate::server_data::models::ToJson;
 use crate::models::stock::Stock;
 use anyhow::Context;
 use async_trait::async_trait;

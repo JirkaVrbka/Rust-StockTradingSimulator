@@ -6,7 +6,7 @@ use utils::json::{EffectJSON, NewsJSON};
 use crate::server_data::models::company::Company;
 use crate::schema::company::dsl::company;
 
-use super::{ConvertJson, Connection};
+use super::{ToJson, Connection, FromJson};
 
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug, PartialEq)]
 #[DieselType = "Effectdb"]
@@ -17,7 +17,7 @@ pub enum Effect {
     Rise,
 }
 
-impl ConvertJson<EffectJSON> for Effect {
+impl ToJson<EffectJSON> for Effect {
     fn to_json(&self, _: &super::Connection) -> anyhow::Result<EffectJSON> {
         match self {
             Effect::Fall => Ok(EffectJSON::Fall),
@@ -25,6 +25,9 @@ impl ConvertJson<EffectJSON> for Effect {
             Effect::Rise => Ok(EffectJSON::Rise),
         }
     }
+}
+
+impl FromJson<EffectJSON> for Effect {
     fn from_json(json: &EffectJSON) -> Self {
         match json {
             EffectJSON::Fall => Effect::Fall,
@@ -47,7 +50,7 @@ pub struct News {
     pub company_id: i32,
 }
 
-impl ConvertJson<NewsJSON> for News {
+impl ToJson<NewsJSON> for News {
     fn to_json(&self, connection: &Connection) -> anyhow::Result<NewsJSON> {
         let affected = Repo::find::<Company, _>(
             &connection,
@@ -65,9 +68,25 @@ impl ConvertJson<NewsJSON> for News {
             company: affected.to_json(connection)?
         })
     }
+}
+
+/* TODO: add schema
+#[derive(Insertable, Serialize, Deserialize, Clone)]
+#[table_name = "news"]
+pub struct NewNews {
+    pub name: String,
+    pub title: String,
+    pub description: String,
+    pub author: String,
+    #[serde(with = "ts_seconds")]
+    pub created_at: chrono::NaiveDateTime,
+    pub kind: Effect,
+    pub company_id: i32,
+}
+
+impl FromJson<NewsJSON> for NewNews {
     fn from_json(json: &NewsJSON) -> Self {
-        News {
-            id: json.id,
+        NewNews {
             title: json.title.clone(),
             description: json.description.clone(),
             author: json.author.clone(),
@@ -77,3 +96,4 @@ impl ConvertJson<NewsJSON> for News {
         }
     }
 }
+**/
