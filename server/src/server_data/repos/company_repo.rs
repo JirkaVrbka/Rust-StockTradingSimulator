@@ -2,7 +2,7 @@ use crate::diesel::BelongingToDsl;
 use crate::models::company::Company;
 use crate::models::stock::Stock;
 use crate::schema::company::dsl::*;
-use crate::server_data::models::ToJson;
+use crate::server_data::models::ConvertJson;
 use async_trait::async_trait;
 use utils::json::CompanyJSON;
 use utils::json::StockJSON;

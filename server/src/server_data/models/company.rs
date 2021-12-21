@@ -5,7 +5,7 @@ use utils::json::CompanyJSON;
 use crate::schema::stonker::dsl::stonker;
 use crate::server_data::models::stonker::Stonker;
 
-use super::{ToJson, Connection};
+use super::{ConvertJson, Connection};
 
 #[derive(Queryable, Clone, Associations, Identifiable, PartialEq)]
 #[table_name = "company"]
@@ -15,7 +15,7 @@ pub struct Company {
     pub performer_id: i32,
 }
 
-impl ToJson<CompanyJSON> for Company {
+impl ConvertJson<CompanyJSON> for Company {
     fn to_json(&self, connection: &Connection) -> anyhow::Result<CompanyJSON> {
         let performer = Repo::find::<Stonker, _>(
             &connection,
@@ -28,6 +28,13 @@ impl ToJson<CompanyJSON> for Company {
             name: self.name.clone(),
             performer: performer.to_json(connection)?,
         })
+    }
+    fn from_json(json: &CompanyJSON) -> Self {
+        Company {
+            id: json.id,
+            name: json.name.clone(),
+            performer_id: json.performer.id,
+        }
     }
 }
 

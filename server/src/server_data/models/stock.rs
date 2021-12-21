@@ -3,7 +3,7 @@ use crate::models::stonker::Stonker;
 use crate::schema::stock;
 use crate::schema::company::dsl::company;
 use crate::schema::stonker::dsl::stonker;
-use crate::server_data::models::{ToJson, Connection};
+use crate::server_data::models::{ConvertJson, Connection};
 use crate::server_data::repos::Repo;
 use serde::{Deserialize, Serialize};
 use utils::json::StockJSON;
@@ -20,7 +20,7 @@ pub struct Stock {
     pub bought_for: i32
 }
 
-impl ToJson<StockJSON> for Stock {
+impl ConvertJson<StockJSON> for Stock {
     fn to_json(&self, connection: &Connection) -> anyhow::Result<StockJSON> {
         let c = Repo::find::<Company, _>(
             &connection,
@@ -41,6 +41,15 @@ impl ToJson<StockJSON> for Stock {
             bought_for: self.bought_for,
             share: self.share
         })
+    }
+    fn from_json(json: &StockJSON) -> Self {
+        Stock {
+            id: json.id,
+            stonker_id: json.owner.id,
+            company_id: json.issued_by.id,
+            share: json.share,
+            bought_for: json.bought_for
+        }
     }
 }
 

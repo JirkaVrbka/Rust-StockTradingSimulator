@@ -4,7 +4,7 @@ use diesel_derive_enum::DbEnum;
 use serde::{Deserialize, Serialize};
 use utils::json::CommandTypesJSON;
 
-use super::ToJson;
+use super::ConvertJson;
 
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug)]
 #[DieselType = "Commandtypesdb"]
@@ -16,13 +16,21 @@ pub enum CommandTypes {
     BuyIfLow,
 }
 
-impl ToJson<CommandTypesJSON> for CommandTypes {
+impl ConvertJson<CommandTypesJSON> for CommandTypes {
     fn to_json(&self, _: &super::Connection) -> anyhow::Result<CommandTypesJSON> {
         match self {
             CommandTypes::Sell => Ok(CommandTypesJSON::Sell),
             CommandTypes::SellIfHigh => Ok(CommandTypesJSON::SellIfHigh),
             CommandTypes::SellIfLow => Ok(CommandTypesJSON::SellIfLow),
             CommandTypes::BuyIfLow => Ok(CommandTypesJSON::BuyIfLow),
+        }
+    }
+    fn from_json(json: &CommandTypesJSON) -> Self {
+        match json {
+            CommandTypesJSON::Sell => CommandTypes::Sell,
+            CommandTypesJSON::SellIfHigh => CommandTypes::SellIfHigh,
+            CommandTypesJSON::SellIfLow => CommandTypes::SellIfLow,
+            CommandTypesJSON::BuyIfLow => CommandTypes::BuyIfLow,
         }
     }
 }

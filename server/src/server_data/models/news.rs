@@ -6,7 +6,7 @@ use utils::json::{EffectJSON, NewsJSON};
 use crate::server_data::models::company::Company;
 use crate::schema::company::dsl::company;
 
-use super::{ToJson, Connection};
+use super::{ConvertJson, Connection};
 
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug, PartialEq)]
 #[DieselType = "Effectdb"]
@@ -17,12 +17,19 @@ pub enum Effect {
     Rise,
 }
 
-impl ToJson<EffectJSON> for Effect {
+impl ConvertJson<EffectJSON> for Effect {
     fn to_json(&self, _: &super::Connection) -> anyhow::Result<EffectJSON> {
         match self {
             Effect::Fall => Ok(EffectJSON::Fall),
             Effect::Neutral => Ok(EffectJSON::Neutral),
             Effect::Rise => Ok(EffectJSON::Rise),
+        }
+    }
+    fn from_json(json: &EffectJSON) -> Self {
+        match json {
+            EffectJSON::Fall => Effect::Fall,
+            EffectJSON::Neutral => Effect::Neutral,
+            EffectJSON::Rise => Effect::Rise,
         }
     }
 }
@@ -40,7 +47,7 @@ pub struct News {
     pub company_id: i32,
 }
 
-impl ToJson<NewsJSON> for News {
+impl ConvertJson<NewsJSON> for News {
     fn to_json(&self, connection: &Connection) -> anyhow::Result<NewsJSON> {
         let affected = Repo::find::<Company, _>(
             &connection,
@@ -57,5 +64,16 @@ impl ToJson<NewsJSON> for News {
             effect: self.kind.to_json(connection)?,
             company: affected.to_json(connection)?
         })
+    }
+    fn from_json(json: &NewsJSON) -> Self {
+        News {
+            id: json.id,
+            title: json.title.clone(),
+            description: json.description.clone(),
+            author: json.author.clone(),
+            created_at: json.created_at,
+            kind: Effect::from_json(&json.effect),
+            company_id: json.company.id
+        }
     }
 }
