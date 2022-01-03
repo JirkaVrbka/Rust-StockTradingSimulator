@@ -3,8 +3,6 @@ pub mod stonkers;
 pub mod company;
 pub mod history;
 
-mod generator;
-mod index_vec;
-
-pub use generator::Generator;
-pub use index_vec::IndexVec;
+pub mod common;
+pub use common::generator::Generator;
+pub use common::index_vec::IndexVec;
