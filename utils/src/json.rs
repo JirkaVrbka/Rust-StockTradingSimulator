@@ -3,7 +3,7 @@ use chrono::naive::serde::ts_seconds;
 use serde_repr::{Serialize_repr, Deserialize_repr};
 use strum::{EnumIter};
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, EnumIter)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CommandTypesJSON {
     Sell,
@@ -77,6 +77,7 @@ pub struct CheapestStocksJSON {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct HistoryJSON {
+    pub id: i32,
     pub owned_by: StonkerJSON,
     pub issued_by: CompanyJSON,
     pub bought_for: i32,
