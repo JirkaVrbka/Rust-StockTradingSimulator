@@ -77,7 +77,6 @@ pub struct CheapestStocksJSON {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct HistoryJSON {
-    pub id: i32,
     pub owned_by: StonkerJSON,
     pub issued_by: CompanyJSON,
     pub bought_for: i32,

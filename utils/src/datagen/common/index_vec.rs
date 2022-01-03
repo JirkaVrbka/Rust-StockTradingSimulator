@@ -26,6 +26,11 @@ impl<T> IndexVec<T> {
         self.0.push((item, false));
         &self.0.last().unwrap().0
     }
+    pub fn extend(&mut self, items: Vec<T>) {
+        items.into_iter().for_each(|item| {
+            self.push_back(item);
+        });
+    }
     fn reset(&mut self) {
         self.0.iter_mut().for_each(|(_, used)| *used = true);
     }
