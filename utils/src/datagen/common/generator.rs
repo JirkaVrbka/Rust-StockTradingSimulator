@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use chrono::{Utc, NaiveDateTime};
-use rand::{thread_rng, Rng, };
+use rand::{thread_rng, Rng};
 use super::index_vec::IndexVec;
 
 #[derive(Debug)]
