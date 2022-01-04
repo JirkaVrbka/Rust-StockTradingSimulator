@@ -37,6 +37,7 @@ pub async fn create_stonker(
     let new_stonker = NewStonker {
         name: stonker_data.name.clone(),
         balance: stonker_data.balance,
+        password: stonker_data.password.clone(),
     };
     let stonker_result = repo.create_stonker(new_stonker).await;
     ApiError::handle(stonker_result)

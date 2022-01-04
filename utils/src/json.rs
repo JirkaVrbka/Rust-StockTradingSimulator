@@ -39,6 +39,7 @@ pub struct StonkerJSON {
     pub balance: i32,
     pub blocked_balance: i32,
     pub invested_balance: i32,
+    pub password: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

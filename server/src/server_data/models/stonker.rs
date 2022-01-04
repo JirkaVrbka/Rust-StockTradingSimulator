@@ -11,6 +11,7 @@ pub struct Stonker {
     pub balance: i32,
     pub blocked_balance: i32,
     pub invested_balance: i32,
+    pub password: String,
 }
 
 impl ToJson<StonkerJSON> for Stonker {
@@ -24,6 +25,7 @@ impl ToJson<StonkerJSON> for Stonker {
             balance: self.balance,
             blocked_balance: self.blocked_balance,
             invested_balance: self.invested_balance,
+            password: self.password.clone(),
         })
     }
 }
@@ -33,6 +35,7 @@ impl ToJson<StonkerJSON> for Stonker {
 pub struct NewStonker {
     pub name: String,
     pub balance: i32,
+    pub password: String,
 }
 
 impl FromJson<StonkerJSON> for NewStonker {
@@ -40,6 +43,7 @@ impl FromJson<StonkerJSON> for NewStonker {
         NewStonker {
             name: json.name.clone(),
             balance: json.balance,
+            password: json.password.clone(),
         }
     }
 }
