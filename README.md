@@ -1,5 +1,5 @@
 # Rust-StockTradingSimulator
-![diagram](diagram.svg)
+[![diagram](diagram.png)](http://localhost:8080/?pgsql=db&username=postgres&db=stocks&ns=public&schema=history%3A16.5278x9.0278_company%3A38.6806x19.7223_command%3A11.5278x17.9167_news%3A25.6945x18.5417_stock%3A26.6667x9.2361_stonker%3A32.9167x-2.1528)
 
 ## Installation
 * Unix - follow instructions in this file
@@ -11,7 +11,7 @@
 ```
 docker-compose -f .\stack.yml up
 ```
-[adminer](http://localhost:8080) 
+[adminer](http://localhost:8080)
 username: postgres
 
 Run new migrations
@@ -21,6 +21,7 @@ diesel migration run
 
 If there is some problem you can always delete stocks database and create new within adminer like a so:
 ```sql
+drop database stocks;
 create database stocks
 ```
 
@@ -60,45 +61,45 @@ trunk --config ./client/trunk.toml serve
 
 ## Endpoints
 ### Stonker endpoints
-- `GET http://localhost:8081/stonkers`  
+- `GET http://localhost:8081/stonkers`
     - get all stonkers
-- `GET http://localhost:8081/stonkers/{id}`  
+- `GET http://localhost:8081/stonkers/{id}`
     - get stonker by id
-- `GET http://localhost:8081/stonkers/{id}/overview`  
+- `GET http://localhost:8081/stonkers/{id}/overview`
     - get stonker overview by id
-- `POST http://localhost:8081/stonkers`  
+- `POST http://localhost:8081/stonkers`
     - create a stonker
     - Request Body: {name: string, balance: number}
 - `GET http://localhost:8081/stonkers/{id}/stocks`
     - get stonker stocks
 
 ### Company endpoints
-- `GET http://localhost:8081/companies`  
+- `GET http://localhost:8081/companies`
     - get all companies
-- `GET http://localhost:8081/companies/{id}`  
+- `GET http://localhost:8081/companies/{id}`
     - get company by id
-- `GET http://localhost:8081/companies/{id}/stocks`  
+- `GET http://localhost:8081/companies/{id}/stocks`
     - get company stocks
 
 
 ### Stock endpoints
-- `GET http://localhost:8081/stocks`  
-  - get all stocks  
-- `GET http://localhost:8081/stocks/{id}`  
-    - get stock by id  
-- `POST http://localhost:8081/stocks`  
-    - create a stock  
+- `GET http://localhost:8081/stocks`
+  - get all stocks
+- `GET http://localhost:8081/stocks/{id}`
+    - get stock by id
+- `POST http://localhost:8081/stocks`
+    - create a stock
     - Request Body: {stonker_id: string, company_id: number}
 
 ### News endpoints
-- `GET http://localhost:8081/news`  
+- `GET http://localhost:8081/news`
     - get all stocks
 
 ## Install Diesel CLI
 `cargo install diesel_cli --no-default-features --features postgres`
 
 ## Install yew
-* `rustup target add wasm32-unknown-unknown` rust compiles to wasm 
+* `rustup target add wasm32-unknown-unknown` rust compiles to wasm
 * `cargo install trunk wasm-bindgen-cli` trunk serve
 
 ### Unix Problems

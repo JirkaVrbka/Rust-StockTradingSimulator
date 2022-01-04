@@ -1,8 +1,57 @@
+use std::convert::TryInto;
+
+use utils::json::NewsJSON;
 use yew::prelude::*;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 use yew_styles::text::{Text, TextType};
-use crate::fetcher::FetchServiceExample;
+use crate::fetcher::ToHtml;
+use crate::fetcher::immediate::ImmediateFetcher;
+use yew_styles::styles::{Size, Palette, Style};
+use yew_styles::card::Card;
+
+impl ToHtml for NewsJSON {
+    fn to_html(&self) -> Html {
+        let header = &self.title;
+        let body = &self.description;
+        let footer = &self.author;
+        let palette = match self.effect {
+            utils::json::EffectJSON::Fall => Palette::Danger,
+            utils::json::EffectJSON::Neutral => Palette::Info,
+            utils::json::EffectJSON::Rise => Palette::Success,
+        };
+        html! {
+            <Card
+                card_size=Size::Medium
+                card_palette=palette
+                card_style=Style::Regular
+                header=Some(html!{
+                    <div>{header}</div>
+                })
+                body=Some(html!{
+                    <div>{body}</div>
+                })
+                footer=Some(html!{
+                    <div>{footer}</div>
+                })
+            />
+        }
+    }
+}
+
+impl ToHtml for Vec<NewsJSON> {
+    fn to_html(&self) -> Html {
+        html! {
+            <Container direction=Direction::Row wrap=Wrap::Wrap> {
+                self.iter().map(|el| html!{
+                    <Item layouts=vec!(ItemLayout::ItXs(self.len().try_into().unwrap())) align_self=AlignSelf::FlexStart>
+                        { el.to_html() }
+                    </Item>
+                }).collect::<Html>()
+            } </Container>
+        }
+    }
+}
 
 pub struct News;
 
@@ -29,9 +78,10 @@ impl Component for News {
                     <Text plain_text="News" text_type=TextType::Plain />
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-                    <FetchServiceExample/>
+                    <ImmediateFetcher::<Vec<NewsJSON>> port="news"/>
                 </Item>
             </Container>
         }
     }
 }
+

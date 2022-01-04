@@ -1,12 +1,35 @@
 use serde::{Serialize, Deserialize};
 use chrono::naive::serde::ts_seconds;
+use serde_repr::{Serialize_repr, Deserialize_repr};
+use strum::{EnumIter};
+
+#[derive(Debug, Serialize, Deserialize, Clone, EnumIter)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum CommandTypesJSON {
+    Sell,
+    SellIfHigh,
+    SellIfLow,
+    BuyIfLow,
+}
+
+#[derive(PartialEq, Eq, Hash, Debug, Serialize_repr, Deserialize_repr, Clone, EnumIter)]
+#[repr(i8)]
+pub enum EffectJSON {
+    Fall = -1,
+    Neutral = 0,
+    Rise = 1,
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub enum CommandTypesJSON {
-    SELL,
-    SELL_IF_HIGH,
-    SELL_IF_LOW,
-    BUY_IF_LOW,
+pub struct NewsJSON {
+    pub id: i32,
+    pub title: String,
+    pub description: String,
+    pub author: String,
+    #[serde(with = "ts_seconds")]
+    pub created_at: chrono::NaiveDateTime,
+    pub effect: EffectJSON,
+    pub company: CompanyJSON,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -37,7 +60,6 @@ pub struct StockJSON {
     pub issued_by: CompanyJSON,
     pub share: i32, // eg.: 50% = 50 * 10000 = 500000
     pub bought_for: i32,
-    pub sold_for: Option<i32>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -58,10 +80,10 @@ pub struct HistoryJSON {
     pub id: i32,
     pub owned_by: StonkerJSON,
     pub issued_by: CompanyJSON,
-    pub bought_for: Option<i32>,
+    pub bought_for: i32,
     #[serde(with = "ts_seconds")]
     pub created_at: chrono::NaiveDateTime,
-    pub sold_for: Option<i32>,
+    pub sold_for: i32,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

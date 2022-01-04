@@ -9,28 +9,26 @@ use crate::schema::command::stonker_id;
 use crate::schema::company::dsl::*;
 use crate::schema::stonker;
 use crate::schema::stonker::dsl::*;
+use crate::server_data::models::ToJson;
 use crate::server_data::models::command::Command;
 use crate::server_data::models::command::CommandTypes;
 use crate::server_data::models::company::Company;
-use crate::server_data::repos::stock_repo::stocks_to_json;
-use crate::{models::stonker::Stonker, repos::connection::PgPool};
+use crate::server_data::models::stonker::Stonker;
 use anyhow::Context;
 use async_trait::async_trait;
 use chrono::Datelike;
-use diesel::PgConnection;
 use diesel::dsl::min;
-use diesel::r2d2::ConnectionManager;
-use diesel::r2d2::PooledConnection;
 use utils::json::PortfolioJSON;
 use utils::json::StockJSON;
 use utils::json::StonkerHistoryJSON;
 use utils::json::StonkerJSON;
 use utils::json::StonkerOverviewJSON;
 use utils::json::UsageJSON;
-use std::sync::Arc;
 use crate::schema::command::company_id;
 use crate::schema::command::kind;
 use crate::schema::command::threshold;
+
+use super::Repo;
 
 #[async_trait]
 pub trait StonkerRepo {
@@ -41,53 +39,37 @@ pub trait StonkerRepo {
     async fn get_stonker_stocks(&self, s_id: i32) -> anyhow::Result<Vec<StockJSON>>;
 }
 
-#[derive(std::clone::Clone)]
-pub struct PostgresStonkerRepo {
-    pg_pool: Arc<PgPool>,
-}
-
-impl PostgresStonkerRepo {
-    pub fn new(pg_pool: Arc<PgPool>) -> Self {
-        Self { pg_pool: pg_pool }
-    }
-}
-
 #[async_trait]
-impl StonkerRepo for PostgresStonkerRepo {
+impl StonkerRepo for Repo {
     async fn get_stonkers(&self) -> anyhow::Result<Vec<Stonker>> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
-        let results = stonker
-            .load::<Stonker>(&connection)
-            .context("404::::Could not find stonkers")?;
-
+        let connection = self.connect()?;
+        let results = Repo::all::<Stonker, _>(
+            &connection,
+            stonker,
+            "stonkers"
+        )?;
         Ok(results)
     }
 
     async fn get_stonker_by_id(&self, s_id: i32) -> anyhow::Result<StonkerJSON> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
-        let result = stonker_to_json(&connection, &stonker
-            .find(s_id)
-            .first::<Stonker>(&connection)
-            .context(format!("404::::Could not find stonker with id {}", s_id))?)?;
-        Ok(result)
+        let connection = self.connect()?;
+        let result = Repo::find::<Stonker, _>(
+            &connection,
+            stonker,
+            s_id,
+            "stonker"
+        )?;
+        result.to_json(&connection)
     }
 
     async fn get_stonker_overview(&self, s_id: i32) -> anyhow::Result<StonkerOverviewJSON> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
-
-        let stonker_entity: Stonker = stonker
-            .find(s_id)
-            .first(&connection)
-            .context(format!("404::::Could not find stonker with id {}", s_id))?;
+        let connection = self.connect()?;
+        let stonker_entity = Repo::find::<Stonker, _>(
+            &connection,
+            stonker,
+            s_id,
+            "stonker"
+        )?;
 
         let usage = UsageJSON {
             free: stonker_entity.balance,
@@ -100,41 +82,39 @@ impl StonkerRepo for PostgresStonkerRepo {
         .filter(stonker_id.eq(s_id))
         .load::<Command>(&connection).unwrap();
 
-
-        let stonker_commands: Vec<(Command, Company)> = command
-            .filter(stonker_id.eq(s_id))
-            .inner_join(company)
-            .load::<(Command, Company)>(&connection)
-            .context(format!(
-                "404::::Could not find commands for stonker {}",
-                s_id
-            ))?;
+        let stonker_commands = Repo::all::<(Command, Company), _>(
+            &connection,
+            command.filter(stonker_id.eq(s_id)).inner_join(company),
+            format!("commands for stonker {}", s_id).as_str()
+        )?;
 
         let stonker_history: Vec<StonkerHistoryJSON> = stonker_commands
             .iter()
-            .map(|(cmd, comp)| StonkerHistoryJSON {
+            .filter_map(|(cmd, comp)| Some(StonkerHistoryJSON {
                 day: format!("{}.{}", cmd.created_at.date().day(), cmd.created_at.date().month()),
-                action: cmd.kind.to_json(),
+                action: cmd.kind.to_json(&connection).ok()?,
                 stock: comp.name.clone(),
                 money: cmd.threshold,
-            })
+            }))
             .collect();
 
-        let stonker_stocks: Vec<(Stock, Company)> = Stock::belonging_to(&stonker_entity).inner_join(company)
-            .load::<(Stock, Company)>(&connection)
-            .context(format!(
-                "404::::Could not find stocks belonging to stonker with id {}",
-                s_id
-        ))?;
+        let stonker_stocks = Repo::all::<(Stock, Company), _>(
+            &connection,
+            Stock::belonging_to(&stonker_entity).inner_join(company),
+            format!("stocks belonging to stonker with id {}", s_id).as_str()
+        )?;
 
         let portfolio: anyhow::Result<Vec<PortfolioJSON>> = stonker_stocks
         .iter()
         .map(|(st, comp)| {
-            let cheapest_company_stocks: Vec<Option<i32>> = command
+            let cheapest_company_stocks = Repo::all::<Option<i32>, _>(
+                &connection,
+                command
                 .filter(company_id.eq(comp.id))
-                .filter(kind.eq(CommandTypes::SELL))
-                .select(min(threshold))
-                .load::<Option<i32>>(&connection)?;
+                .filter(kind.eq(CommandTypes::Sell))
+                .select(min(threshold)),
+                "cheapest company stocks"
+            )?;
             let cheapest_company_stock = match cheapest_company_stocks.len() {
                 0 => st.bought_for,
                 _ => cheapest_company_stocks.get(0).unwrap().unwrap(),
@@ -159,50 +139,29 @@ impl StonkerRepo for PostgresStonkerRepo {
     }
 
     async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<StonkerJSON> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
+        let connection = self.connect()?;
 
-        let result = stonker_to_json(&connection, &diesel::insert_into(stonker::table)
+        let result = &diesel::insert_into(stonker::table)
             .values(&new_stonker)
             .get_result::<Stonker>(&connection)
-            .context("500::::Error saving new message")?)?;
+            .context("500::::Error saving new message")?;
 
-        Ok(result)
+        result.to_json(&connection)
     }
 
     async fn get_stonker_stocks(&self, s_id: i32) -> anyhow::Result<Vec<StockJSON>> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
-        let s: Stonker = stonker
-            .find(s_id)
-            .first(&connection)
-            .context(format!("404::::Could not find stonker with id {}", s_id))?;
-
-        let stonker_stocks: Vec<Stock> = Stock::belonging_to(&s)
-            .load::<Stock>(&connection)
-            .context(format!(
-                "404::::Could not find stock belonging to stonker with id {}",
-                s_id
-            ))?;
-
-        Ok(stocks_to_json(&connection, &stonker_stocks)?)
+        let connection = self.connect()?;
+        let s = Repo::find::<Stonker, _>(
+            &connection,
+            stonker,
+            s_id,
+            "stonker"
+        )?;
+        let stonker_stocks = Repo::all::<Stock, _>(
+            &connection,
+            Stock::belonging_to(&s),
+            format!("stocks belonging to stonker with id {}", s_id).as_str()
+        )?;
+        stonker_stocks.to_json(&connection)
     }
 }
-
-pub fn stonker_to_json(
-    _connection: &PooledConnection<ConnectionManager<PgConnection>>,
-    entity: &Stonker,
-) -> anyhow::Result<StonkerJSON> {
-    Ok(StonkerJSON {
-        id: entity.id,
-        name: entity.name.clone(),
-        balance: entity.balance,
-        blocked_balance: entity.blocked_balance,
-        invested_balance: entity.invested_balance,
-    })
-}
-

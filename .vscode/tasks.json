@@ -23,6 +23,12 @@
             "problemMatcher": []
         },
         {
+            "label": "utils",
+            "type": "shell",
+            "command": "cargo run --bin utils",
+            "problemMatcher": []
+        },
+        {
             "label": "sleep",
             "type": "shell",
             "command": "sleep 10",

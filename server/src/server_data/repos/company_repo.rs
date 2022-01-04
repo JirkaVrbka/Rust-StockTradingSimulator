@@ -1,24 +1,12 @@
 use crate::diesel::BelongingToDsl;
-use crate::diesel::QueryDsl;
-use crate::diesel::RunQueryDsl;
 use crate::models::company::Company;
 use crate::models::stock::Stock;
-use crate::repos::connection::PgPool;
 use crate::schema::company::dsl::*;
-use crate::schema::stonker::dsl::stonker;
-use crate::server_data::models::stonker::Stonker;
-use crate::server_data::repos::stock_repo::stocks_to_json;
-use anyhow::Context;
+use crate::server_data::models::ToJson;
 use async_trait::async_trait;
-use diesel::r2d2::ConnectionManager;
-use diesel::r2d2::PooledConnection;
-use diesel::PgConnection;
 use utils::json::CompanyJSON;
 use utils::json::StockJSON;
-use utils::json::StonkerJSON;
-use std::sync::Arc;
-
-use super::stonker_repo::stonker_to_json;
+use super::Repo;
 
 #[async_trait]
 pub trait CompanyRepo {
@@ -27,91 +15,42 @@ pub trait CompanyRepo {
     async fn get_company_stocks(&self, company_id: i32) -> anyhow::Result<Vec<StockJSON>>;
 }
 
-#[derive(std::clone::Clone)]
-pub struct PostgresCompanyRepo {
-    pg_pool: Arc<PgPool>,
-}
-
-impl PostgresCompanyRepo {
-    pub fn new(pg_pool: Arc<PgPool>) -> Self {
-        Self { pg_pool: pg_pool }
-    }
-}
-
-pub fn company_to_json(
-    connection: &PooledConnection<ConnectionManager<PgConnection>>,
-    entity: &Company,
-) -> anyhow::Result<CompanyJSON> {
-    let performer: StonkerJSON = stonker_to_json(connection, &stonker
-        .find(entity.performer_id)
-        .get_result::<Stonker>(connection)
-        .context(format!(
-            "404::::Cannot find performer {} of company {}",
-            entity.performer_id, entity.id
-        ))?)?;
-    Ok(CompanyJSON {
-        id: entity.id,
-        name: entity.name.clone(),
-        performer,
-    })
-}
-
 #[async_trait]
-impl CompanyRepo for PostgresCompanyRepo {
+impl CompanyRepo for Repo {
     async fn get_companies(&self) -> anyhow::Result<Vec<CompanyJSON>> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
-        let company_entities = company
-            .load::<Company>(&connection)
-            .context(format!("404::::Could not get companies"))?;
-
-        let company_jsons: anyhow::Result<Vec<CompanyJSON>> = company_entities
-            .iter()
-            .map(|entity| company_to_json(&connection, entity))
-            .collect();
-
-        Ok(company_jsons?)
+        let connection = self.connect()?;
+        let company_entities = Repo::all::<Company, _>(
+            &connection,
+            company,
+            "companies"
+        )?;
+        company_entities.to_json(&connection)
     }
 
     async fn get_company_by_id(&self, company_id: i32) -> anyhow::Result<CompanyJSON> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::Cannot get connection from pool")?;
-
-        let result: Company = company
-            .find(company_id)
-            .first(&connection)
-            .context(format!(
-                "404::::Could not find company with id {}",
-                company_id
-            ))?;
-
-        Ok(company_to_json(&connection, &result)?)
+        let connection = self.connect()?;
+        let result = Repo::find::<Company, _>(
+            &connection,
+            company,
+            company_id,
+            "company"
+        )?;
+        result.to_json(&connection)
     }
 
     async fn get_company_stocks(&self, company_id: i32) -> anyhow::Result<Vec<StockJSON>> {
-        let connection = self
-            .pg_pool
-            .get()
-            .context("500::::::Cannot not get connection from pool")?;
-        let c: Company = company
-            .find(company_id)
-            .first(&connection)
-            .context(format!(
-                "404::::Could not find company with id {}",
-                company_id
-            ))?;
-
-        let company_stocks: Vec<Stock> = Stock::belonging_to(&c)
-            .load::<Stock>(&connection)
-            .context(format!(
-                "404::::Could not find stock belonging to company with id {}",
-                company_id
-            ))?;
-
-        Ok(stocks_to_json(&connection, &company_stocks)?)
+        let connection = self.connect()?;
+        let c = Repo::find::<Company, _>(
+            &connection,
+            company,
+            company_id,
+            "company"
+        )?;
+        let company_stocks = Repo::all::<Stock, _>(
+            &connection,
+            Stock::belonging_to(&c),
+            format!("stock belonging to company with id {}", company_id).as_str()
+        )?;
+        company_stocks.to_json(&connection)
     }
 }

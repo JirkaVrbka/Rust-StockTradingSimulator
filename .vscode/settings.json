@@ -1,11 +1,12 @@
 {
-    "rust-analyzer.cargo.allFeatures": true,
     "cSpell.words": [
         "actix",
+        "datagen",
         "Datelike",
         "dotenv",
         "chrono",
         "Insertable",
+        "repr",
         "stonker",
         "stonkers",
         "websockets"

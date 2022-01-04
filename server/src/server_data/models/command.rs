@@ -4,36 +4,41 @@ use diesel_derive_enum::DbEnum;
 use serde::{Deserialize, Serialize};
 use utils::json::CommandTypesJSON;
 
+use super::{ToJson, FromJson};
+
 #[derive(Serialize, Deserialize, Clone, DbEnum, Debug)]
-#[DieselType = "Commandtypes"]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[DieselType = "Commandtypesdb"]
+#[DbValueStyle = "SCREAMING_SNAKE_CASE"]
 pub enum CommandTypes {
-    SELL,
-    SELL_IF_HIGH,
-    SELL_IF_LOW,
-    BUY_IF_LOW,
+    Sell,
+    SellIfHigh,
+    SellIfLow,
+    BuyIfLow,
 }
 
-impl CommandTypes {
-    pub fn from_json(json: CommandTypesJSON) -> CommandTypes {
-        match json {
-            CommandTypesJSON::SELL => CommandTypes::SELL,
-            CommandTypesJSON::SELL_IF_HIGH => CommandTypes::SELL_IF_HIGH,
-            CommandTypesJSON::SELL_IF_LOW => CommandTypes::SELL_IF_LOW,
-            CommandTypesJSON::BUY_IF_LOW => CommandTypes::BUY_IF_LOW,
-        }
-    }
-    pub fn to_json(&self) -> CommandTypesJSON {
+impl ToJson<CommandTypesJSON> for CommandTypes {
+    fn to_json(&self, _: &super::Connection) -> anyhow::Result<CommandTypesJSON> {
         match self {
-            CommandTypes::SELL => CommandTypesJSON::SELL,
-            CommandTypes::SELL_IF_HIGH => CommandTypesJSON::SELL_IF_HIGH,
-            CommandTypes::SELL_IF_LOW => CommandTypesJSON::SELL_IF_LOW,
-            CommandTypes::BUY_IF_LOW => CommandTypesJSON::BUY_IF_LOW,
+            CommandTypes::Sell => Ok(CommandTypesJSON::Sell),
+            CommandTypes::SellIfHigh => Ok(CommandTypesJSON::SellIfHigh),
+            CommandTypes::SellIfLow => Ok(CommandTypesJSON::SellIfLow),
+            CommandTypes::BuyIfLow => Ok(CommandTypesJSON::BuyIfLow),
         }
     }
 }
 
-#[derive(Queryable,Serialize, Deserialize,Clone, Associations, Identifiable)]
+impl FromJson<CommandTypesJSON> for CommandTypes {
+    fn from_json(json: &CommandTypesJSON) -> Self {
+        match json {
+            CommandTypesJSON::Sell => CommandTypes::Sell,
+            CommandTypesJSON::SellIfHigh => CommandTypes::SellIfHigh,
+            CommandTypesJSON::SellIfLow => CommandTypes::SellIfLow,
+            CommandTypesJSON::BuyIfLow => CommandTypes::BuyIfLow,
+        }
+    }
+}
+
+#[derive(Queryable, Serialize, Deserialize,Clone, Associations, Identifiable)]
 #[table_name = "command"]
 pub struct Command {
     pub id: i32,
@@ -46,6 +51,8 @@ pub struct Command {
     pub created_at: chrono::NaiveDateTime,
 }
 
+// TODO: implement toJson for Command
+
 #[derive(Insertable, Serialize, Deserialize)]
 #[table_name = "command"]
 pub struct NewCommand {
@@ -55,3 +62,5 @@ pub struct NewCommand {
     pub share: i32,
     pub kind: CommandTypes,
 }
+
+// TODO: implement fromJson for newCommand

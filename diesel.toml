@@ -2,5 +2,5 @@
 # see diesel.rs/guides/configuring-diesel-cli
 
 [print_schema]
-file = "src/bin/server_data/schema.rs"
-import_types = ["diesel::sql_types::*","crate::models::command::*"]
+file = "server/src/server_data/schema.rs"
+import_types = ["diesel::sql_types::*","crate::models::command::Commandtypesdb","crate::models::news::Effectdb"]
