@@ -33,7 +33,8 @@ impl StonkerGenerator {
             name: format!("{} {}", self.generator.choose(&mut self.first_names), self.generator.choose(&mut self.last_names)),
             balance: self.generator.random.gen_range(100..100000),
             blocked_balance: 0,
-            invested_balance: 0
+            invested_balance: 0,
+            password: self.generator.random_passwd(5),
         })
     }
 }

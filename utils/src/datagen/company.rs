@@ -1,4 +1,5 @@
-use rand::Rng;
+use rand::{Rng, thread_rng};
+use rand::distributions::Alphanumeric;
 use serde::Deserialize;
 
 use crate::json::{CompanyJSON, StonkerJSON};
@@ -38,6 +39,7 @@ impl CompanyGenerator {
                 balance: self.generator.random.gen_range(10_000..100_000),
                 blocked_balance: 0,
                 invested_balance: 0,
+                password: self.generator.random_passwd(5),
             }
         })
     }
