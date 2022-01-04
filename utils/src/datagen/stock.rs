@@ -17,10 +17,10 @@ impl StockGenerator {
     pub fn create(&mut self, company: &CompanyJSON) -> Vec<StockJSON> {
         let stocks = self.generator.random.gen_range(1..1000); // 1 - 999 stocks
         let value = self.generator.random.gen_range(1..(1_000_000/stocks));
-        (0..stocks).into_iter().map(|nth| {
+        (0..stocks).into_iter().map(|_nth| {
             StockJSON {
                 id: self.generator.next(),
-                owner: company.performer,
+                owner: company.performer.clone(),
                 issued_by: company.clone(),
                 share: value,
                 bought_for: 0,

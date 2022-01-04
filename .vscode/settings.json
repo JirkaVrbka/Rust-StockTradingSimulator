@@ -6,6 +6,7 @@
         "dotenv",
         "chrono",
         "Insertable",
+        "repr",
         "stonker",
         "stonkers",
         "websockets"

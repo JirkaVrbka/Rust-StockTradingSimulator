@@ -1,7 +1,7 @@
 use rand::Rng;
 use serde::Deserialize;
 
-use crate::json::{CompanyJSON, StonkerJSON, StockJSON};
+use crate::json::{CompanyJSON, StonkerJSON};
 
 use super::{Generator, IndexVec};
 

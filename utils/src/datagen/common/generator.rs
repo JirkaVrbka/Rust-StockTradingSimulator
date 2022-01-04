@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use chrono::{Utc, NaiveDateTime};
 use rand::{thread_rng, Rng};
 use super::index_vec::IndexVec;
+use rand_distr::{Normal, Exp};
 
 #[derive(Debug)]
 pub struct Generator {
@@ -32,5 +33,22 @@ impl Generator {
         let now = Utc::now().naive_utc().timestamp();
         let at = self.random.gen_range((now-seconds)..now);
         NaiveDateTime::from_timestamp(at, 0)
+    }
+    // we want to have > 0.95 percentage certainty that the
+    // transaction happened in interval [last_transaction, last_transaction/2)
+    // Wolfram: CDF[ExponentialDistribution[6], 0.5] = 0.950213
+    pub fn random_date(&mut self, last: NaiveDateTime) -> NaiveDateTime {
+        let now = chrono::offset::Local::now();
+        let difference = (now.timestamp() - last.timestamp()) as f64;
+        let exponential = Exp::new(6.0).unwrap();
+        let created_at = self.random.sample(exponential) * difference;
+        NaiveDateTime::from_timestamp(created_at.round() as i64, 0)
+    }
+    pub fn random_price(&mut self, last: i32, wealth: i32) -> i32 {
+        // we want to have > 0.95 percentage certainty
+        // that stonker had enough money to buy the stock
+        // Wolfram: CDF[NormalDistribution[0, 1], 2] - CDF[NormalDistribution[0, 1], -2] = 0.9545
+        let normal = Normal::new(last as f64, (wealth as f64) / 2.0).unwrap();
+        self.random.sample(normal).round() as i32
     }
 }
