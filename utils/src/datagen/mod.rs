@@ -9,7 +9,7 @@ pub mod common;
 pub use common::generator::Generator;
 pub use common::index_vec::IndexVec;
 
-use crate::json::NewsJSON;
+use crate::json::{NewsJSON, CompanyJSON, StonkerJSON};
 
 use self::company::CompanyGenerator;
 use self::news::NewsGenerator;
@@ -19,7 +19,7 @@ use self::history::HistoryGenerator;
 use self::command::CommandGenerator;
 
 pub struct DataGenerator {
-    company: CompanyGenerator,
+    companies: CompanyGenerator,
     news: NewsGenerator,
     stocks: StockGenerator,
     stonkers: StonkerGenerator,
@@ -30,7 +30,7 @@ pub struct DataGenerator {
 impl DataGenerator {
     pub fn new() -> anyhow::Result<DataGenerator> {
         Ok(DataGenerator {
-            company: CompanyGenerator::new()?,
+            companies: CompanyGenerator::new()?,
             news: NewsGenerator::new()?,
             stocks: StockGenerator::new(),
             stonkers: StonkerGenerator::new()?,
@@ -38,8 +38,13 @@ impl DataGenerator {
             offers: CommandGenerator::new(),
         })
     }
-    pub fn create_news(&mut self) -> &NewsJSON {
-        let company = self.company.create();
-        self.news.create(company)
+    pub fn company(&mut self) -> &CompanyJSON {
+        self.companies.create()
+    }
+    pub fn news(&mut self) -> &NewsJSON {
+        self.news.create(self.companies.create())
+    }
+    pub fn stonker(&mut self) -> &StonkerJSON {
+        self.stonkers.create()
     }
 }

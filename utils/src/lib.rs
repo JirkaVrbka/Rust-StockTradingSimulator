@@ -5,7 +5,7 @@ pub mod datagen;
 #[allow(dead_code)]
 fn main() -> Result<(), anyhow::Error> {
     let mut generator = datagen::DataGenerator::new()?;
-    let news = generator.create_news();
+    let news = generator.news();
     println!("{:#?}", news);
     Ok(())
 }

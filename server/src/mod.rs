@@ -11,6 +11,7 @@ use server_data::*;
 extern crate diesel;
 extern crate dotenv;
 
+use crate::endpoints::admin_endpoints::datagen_stonker;
 use crate::endpoints::company_endpoints::{get_companies, get_company, get_company_stocks};
 use crate::endpoints::news_endpoints::get_news;
 use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks};
