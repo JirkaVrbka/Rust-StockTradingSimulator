@@ -5,4 +5,6 @@ pub mod stonker_endpoints;
 pub mod admin_endpoints;
 
 mod api_error;
+mod auth;
+
 pub use api_error::ApiError;

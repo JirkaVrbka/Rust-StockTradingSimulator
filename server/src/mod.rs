@@ -15,9 +15,7 @@ use crate::endpoints::admin_endpoints::datagen_stonker;
 use crate::endpoints::company_endpoints::{get_companies, get_company, get_company_stocks};
 use crate::endpoints::news_endpoints::get_news;
 use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks};
-use crate::endpoints::stonker_endpoints::{
-    create_stonker, get_stonker, get_stonker_overview, get_stonker_stocks, get_stonkers,
-};
+use crate::endpoints::stonker_endpoints::{create_stonker, get_curr_stonker_stocks, get_stonker, get_stonker_overview, get_stonker_stocks, get_stonkers, login};
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::http::header;
@@ -44,17 +42,11 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Logger::default())
             .wrap(
-                Cors::default()
-                    .allowed_origin("http://localhost:5000")
-                    .allowed_methods(vec!["GET", "POST", "DELETE", "PUT"])
-                    .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
-                    .allowed_header(header::CONTENT_TYPE)
-                    .supports_credentials()
-                    .max_age(3600),
+                Cors::permissive()
             )
             .data(repo.clone())
             .data(chat_server.clone()) //register the lobby
-            .service(datagen_stonker)
+            .service(login)
             .service(get_stonkers)
             .service(get_stonker)
             .service(get_stonker_overview)
@@ -65,6 +57,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_stock)
             .service(create_stock)
             .service(get_company_stocks)
+            .service(get_curr_stonker_stocks)
             .service(get_stonker_stocks)
             .service(get_news)
             .service(start_connection_route) //register our route. rename with "as" import or naming conflict

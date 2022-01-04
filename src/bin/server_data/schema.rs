@@ -1,7 +1,6 @@
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::Commandtypesdb;
-    use crate::models::news::Effectdb;
+    use crate::models::command::*;
 
     command (id) {
         id -> Int4,
@@ -9,15 +8,14 @@ table! {
         company_id -> Int4,
         threshold -> Int4,
         share -> Int4,
-        kind -> Commandtypesdb,
+        kind -> Commandtypes,
         created_at -> Timestamp,
     }
 }
 
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::Commandtypesdb;
-    use crate::models::news::Effectdb;
+    use crate::models::command::*;
 
     company (id) {
         id -> Int4,
@@ -28,23 +26,21 @@ table! {
 
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::Commandtypesdb;
-    use crate::models::news::Effectdb;
+    use crate::models::command::*;
 
     history (id) {
         id -> Int4,
         stonker_id -> Int4,
         stock_id -> Int4,
-        bought_for -> Int4,
+        bought_for -> Nullable<Int4>,
         created_at -> Timestamp,
-        sold_for -> Int4,
+        sold_for -> Nullable<Int4>,
     }
 }
 
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::Commandtypesdb;
-    use crate::models::news::Effectdb;
+    use crate::models::command::*;
 
     news (id) {
         id -> Int4,
@@ -52,15 +48,12 @@ table! {
         description -> Text,
         author -> Varchar,
         created_at -> Timestamp,
-        kind -> Effectdb,
-        company_id -> Int4,
     }
 }
 
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::Commandtypesdb;
-    use crate::models::news::Effectdb;
+    use crate::models::command::*;
 
     stock (id) {
         id -> Int4,
@@ -68,13 +61,13 @@ table! {
         company_id -> Int4,
         share -> Int4,
         bought_for -> Int4,
+        sold_for -> Nullable<Int4>,
     }
 }
 
 table! {
     use diesel::sql_types::*;
-    use crate::models::command::Commandtypesdb;
-    use crate::models::news::Effectdb;
+    use crate::models::command::*;
 
     stonker (id) {
         id -> Int4,
@@ -82,7 +75,6 @@ table! {
         balance -> Int4,
         blocked_balance -> Int4,
         invested_balance -> Int4,
-        password -> Nullable<Varchar>,
     }
 }
 
@@ -91,7 +83,6 @@ joinable!(command -> stonker (stonker_id));
 joinable!(company -> stonker (performer_id));
 joinable!(history -> stock (stock_id));
 joinable!(history -> stonker (stonker_id));
-joinable!(news -> company (company_id));
 joinable!(stock -> company (company_id));
 joinable!(stock -> stonker (stonker_id));
 

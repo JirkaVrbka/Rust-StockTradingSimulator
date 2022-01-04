@@ -51,4 +51,18 @@ impl Generator {
         let normal = Normal::new(last as f64, (wealth as f64) / 2.0).unwrap();
         self.random.sample(normal).round() as i32
     }
+
+    pub fn random_passwd(&mut self, len: i32) -> String {
+        const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ\
+                            abcdefghijklmnopqrstuvwxyz\
+                            0123456789)(*&^%$#@!~";
+
+        let password: String = (0..len)
+            .map(|_| {
+                let idx = self.random.gen_range(0..CHARSET.len());
+                CHARSET[idx] as char
+            })
+            .collect();
+        password
+    }
 }
