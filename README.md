@@ -30,6 +30,10 @@ cargo run --bin server
 ```
 [stonkers.json](http://localhost:8081/stonkers)
 
+#### In case of problem
+* Create a new file in project root called '.env'
+* Add into file 'DATABASE_URL=postgres://postgres:example@localhost:5432/stocks'
+
 ### Client
 #### First time setup
 ```
