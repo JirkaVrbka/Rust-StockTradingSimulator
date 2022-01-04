@@ -99,6 +99,7 @@ trunk --config ./client/trunk.toml serve
 
 ### Unix Problems
 In case of problems: `sudo apt install libpq-dev`
+Alternatively: `sudo apt install libpq-dev libmysqlclient-dev`
 
 ## Create migration
 `diesel migration generate <migration_name>`
