@@ -82,7 +82,7 @@ table! {
         balance -> Int4,
         blocked_balance -> Int4,
         invested_balance -> Int4,
-        password -> Varchar,
+        password -> Nullable<Varchar>,
     }
 }
 
