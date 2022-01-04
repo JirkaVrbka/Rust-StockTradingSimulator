@@ -1,6 +1,7 @@
+use rand::Rng;
 use serde::Deserialize;
 
-use crate::json::{CompanyJSON, StonkerJSON};
+use crate::json::{CompanyJSON, StonkerJSON, StockJSON};
 
 use super::{Generator, IndexVec};
 
@@ -34,7 +35,7 @@ impl CompanyGenerator {
             performer: StonkerJSON {
                 id,
                 name: stock.name.clone(),
-                balance: 0,
+                balance: self.generator.random.gen_range(10_000..100_000),
                 blocked_balance: 0,
                 invested_balance: 0,
             }

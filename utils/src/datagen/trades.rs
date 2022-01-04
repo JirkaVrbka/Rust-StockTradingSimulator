@@ -1,6 +1,6 @@
-use std::{collections::HashMap, process::Command};
+use std::collections::HashMap;
 
-use chrono::{NaiveDateTime, TimeZone, NaiveDate};
+use chrono::{NaiveDateTime, NaiveDate};
 use rand::{Rng, prelude::SliceRandom};
 use strum::IntoEnumIterator;
 
@@ -11,7 +11,7 @@ use rand_distr::{Normal, Exp};
 
 
 // TODO: split to two separate generators that share stonkers and stocks
-struct TradesGenerator {
+pub struct TradesGenerator {
     history_generator: Generator,
     offers_generator: Generator,
     stonkers: IndexVec<StonkerJSON>,
@@ -27,7 +27,7 @@ impl TradesGenerator {
             offers_generator: Generator::new(),
             stonkers: IndexVec::new(),
             stocks: IndexVec::new(),
-            spawned_history: HashMap::new(),
+            spawned_history: IndexVec::new(),
             spawned_offers: HashMap::new(),
         }
     }
@@ -79,14 +79,15 @@ impl TradesGenerator {
         }
         &command
     }
-    pub fn create_history(&mut self, buy_offer: &CommandJSON, sell_offer: &CommandJSON) -> &HistoryJSON {
+    pub fn create_history(&mut self, sell_offer: &CommandJSON) -> &HistoryJSON {
         let id = self.history_generator.next();
-        let created_at = self.random_date(buy_offer.created_at);
+        let created_at = self.random_date(sell_offer.created_at);
+        let buyer = self.history_generator.choose(&mut self.stonkers).clone();
         let history = HistoryJSON{
             id: self.history_generator.next(),
-            owned_by: buy_offer.stonker.clone(),
-            issued_by: buy_offer.company.clone(),
-            bought_for: buy_offer.threshold,
+            owned_by: sell_offer.stonker.clone(),
+            issued_by: sell_offer.company.clone(),
+            bought_for: sell_offer.threshold,
             created_at: created_at,
             sold_for: sell_offer.threshold,
         };
