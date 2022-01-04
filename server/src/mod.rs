@@ -16,7 +16,7 @@ use crate::endpoints::company_endpoints::{get_companies, get_company, get_compan
 use crate::endpoints::news_endpoints::get_news;
 use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks};
 use crate::endpoints::stonker_endpoints::{
-    create_stonker, get_stonker,get_stonker_overview, get_stonker_stocks, get_stonkers,
+    create_stonker, get_stonker, get_stonker_overview, get_stonker_stocks, get_stonkers,
 };
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
