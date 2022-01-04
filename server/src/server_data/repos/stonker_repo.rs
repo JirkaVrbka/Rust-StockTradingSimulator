@@ -14,7 +14,7 @@ use crate::server_data::models::command::Command;
 use crate::server_data::models::command::CommandTypes;
 use crate::server_data::models::company::Company;
 use crate::server_data::models::stonker::Stonker;
-use anyhow::Context;
+use anyhow::{Context, Error};
 use async_trait::async_trait;
 use chrono::Datelike;
 use diesel::dsl::min;
@@ -37,6 +37,7 @@ pub trait StonkerRepo {
     async fn get_stonker_by_id(&self, s_id: i32) -> anyhow::Result<StonkerJSON>;
     async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<StonkerJSON>;
     async fn get_stonker_stocks(&self, s_id: i32) -> anyhow::Result<Vec<StockJSON>>;
+    async fn get_stonker_by_name(&self, name: &String) -> anyhow::Result<StonkerJSON>;
 }
 
 #[async_trait]
@@ -60,6 +61,21 @@ impl StonkerRepo for Repo {
             "stonker"
         )?;
         result.to_json(&connection)
+    }
+
+    async fn get_stonker_by_name(&self, nname: &String) -> anyhow::Result<StonkerJSON> {
+        let connection = self.connect()?;
+        let stonkers = Repo::all::<Stonker, _>(
+            &connection,
+            stonker,
+            "stonkers"
+        )?;
+        for s in stonkers.iter() {
+            if &s.name == nname {
+                return s.to_json(&connection);
+            }
+        }
+        return Err(anyhow::Error::msg("No such stonker."));
     }
 
     async fn get_stonker_overview(&self, s_id: i32) -> anyhow::Result<StonkerOverviewJSON> {

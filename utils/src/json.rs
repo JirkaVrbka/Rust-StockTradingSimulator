@@ -43,6 +43,12 @@ pub struct StonkerJSON {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct StonkerCredentials {
+    pub name: String,
+    pub password: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CommandJSON {
     pub id: i32,
     pub stonker: StonkerJSON,
