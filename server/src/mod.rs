@@ -11,6 +11,7 @@ use server_data::*;
 extern crate diesel;
 extern crate dotenv;
 
+use crate::endpoints::admin_endpoints::datagen_stonker;
 use crate::endpoints::company_endpoints::{get_companies, get_company, get_company_stocks};
 use crate::endpoints::news_endpoints::get_news;
 use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks};
@@ -45,17 +46,15 @@ async fn main() -> std::io::Result<()> {
             .wrap(
                 Cors::default()
                     .allowed_origin("http://localhost:5000")
-                .allowed_methods(vec!["GET", "POST", "DELETE", "PUT"])
+                    .allowed_methods(vec!["GET", "POST", "DELETE", "PUT"])
                     .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
                     .allowed_header(header::CONTENT_TYPE)
                     .supports_credentials()
                     .max_age(3600),
             )
             .data(repo.clone())
-            .data(repo.clone())
-            .data(repo.clone())
-            .data(repo.clone())
             .data(chat_server.clone()) //register the lobby
+            .service(datagen_stonker)
             .service(get_stonkers)
             .service(get_stonker)
             .service(get_stonker_overview)

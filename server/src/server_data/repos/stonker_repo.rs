@@ -141,10 +141,10 @@ impl StonkerRepo for Repo {
     async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<StonkerJSON> {
         let connection = self.connect()?;
 
-        let result = &diesel::insert_into(stonker::table)
+        let result: Stonker = diesel::insert_into(stonker::table)
             .values(&new_stonker)
             .get_result::<Stonker>(&connection)
-            .context("500::::Error saving new message")?;
+            .context("500::::Error saving stonker")?;
 
         result.to_json(&connection)
     }
