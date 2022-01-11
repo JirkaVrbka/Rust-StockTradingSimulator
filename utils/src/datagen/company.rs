@@ -3,7 +3,7 @@ use serde::Deserialize;
 
 use crate::json::{CompanyJSON, StonkerJSON};
 
-use super::{Generator, IndexVec, Data, ToTSQL, TSQLValue, ToTSQLValue};
+use super::{Generator, IndexVec, Data, ToTSQL, TSQLValue, ToTSQLValue, JsonGenerator};
 
 impl ToTSQL for CompanyJSON {
     fn to_header() -> &'static str {
@@ -28,13 +28,13 @@ pub struct CompanyGenerator {
     stocks: IndexVec<Stock>,
 }
 
-impl CompanyGenerator {
-    pub fn new() -> anyhow::Result<CompanyGenerator> {
+impl JsonGenerator for CompanyGenerator {
+    fn new() -> anyhow::Result<CompanyGenerator> {
         Ok(CompanyGenerator{
             stocks: IndexVec::read_csv("stocks.csv", b',')?,
         })
     }
-    pub fn create(&mut self, generator: &mut Generator, data: &mut Data) {
+    fn create(&mut self, generator: &mut Generator, data: &mut Data) {
         let stock = generator.choose(&mut self.stocks);
         let performer = StonkerJSON {
             id: data.next(),

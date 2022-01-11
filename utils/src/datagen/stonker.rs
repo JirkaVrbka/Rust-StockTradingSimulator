@@ -1,7 +1,7 @@
 use rand::Rng;
 use serde::Deserialize;
 use crate::{json::StonkerJSON, datagen::{ToTSQLValue, TSQLValue}};
-use super::{Generator, IndexVec, Data, ToTSQL};
+use super::{Generator, IndexVec, Data, ToTSQL, JsonGenerator};
 
 impl ToTSQL for StonkerJSON {
     fn to_header() -> &'static str {
@@ -28,8 +28,8 @@ pub struct StonkerGenerator {
     last_names: IndexVec<String>,
 }
 
-impl StonkerGenerator {
-    pub fn new() -> anyhow::Result<StonkerGenerator> {
+impl JsonGenerator for StonkerGenerator {
+    fn new() -> anyhow::Result<StonkerGenerator> {
         let names: IndexVec<Name> = IndexVec::read_csv("names.csv", b' ')?;
         Ok(StonkerGenerator {
             first_names: IndexVec::from(&names, |name| name.first.clone()),
@@ -37,7 +37,7 @@ impl StonkerGenerator {
         })
     }
 
-    pub fn create(&mut self, generator: &mut Generator, data: &mut Data) {
+    fn create(&mut self, generator: &mut Generator, data: &mut Data) {
         data.stonkers.push_back(StonkerJSON {
             id: data.next(),
             name: format!("{} {}", generator.choose(&mut self.first_names), generator.choose(&mut self.last_names)),

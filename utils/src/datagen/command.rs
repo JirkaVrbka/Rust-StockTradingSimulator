@@ -6,7 +6,7 @@ use strum::IntoEnumIterator;
 
 use crate::json::{CommandJSON, CommandTypesJSON, StonkerJSON, StockJSON};
 
-use super::{Generator, IndexVec, ToTSQL, Data, TSQLValue};
+use super::{Generator, IndexVec, ToTSQL, Data, TSQLValue, JsonGenerator};
 
 impl ToTSQL for CommandJSON {
     fn to_header() -> &'static str {
@@ -23,14 +23,15 @@ impl ToTSQL for CommandJSON {
 
 pub struct CommandGenerator;
 
-impl CommandGenerator {
-    pub fn new() -> CommandGenerator {
-        CommandGenerator { }
+fn get_beginning() -> NaiveDateTime {
+    NaiveDate::from_ymd(2016, 7, 8).and_hms(9, 10, 11)
+}
+
+impl JsonGenerator for CommandGenerator {
+    fn new() -> anyhow::Result<CommandGenerator> {
+        Ok(CommandGenerator)
     }
-    fn get_beginning(&self) -> NaiveDateTime {
-        NaiveDate::from_ymd(2016, 7, 8).and_hms(9, 10, 11)
-    }
-    pub fn create(&mut self, generator: &mut Generator, data: &mut Data) {
+    fn create(&mut self, generator: &mut Generator, data: &mut Data) {
         /*let stonker = generator.choose(&mut data.stonkers).clone();
         let kind = CommandTypesJSON::iter().collect::<Vec<CommandTypesJSON>>()
             .choose(&mut generator.random).unwrap().clone();

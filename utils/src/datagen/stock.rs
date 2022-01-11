@@ -2,15 +2,15 @@ use rand::Rng;
 
 use crate::json::{CompanyJSON, StockJSON};
 
-use super::{Generator, Data};
+use super::{Generator, Data, JsonGenerator};
 
 pub struct StockGenerator;
 
-impl StockGenerator {
-    pub fn new() -> StockGenerator {
-        StockGenerator { }
+impl JsonGenerator for StockGenerator {
+    fn new() -> anyhow::Result<StockGenerator> {
+        Ok(StockGenerator)
     }
-    pub fn create(&mut self, generator: &mut Generator, data: &mut Data) {
+    fn create(&mut self, generator: &mut Generator, data: &mut Data) {
         let count = data.next();
         let company = generator.choose(&mut data.companies);
         let stocks = generator.random.gen_range(1..1000); // 1 - 999 stocks

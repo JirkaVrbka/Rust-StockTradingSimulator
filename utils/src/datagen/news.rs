@@ -2,10 +2,9 @@ use std::collections::HashMap;
 use serde::Deserialize;
 use crate::datagen::{ToTSQLValue, TSQLValue};
 use crate::json::NewsJSON;
-use anyhow::Error;
 use crate::json::EffectJSON;
 use strum::IntoEnumIterator;
-use super::Data;
+use super::{Data, JsonGenerator};
 use super::IndexVec;
 use super::Generator;
 use super::ToTSQL;
@@ -68,8 +67,8 @@ fn into_map(vec: IndexVec<Info>) -> HashMap<EffectJSON, IndexVec<String>> {
     map
 }
 
-impl NewsGenerator {
-    pub fn new() -> Result<NewsGenerator, Error>  {
+impl JsonGenerator for NewsGenerator {
+    fn new() -> anyhow::Result<NewsGenerator>  {
         Ok(NewsGenerator {
             glues: into_map(IndexVec::read_csv("news/glue.csv", b';')?),
             titles: into_map(IndexVec::read_csv("news/titles.csv", b';')?),
@@ -78,7 +77,7 @@ impl NewsGenerator {
             effects: IndexVec::convert(EffectJSON::iter().collect::<Vec<EffectJSON>>()),
         })
     }
-    pub fn create(&mut self, generator: &mut Generator, data: &mut Data) {
+    fn create(&mut self, generator: &mut Generator, data: &mut Data) {
         let company = generator.choose(&mut data.companies).clone();
         let effect = generator.choose(&mut self.effects).clone();
         let glue = generator.choose_from(&mut self.glues, &effect).replace("{}", company.performer.name.as_str());

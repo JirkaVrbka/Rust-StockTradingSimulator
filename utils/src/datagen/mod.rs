@@ -46,6 +46,16 @@ impl Data {
     }
 }
 
+trait JsonGenerator {
+    fn new() -> anyhow::Result<Self> where Self: Sized;
+    fn create(&mut self, generator: &mut Generator, data: &mut Data);
+    fn n_times(&mut self, generator: &mut Generator, data: &mut Data, times: usize) {
+        for _ in 0..times {
+            self.create(generator, data);
+        }
+    }
+}
+
 struct Generators {
     companies: CompanyGenerator,
     news: NewsGenerator,
@@ -55,15 +65,24 @@ struct Generators {
     commands: CommandGenerator,
 }
 
+pub struct MinCounts {
+    pub companies: usize,
+    pub news: usize,
+    pub stocks: usize,
+    pub stonkers: usize,
+    pub history: usize,
+    pub commands: usize,
+}
+
 impl Generators {
     pub fn new() -> anyhow::Result<Generators> {
         Ok(Generators {
             companies: CompanyGenerator::new()?,
             news: NewsGenerator::new()?,
-            stocks: StockGenerator::new(),
+            stocks: StockGenerator::new()?,
             stonkers: StonkerGenerator::new()?,
-            history: HistoryGenerator::new(),
-            commands: CommandGenerator::new(),
+            history: HistoryGenerator::new()?,
+            commands: CommandGenerator::new()?,
         })
     }
 }
@@ -71,43 +90,27 @@ impl Generators {
 pub struct DataGenerator {
     data: Data,
     random: Generator,
-    generators: Generators
+    generators: Generators,
+    min_counts: MinCounts
 }
 
 impl DataGenerator {
-    pub fn new() -> anyhow::Result<DataGenerator> {
+    pub fn new(min_counts: MinCounts) -> anyhow::Result<DataGenerator> {
         Ok(DataGenerator {
             data: Data::new(),
             random: Generator::new(),
             generators: Generators::new()?,
+            min_counts
         })
     }
-    fn company(&mut self) {
-        self.generators.companies.create(&mut self.random, &mut self.data)
-    }
-    fn news(&mut self) {
-        self.generators.news.create(&mut self.random, &mut self.data)
-    }
-    fn stonker(&mut self) {
-        self.generators.stonkers.create(&mut self.random, &mut self.data)
-    }
-    fn print(self) -> String {
+    pub fn create(mut self) -> String {
+        self.generators.companies.n_times(&mut self.random, &mut self.data, self.min_counts.companies);
+        self.generators.stonkers.n_times(&mut self.random, &mut self.data, self.min_counts.stonkers);
+        self.generators.news.n_times(&mut self.random, &mut self.data, self.min_counts.news);
         format!("{}{}{}",
             ToTSQL::convert(self.data.stonkers),
             ToTSQL::convert(self.data.companies),
             ToTSQL::convert(self.data.news)
         )
-    }
-    pub fn create(mut self) -> String {
-        for _ in 0..5 {
-            self.company()
-        }
-        for i in 0..10 {
-            self.stonker();
-        }
-        for i in 0..3 {
-            self.news();
-        }
-        self.print()
     }
 }

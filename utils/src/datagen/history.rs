@@ -1,14 +1,14 @@
 use crate::json::{HistoryJSON, CommandJSON, StonkerJSON};
 
-use super::{Generator, IndexVec, Data};
+use super::{Generator, IndexVec, Data, JsonGenerator};
 
 pub struct HistoryGenerator;
 
-impl HistoryGenerator {
-    pub fn new() -> HistoryGenerator {
-        HistoryGenerator { }
+impl JsonGenerator for  HistoryGenerator {
+    fn new() -> anyhow::Result<HistoryGenerator> {
+        Ok(HistoryGenerator)
     }
-    pub fn create_history(&mut self, generator: &mut Generator, data: &mut Data) {
+    fn create(&mut self, generator: &mut Generator, data: &mut Data) {
         let id = data.next();
         let sell_offer = generator.choose(&mut data.commands);
         let buyer = generator.choose(&mut data.stonkers).clone();
