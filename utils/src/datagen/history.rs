@@ -2,21 +2,17 @@ use crate::json::{HistoryJSON, CommandJSON, StonkerJSON};
 
 use super::{Generator, IndexVec, Data};
 
-pub struct HistoryGenerator {
-    generator: Generator,
-}
+pub struct HistoryGenerator;
 
 impl HistoryGenerator {
     pub fn new() -> HistoryGenerator {
-        HistoryGenerator {
-            generator: Generator::new(),
-        }
+        HistoryGenerator { }
     }
-    pub fn create_history(&mut self, data: &mut Data) {
+    pub fn create_history(&mut self, generator: &mut Generator, data: &mut Data) {
         let id = data.next();
-        let sell_offer = self.generator.choose(&mut data.commands);
-        let buyer = self.generator.choose(&mut data.stonkers).clone();
-        let created_at = self.generator.random_date(sell_offer.created_at);
+        let sell_offer = generator.choose(&mut data.commands);
+        let buyer = generator.choose(&mut data.stonkers).clone();
+        let created_at = generator.random_date(sell_offer.created_at);
         data.history.push_back(HistoryJSON{
             id,
             owned_by: sell_offer.stonker.clone(),

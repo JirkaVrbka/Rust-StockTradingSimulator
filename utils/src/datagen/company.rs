@@ -25,26 +25,24 @@ struct Stock {
 }
 
 pub struct CompanyGenerator {
-    generator: Generator,
     stocks: IndexVec<Stock>,
 }
 
 impl CompanyGenerator {
     pub fn new() -> anyhow::Result<CompanyGenerator> {
         Ok(CompanyGenerator{
-            generator: Generator::new(),
             stocks: IndexVec::read_csv("stocks.csv", b',')?,
         })
     }
-    pub fn create(&mut self, data: &mut Data) {
-        let stock = self.generator.choose(&mut self.stocks);
+    pub fn create(&mut self, generator: &mut Generator, data: &mut Data) {
+        let stock = generator.choose(&mut self.stocks);
         let performer = StonkerJSON {
             id: data.next(),
             name: stock.name.clone(),
-            balance: self.generator.random.gen_range(10_000..100_000),
+            balance: generator.random.gen_range(10_000..100_000),
             blocked_balance: 0,
             invested_balance: 0,
-            password: self.generator.random_passwd(5),
+            password: generator.random_passwd(5),
         };
         data.stonkers.push_back(performer.clone());
         data.companies.push_back(CompanyJSON {

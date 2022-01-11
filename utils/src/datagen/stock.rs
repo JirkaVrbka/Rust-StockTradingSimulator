@@ -4,21 +4,17 @@ use crate::json::{CompanyJSON, StockJSON};
 
 use super::{Generator, Data};
 
-pub struct StockGenerator {
-    generator: Generator
-}
+pub struct StockGenerator;
 
 impl StockGenerator {
     pub fn new() -> StockGenerator {
-        StockGenerator {
-            generator: Generator::new()
-        }
+        StockGenerator { }
     }
-    pub fn create(&mut self, data: &mut Data) {
+    pub fn create(&mut self, generator: &mut Generator, data: &mut Data) {
         let count = data.next();
-        let company = self.generator.choose(&mut data.companies);
-        let stocks = self.generator.random.gen_range(1..1000); // 1 - 999 stocks
-        let value = self.generator.random.gen_range(1..(1_000_000/stocks));
+        let company = generator.choose(&mut data.companies);
+        let stocks = generator.random.gen_range(1..1000); // 1 - 999 stocks
+        let value = generator.random.gen_range(1..(1_000_000/stocks));
         for nth in 0..stocks {
             data.stocks.push_back(
             StockJSON {

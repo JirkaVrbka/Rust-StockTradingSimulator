@@ -85,6 +85,7 @@ impl Generators {
 
 pub struct DataGenerator {
     data: Data,
+    random: Generator,
     generators: Generators
 }
 
@@ -92,17 +93,18 @@ impl DataGenerator {
     pub fn new() -> anyhow::Result<DataGenerator> {
         Ok(DataGenerator {
             data: Data::new(),
+            random: Generator::new(),
             generators: Generators::new()?,
         })
     }
     fn company(&mut self) {
-        self.generators.companies.create(&mut self.data)
+        self.generators.companies.create(&mut self.random, &mut self.data)
     }
     fn news(&mut self) {
-        self.generators.news.create(&mut self.data)
+        self.generators.news.create(&mut self.random, &mut self.data)
     }
     fn stonker(&mut self) {
-        self.generators.stonkers.create(&mut self.data)
+        self.generators.stonkers.create(&mut self.random, &mut self.data)
     }
     fn print(self) -> String {
         format!("{}{}{}",
