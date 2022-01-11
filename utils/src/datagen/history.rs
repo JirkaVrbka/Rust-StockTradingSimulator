@@ -1,6 +1,6 @@
-use crate::{json::{HistoryJSON, CommandJSON, StonkerJSON, CommandTypesJSON}, datagen::ToTSQLValue};
+use crate::{json::{HistoryJSON, CommandTypesJSON}, datagen::ToTSQLValue};
 
-use super::{Generator, IndexVec, Data, JsonGenerator, ToTSQL, stock};
+use super::{Generator, Data, JsonGenerator, ToTSQL};
 
 impl ToTSQL for HistoryJSON {
     fn to_header() -> &'static str {
@@ -45,7 +45,7 @@ impl JsonGenerator for  HistoryGenerator {
         buyer.balance -= command.threshold;
         stock.bought_for = command.threshold;
         stock.owner = buyer.clone();
-        command.threshold = generator.random_price(sold_for, buyer.balance/10);
+        command.threshold = generator.random_price(sold_for, buyer.balance / 10);
         command.stonker = buyer.clone();
         command.created_at = generator.random_date(command.created_at);
         data.history.push_back(HistoryJSON {

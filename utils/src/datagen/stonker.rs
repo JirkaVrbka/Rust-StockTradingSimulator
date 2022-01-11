@@ -44,7 +44,7 @@ impl JsonGenerator for StonkerGenerator {
             balance: generator.random.gen_range(100..100000),
             blocked_balance: 0,
             invested_balance: 0,
-            password: generator.random_passwd(5),
+            password: generator.random_password(5),
         })
     }
 }

@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use chrono::{Utc, NaiveDateTime};
+use chrono::{Utc, NaiveDateTime, TimeZone};
 use rand::{thread_rng, Rng};
 use super::index_vec::IndexVec;
 use rand_distr::{Normal, Exp};
@@ -42,14 +42,17 @@ impl Generator {
         NaiveDateTime::from_timestamp(last.timestamp() + created_at.round() as i64, 0)
     }
     pub fn random_price(&mut self, last: i32, wealth: i32) -> i32 {
+        let money = if wealth > 0 { wealth } else { 100 };
         // we want to have > 0.95 percentage certainty
         // that stonker had enough money to buy the stock
         // Wolfram: CDF[NormalDistribution[0, 1], 2] - CDF[NormalDistribution[0, 1], -2] = 0.9545
-        let normal = Normal::new(last as f64, (wealth as f64) / 2.0).unwrap();
+        let normal = Normal::new(last as f64, (money as f64) / 2.0).unwrap();
         self.random.sample(normal).round() as i32
     }
-
-    pub fn random_passwd(&mut self, len: i32) -> String {
+    pub fn get_beginning() -> chrono::NaiveDateTime {
+        Utc.ymd(2020, 1, 1).and_hms(0, 0, 0).naive_local()
+    }
+    pub fn random_password(&mut self, len: i32) -> String {
         const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ\
                             abcdefghijklmnopqrstuvwxyz\
                             0123456789)(*&^%$#@!~";

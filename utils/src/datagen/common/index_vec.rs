@@ -73,6 +73,9 @@ impl<T> IndexVec<T> {
     pub fn iter_mut(&mut self) -> Vec<&mut T> {
         self.0.iter_mut().map(|(value, _)| value).collect()
     }
+    pub fn iter(&self) -> Vec<&T> {
+        self.0.iter().map(|(value, _)| value).collect()
+    }
 }
 
 impl<T: for<'de> Deserialize<'de>> IndexVec<T> {

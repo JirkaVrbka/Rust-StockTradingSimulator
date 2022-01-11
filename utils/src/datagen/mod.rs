@@ -116,9 +116,10 @@ impl DataGenerator {
     pub fn create(mut self) -> String {
         self.generators.companies.n_times(&mut self.random, &mut self.data, self.min_counts.companies);
         self.generators.stocks.n_times(&mut self.random, &mut self.data, self.min_counts.stocks);
-        self.generators.stonkers.n_times(&mut self.random, &mut self.data, 2 * self.min_counts.stonkers);
+        self.generators.stonkers.n_times(&mut self.random, &mut self.data, self.min_counts.stonkers);
         self.generators.news.n_times(&mut self.random, &mut self.data, self.min_counts.news);
-        self.generators.history.n_times(&mut self.random, &mut self.data, 10 * self.min_counts.history);
+        self.generators.history.n_times(&mut self.random, &mut self.data, self.min_counts.history);
+        self.generators.commands.n_times(&mut self.random, &mut self.data, 5 * self.min_counts.commands);
         self.data.to_string()
     }
 }

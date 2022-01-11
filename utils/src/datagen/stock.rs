@@ -1,4 +1,3 @@
-use chrono::{Utc, TimeZone};
 use rand::Rng;
 
 use crate::{json::{StockJSON, CommandJSON, CommandTypesJSON}, datagen::ToTSQLValue};
@@ -15,10 +14,6 @@ impl ToTSQL for StockJSON {
     fn to_data(&self) -> Vec<super::TSQLValue> {
         vec![self.id.to_id(), self.owner.id.to_id(), self.issued_by.id.to_id(), self.share.to(), self.bought_for.to()]
     }
-}
-
-fn get_beginning() -> chrono::NaiveDateTime {
-    Utc.ymd(2020, 1, 1).and_hms(0, 0, 0).naive_local()
 }
 
 pub struct StockGenerator;
@@ -50,7 +45,7 @@ impl JsonGenerator for StockGenerator {
                     threshold,
                     share,
                     kind: CommandTypesJSON::Sell,
-                    created_at: get_beginning()
+                    created_at: Generator::get_beginning()
                 }
             })
         }
