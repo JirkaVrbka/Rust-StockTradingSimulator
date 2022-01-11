@@ -1,0 +1,32 @@
+{ Stonker }
+[ id ] [ name ] [ password ] [ balance ] [ blocked_balance ] [ invested_balance ]
+id0 'Atlas Crest Investment Corp. II Class A' 'MXANU' 57045 0 0
+id2 'Murphy USA Inc.' 'y81%j' 25975 0 0
+id4 'Black Hills Corporation' '#XaaL' 62025 0 0
+id6 'Carnival Corporation' 'LJi&e' 16551 0 0
+id8 'Clover Leaf Capital Corp. Class A' '9l1qD' 41664 0 0
+id10 'Vivian Davis' 'UVfNq' 43563 0 0
+id11 'Shane Evans' '7ArYk' 25968 0 0
+id12 'Gloria Holland' 'FxV3u' 2269 0 0
+id13 'Joey Butler' 'E#PBa' 83583 0 0
+id14 'Greyson Singh' 'eT2e5' 65962 0 0
+id15 'Gemma Jones' '#Nq46' 44747 0 0
+id16 'Orlando Butler' '4d)xw' 87084 0 0
+id17 'Liam Ward' '^U)DB' 26622 0 0
+id18 'Harmony Powell' 'o%QKl' 53153 0 0
+id19 'Albert Crawford' 'ka@WJ' 75875 0 0
+
+{ Company }
+[ id ] [ name ] [ performer_id ]
+id1 'ACII' id0
+id3 'MUSA' id2
+id5 'BKH' id4
+id7 'CCL' id6
+id9 'CLOE' id8
+
+{ News }
+[ id ] [ title ] [ description ] [ author ] [ created_at ] [ kind ] [ company_id ]
+id20 'Position of CCL' 'Clinton indon visit monday. Future of Carnival Corporation is not clear.' 'Vedomosti' 2022-01-08P23:27:12 'NEUTRAL' id7
+id21 'Strong Sell BKH' 'Property group claims easter trading laws unfair. Investors of Black Hills Corporation are quite happy with the current situation.' 'El Economista' 2022-01-09P13:33:02 'RISE' id5
+id22 'Fall of BKH' 'Visitor info centre faces funding crisis. Future of Black Hills Corporation is looking pretty bad.' 'The Nikkei' 2022-01-10P12:02:53 'FALL' id5
+

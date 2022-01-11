@@ -10,7 +10,7 @@ impl ToTSQL for CompanyJSON {
         "Company"
     }
     fn to_columns() -> Vec<&'static str> {
-        vec!["id", "name", "perfomer_id"]
+        vec!["id", "name", "performer_id"]
     }
     fn to_data(&self) -> Vec<TSQLValue> {
         vec![self.id.to_id(), self.name.to(), self.performer.id.to_id()]

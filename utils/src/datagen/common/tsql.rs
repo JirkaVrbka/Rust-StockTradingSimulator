@@ -11,7 +11,7 @@ pub trait ToTSQLValue {
 
 impl ToTSQLValue for String {
     fn to(&self) -> TSQLValue {
-        TSQLValue(format!("'{}'", str::replace(self, "'", "\\'")))
+        TSQLValue(format!("'{}'", str::replace(self, "'", "''")))
     }
 }
 

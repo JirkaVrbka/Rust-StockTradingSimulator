@@ -1,3 +1,5 @@
+use std::fs;
+
 pub mod json;
 pub mod datagen;
 
@@ -5,6 +7,7 @@ pub mod datagen;
 #[allow(dead_code)]
 fn main() -> Result<(), anyhow::Error> {
     let generator = datagen::DataGenerator::new()?;
-    println!("{}", generator.create());
+    fs::write("./utils/data.tsql", generator.create())
+        .expect("Unable to write file");
     Ok(())
 }

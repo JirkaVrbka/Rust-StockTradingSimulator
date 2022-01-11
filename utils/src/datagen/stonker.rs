@@ -8,10 +8,10 @@ impl ToTSQL for StonkerJSON {
         "Stonker"
     }
     fn to_columns() -> Vec<&'static str> {
-        vec!["id", "name", "balance", "blocked_balance", "invested_balance"]
+        vec!["id", "name", "password", "balance", "blocked_balance", "invested_balance"]
     }
     fn to_data(&self) -> Vec<TSQLValue> {
-        vec![self.id.to_id(), self.name.to(),
+        vec![self.id.to_id(), self.name.to(), self.password.to(),
             self.balance.to(), self.blocked_balance.to(),
             self.invested_balance.to()]
     }
