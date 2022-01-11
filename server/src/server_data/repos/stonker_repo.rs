@@ -14,7 +14,7 @@ use crate::server_data::models::command::Command;
 use crate::server_data::models::command::CommandTypes;
 use crate::server_data::models::company::Company;
 use crate::server_data::models::stonker::Stonker;
-use anyhow::{Context, Error};
+use anyhow::Context;
 use async_trait::async_trait;
 use chrono::Datelike;
 use diesel::dsl::min;

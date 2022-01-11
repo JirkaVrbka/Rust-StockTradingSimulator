@@ -6,12 +6,13 @@ mod stock;
 mod command;
 
 pub mod common;
+use std::convert::TryInto;
 use std::process::Command;
 
 pub use common::generator::Generator;
 pub use common::index_vec::IndexVec;
 
-use crate::json::{NewsJSON, CompanyJSON, StonkerJSON, HistoryJSON, CommandJSON};
+use crate::json::{NewsJSON, CompanyJSON, StonkerJSON, HistoryJSON, CommandJSON, StockJSON};
 
 use self::company::CompanyGenerator;
 use self::news::NewsGenerator;
@@ -28,19 +29,16 @@ trait ToTSQL {
         format!("{{ {} }}\n{}\n{}\n", Self::to_header(),
             Self::to_columns().into_iter().map(|column| format!("[ {} ] ", column)).collect::<String>(),
             data.into_iter().map(|data|
-                format!("{}\n", Self::to_data(&data).into_iter().enumerate()
-                    .map(|(i, column)|
-                        if i != 0 { format!("{} ", column) }
-                        else { format!("{}{} ", Self::to_header().to_ascii_lowercase(), column)})
-                    .collect::<String>()),
+                format!("{}\n", Self::to_data(&data).into_iter()
+                    .map(|column| format!("{} ", column)).collect::<String>()),
             ).collect::<String>())
     }
 }
 
-struct Data {
+pub struct Data {
     companies: IndexVec<CompanyJSON>,
     news: IndexVec<NewsJSON>,
-    stocks: IndexVec<StonkerJSON>,
+    stocks: IndexVec<StockJSON>,
     stonkers: IndexVec<StonkerJSON>,
     history: IndexVec<HistoryJSON>,
     commands: IndexVec<CommandJSON>
@@ -56,6 +54,10 @@ impl Data {
             history: IndexVec::new(),
             commands: IndexVec::new(),
         }
+    }
+    fn next(&self) -> i32 {
+        (self.companies.len() + self.news.len() + self.stocks.len()
+         + self.stonkers.len() + self.history.len() + self.commands.len()) as i32
     }
 }
 

@@ -11,14 +11,12 @@ use server_data::*;
 extern crate diesel;
 extern crate dotenv;
 
-use crate::endpoints::admin_endpoints::datagen_stonker;
 use crate::endpoints::company_endpoints::{get_companies, get_company, get_company_stocks};
 use crate::endpoints::news_endpoints::get_news;
 use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks};
 use crate::endpoints::stonker_endpoints::{create_stonker, get_curr_stonker_stocks, get_stonker, get_stonker_overview, get_stonker_stocks, get_stonkers, login};
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
-use actix_web::http::header;
 use diesel::pg::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use env_logger;

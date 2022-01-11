@@ -6,20 +6,14 @@ use rand_distr::{Normal, Exp};
 
 #[derive(Debug)]
 pub struct Generator {
-    last_id: i32,
     pub random: rand::rngs::ThreadRng,
 }
 
 impl Generator {
     pub fn new() -> Generator {
         Generator {
-            last_id: -1,
             random: thread_rng()
         }
-    }
-    pub fn next(&mut self) -> i32 {
-        self.last_id += 1;
-        self.last_id
     }
     pub fn choose<'a, T: 'a>(&mut self, collection: &'a mut IndexVec<T>) -> &'a T {
         let index = self.random.gen_range(0..collection.len());

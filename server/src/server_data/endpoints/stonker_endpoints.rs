@@ -1,12 +1,9 @@
-use std::future::Future;
 use crate::models::stonker::NewStonker;
 use crate::repos::stonker_repo::StonkerRepo;
 use crate::server_data::endpoints::ApiError;
 use crate::server_data::repos::Repo;
-use actix_web::{error, http, HttpMessage, HttpRequest, web};
+use actix_web::{http, HttpRequest, web};
 use actix_web::{get, post, HttpResponse, Result};
-use actix_web::cookie::Cookie;
-use actix_web::http::StatusCode;
 use actix_web::web::Bytes;
 use utils::json::{StonkerCredentials, StonkerJSON};
 use crate::endpoints::auth::auth;

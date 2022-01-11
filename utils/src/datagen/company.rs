@@ -38,9 +38,8 @@ impl CompanyGenerator {
     }
     pub fn create(&mut self, data: &mut Data) {
         let stock = self.generator.choose(&mut self.stocks);
-        let id = self.generator.next();
         let performer = StonkerJSON {
-            id,
+            id: data.next(),
             name: stock.name.clone(),
             balance: self.generator.random.gen_range(10_000..100_000),
             blocked_balance: 0,
@@ -49,7 +48,7 @@ impl CompanyGenerator {
         };
         data.stonkers.push_back(performer.clone());
         data.companies.push_back(CompanyJSON {
-            id,
+            id: data.next(),
             name: stock.symbol.clone(),
             performer
         });

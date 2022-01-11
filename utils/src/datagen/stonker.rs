@@ -41,7 +41,7 @@ impl StonkerGenerator {
 
     pub fn create(&mut self, data: &mut Data) {
         data.stonkers.push_back(StonkerJSON {
-            id: self.generator.next(),
+            id: data.next(),
             name: format!("{} {}", self.generator.choose(&mut self.first_names), self.generator.choose(&mut self.last_names)),
             balance: self.generator.random.gen_range(100..100000),
             blocked_balance: 0,

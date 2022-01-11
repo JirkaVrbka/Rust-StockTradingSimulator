@@ -89,7 +89,7 @@ impl NewsGenerator {
         let headline = format!("{}{}", first_char.to_uppercase(), headline.chars().skip(1).collect::<String>());
         let recently = self.generator.date_from_days(3);
         data.news.push_back(NewsJSON {
-            id: self.generator.next(),
+            id: data.next(),
             title: self.generator.choose_from(&mut self.titles, &effect).replace("{}", company.name.as_str()).clone(),
             description: format!("{}{}", headline, glue),
             author: self.generator.choose(&mut self.newspapers).name.clone(),
