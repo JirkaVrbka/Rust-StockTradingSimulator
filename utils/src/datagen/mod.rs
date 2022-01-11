@@ -44,6 +44,16 @@ impl Data {
         (self.companies.len() + self.news.len() + self.stocks.len()
          + self.stonkers.len() + self.history.len() + self.commands.len()) as i32
     }
+    fn to_string(self) -> String {
+        format!("{}{}{}{}{}{}",
+            ToTSQL::convert(self.stonkers),
+            ToTSQL::convert(self.companies),
+            ToTSQL::convert(self.stocks),
+            ToTSQL::convert(self.news),
+            ToTSQL::convert(self.history),
+            ToTSQL::convert(self.commands),
+        )
+    }
 }
 
 trait JsonGenerator {
@@ -106,13 +116,9 @@ impl DataGenerator {
     pub fn create(mut self) -> String {
         self.generators.companies.n_times(&mut self.random, &mut self.data, self.min_counts.companies);
         self.generators.stocks.n_times(&mut self.random, &mut self.data, self.min_counts.stocks);
-        self.generators.stonkers.n_times(&mut self.random, &mut self.data, self.min_counts.stonkers);
+        self.generators.stonkers.n_times(&mut self.random, &mut self.data, 2 * self.min_counts.stonkers);
         self.generators.news.n_times(&mut self.random, &mut self.data, self.min_counts.news);
-        format!("{}{}{}{}",
-            ToTSQL::convert(self.data.stonkers),
-            ToTSQL::convert(self.data.companies),
-            ToTSQL::convert(self.data.stocks),
-            ToTSQL::convert(self.data.news)
-        )
+        self.generators.history.n_times(&mut self.random, &mut self.data, 10 * self.min_counts.history);
+        self.data.to_string()
     }
 }

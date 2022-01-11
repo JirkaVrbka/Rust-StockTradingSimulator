@@ -1,4 +1,5 @@
 use rand::Rng;
+use rand_distr::num_traits::Float;
 use serde::Deserialize;
 
 use crate::json::{CompanyJSON, StonkerJSON};
@@ -41,7 +42,7 @@ impl JsonGenerator for CompanyGenerator {
             name: stock.name.clone(),
             balance: generator.random.gen_range(10_000..100_000),
             blocked_balance: 0,
-            invested_balance: 0,
+            invested_balance: (100.0 * stock.price.clone()).round() as i32,
             password: generator.random_passwd(5),
         };
         data.stonkers.push_back(performer.clone());

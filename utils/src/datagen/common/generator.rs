@@ -16,8 +16,11 @@ impl Generator {
         }
     }
     pub fn choose<'a, T: 'a>(&mut self, collection: &'a mut IndexVec<T>) -> &'a T {
-        let index = self.random.gen_range(0..collection.len());
-        collection.choose(index)
+        collection.choose(self.random.gen_range(0..collection.len()))
+    }
+    // copy of choose but with mutability
+    pub fn choose_mut<'a, T: 'a>(&mut self, collection: &'a mut IndexVec<T>) -> &'a mut T {
+        collection.choose_mut(self.random.gen_range(0..collection.len()))
     }
     pub fn choose_from<'a, T, K>(&mut self, map: &'a mut HashMap<K, IndexVec<T>>, key: &K) -> &'a T where T: 'a, K: std::cmp::Eq + std::hash::Hash {
         self.choose(map.get_mut(&key).expect("Map doesn't contain the key"))
@@ -36,7 +39,7 @@ impl Generator {
         let difference = (now.timestamp() - last.timestamp()) as f64;
         let exponential = Exp::new(6.0).unwrap();
         let created_at = self.random.sample(exponential) * difference;
-        NaiveDateTime::from_timestamp(created_at.round() as i64, 0)
+        NaiveDateTime::from_timestamp(last.timestamp() + created_at.round() as i64, 0)
     }
     pub fn random_price(&mut self, last: i32, wealth: i32) -> i32 {
         // we want to have > 0.95 percentage certainty

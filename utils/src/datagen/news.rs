@@ -9,11 +9,13 @@ use super::IndexVec;
 use super::Generator;
 use super::ToTSQL;
 
-fn effect_to_string(effect: EffectJSON) ->&'static str {
-    match effect {
-        EffectJSON::Fall => "FALL",
-        EffectJSON::Neutral => "NEUTRAL",
-        EffectJSON::Rise => "RISE",
+impl ToTSQLValue for EffectJSON {
+    fn to(&self) -> TSQLValue {
+        match self {
+            EffectJSON::Fall => "FALL",
+            EffectJSON::Neutral => "NEUTRAL",
+            EffectJSON::Rise => "RISE",
+        }.to_string().to()
     }
 }
 
@@ -27,8 +29,7 @@ impl ToTSQL for NewsJSON {
     fn to_data(&self) -> Vec<TSQLValue> {
         vec![self.id.to_id(), self.title.to(), self.description.to(),
             self.author.to(), self.created_at.to(),
-            effect_to_string(self.effect.clone()).to_string().to(),
-            self.company.id.to_id()]
+            self.effect.to(), self.company.id.to_id()]
     }
 }
 

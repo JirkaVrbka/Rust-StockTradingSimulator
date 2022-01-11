@@ -1,6 +1,7 @@
+use chrono::{Utc, TimeZone};
 use rand::Rng;
 
-use crate::{json::StockJSON, datagen::ToTSQLValue};
+use crate::{json::{StockJSON, CommandJSON, CommandTypesJSON}, datagen::ToTSQLValue};
 
 use super::{Generator, Data, JsonGenerator, ToTSQL};
 
@@ -16,6 +17,10 @@ impl ToTSQL for StockJSON {
     }
 }
 
+fn get_beginning() -> chrono::NaiveDateTime {
+    Utc.ymd(2020, 1, 1).and_hms(0, 0, 0).naive_local()
+}
+
 pub struct StockGenerator;
 
 impl JsonGenerator for StockGenerator {
@@ -26,16 +31,28 @@ impl JsonGenerator for StockGenerator {
         let count = data.next();
         let company = generator.choose(&mut data.companies);
         let stocks = generator.random.gen_range(1..100); // 1 - 99 stocks
-        let value = generator.random.gen_range(1..(1_000_000/stocks));
+        let share = generator.random.gen_range(1..(1_000_000/stocks));
+        let threshold = company.performer.invested_balance;
         for nth in 0..stocks {
             data.stocks.push_back(
             StockJSON {
-                id: count + nth,
+                id: count + 2 * nth,
                 owner: company.performer.clone(),
                 issued_by: company.clone(),
-                share: value,
+                share,
                 bought_for: 0,
             });
+            data.commands.push_back({
+                CommandJSON {
+                    id: count + 2 * nth + 1,
+                    stonker: company.performer.clone(),
+                    company: company.clone(),
+                    threshold,
+                    share,
+                    kind: CommandTypesJSON::Sell,
+                    created_at: get_beginning()
+                }
+            })
         }
     }
 }

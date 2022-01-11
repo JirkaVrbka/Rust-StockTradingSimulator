@@ -54,8 +54,24 @@ impl<T> IndexVec<T> {
             Some(val) => &self.0[val].0
         }
     }
+    // copy of choose, but with two muts added
+    pub fn choose_mut(&mut self, index: usize) -> &mut T {
+        if self.0.is_empty() {
+            panic!("Empty collection");
+        }
+        match self.next(index) {
+            None => {
+                self.reset();
+                &mut self.0[index].0
+            }
+            Some(val) => &mut self.0[val].0
+        }
+    }
     pub fn len(&self) -> usize {
         self.0.len()
+    }
+    pub fn iter_mut(&mut self) -> Vec<&mut T> {
+        self.0.iter_mut().map(|(value, _)| value).collect()
     }
 }
 

@@ -32,7 +32,7 @@ impl ToTSQLValue for chrono::NaiveDateTime {
 
 impl ToTSQLValue for dyn ToString {
     fn to(&self) -> TSQLValue {
-        TSQLValue(self.to_string())
+        self.to_string().to()
     }
 }
 

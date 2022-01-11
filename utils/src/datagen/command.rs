@@ -1,62 +1,41 @@
-use std::collections::HashMap;
-
 use chrono::{NaiveDateTime, NaiveDate};
-use rand::{Rng, prelude::SliceRandom};
-use strum::IntoEnumIterator;
 
-use crate::json::{CommandJSON, CommandTypesJSON, StonkerJSON, StockJSON};
+use crate::{json::{CommandJSON, CommandTypesJSON}, datagen::ToTSQLValue};
 
 use super::{Generator, IndexVec, ToTSQL, Data, TSQLValue, JsonGenerator};
 
+impl ToTSQLValue for CommandTypesJSON {
+    fn to(&self) -> TSQLValue {
+        match self {
+            CommandTypesJSON::Sell => "SELL",
+            CommandTypesJSON::SellIfHigh => "SELL_IF_HIGH",
+            CommandTypesJSON::SellIfLow => "SELL_IF_LOW",
+            CommandTypesJSON::BuyIfLow => "BUY_IF_LOW",
+        }.to_string().to()
+    }
+}
+
 impl ToTSQL for CommandJSON {
     fn to_header() -> &'static str {
-        todo!()
+        "Command"
     }
     fn to_columns() -> Vec<&'static str> {
         vec!["id", "stonker_id", "company_id", "threshold", "share", "kind", "created_at"]
     }
-
     fn to_data(&self) -> Vec<TSQLValue> {
-        todo!()
+        vec![self.id.to_id(), self.stonker.id.to_id(), self.company.id.to_id(),
+            self.threshold.to(), self.share.to(), self.kind.to(), self.created_at.to()]
     }
 }
 
 pub struct CommandGenerator;
-
-fn get_beginning() -> NaiveDateTime {
-    NaiveDate::from_ymd(2016, 7, 8).and_hms(9, 10, 11)
-}
 
 impl JsonGenerator for CommandGenerator {
     fn new() -> anyhow::Result<CommandGenerator> {
         Ok(CommandGenerator)
     }
     fn create(&mut self, generator: &mut Generator, data: &mut Data) {
-        /*let stonker = generator.choose(&mut data.stonkers).clone();
-        let kind = CommandTypesJSON::iter().collect::<Vec<CommandTypesJSON>>()
-            .choose(&mut generator.random).unwrap().clone();
-        let stock = generator.choose(&mut data.stocks).clone();
-        let id = stock.issued_by.id;
-        let last_offer = self.spawned.get(&id);
-        let created_at = match last_offer {
-            None => self.get_beginning(),
-            Some(command) => generator.random_date(command.last().unwrap().created_at),
-        };
-        let last_offer = self.spawned.get_mut(&id);
-        let wealth = stonker.balance;
-        let command = CommandJSON {
-            id: data.next(),
-            stonker: stonker,
-            kind: kind,
-            created_at: created_at,
-            company: stock.issued_by.clone(),
-            threshold: generator.random_price(stock.bought_for, wealth),
-            share: generator.random.gen_range(10_000..100_000)
-        };
-        match last_offer {
-            None => { self.spawned.insert(id, vec![command]); },
-            Some(vec) => { vec.push(command); },
-        };
-        self.spawned.get(&id).unwrap().last().unwrap()*/
+        // choose random stonker, if he owns stocks, put random sell command on their random stock
+        // if he does not own stocks, put buy_if_low command on random stock
     }
 }
