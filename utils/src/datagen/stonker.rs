@@ -1,7 +1,21 @@
 use rand::Rng;
 use serde::Deserialize;
 use crate::json::StonkerJSON;
-use super::{Generator, IndexVec};
+use super::{Generator, IndexVec, Data, ToTSQL};
+
+impl ToTSQL for StonkerJSON {
+    fn to_header() -> &'static str {
+        "Stonker"
+    }
+    fn to_columns() -> Vec<&'static str> {
+        vec!["id", "name", "balance", "blocked_balance", "invested_balance"]
+    }
+    fn to_data(&self) -> Vec<String> {
+        vec![self.id.to_string(), self.name.to_string(),
+            self.balance.to_string(), self.blocked_balance.to_string(),
+            self.invested_balance.to_string()]
+    }
+}
 
 #[derive(Deserialize)]
 struct Name {
@@ -13,7 +27,6 @@ pub struct StonkerGenerator {
     generator: Generator,
     first_names: IndexVec<String>,
     last_names: IndexVec<String>,
-    spawned: IndexVec<StonkerJSON>
 }
 
 impl StonkerGenerator {
@@ -23,12 +36,11 @@ impl StonkerGenerator {
             generator: Generator::new(),
             first_names: IndexVec::from(&names, |name| name.first.clone()),
             last_names: IndexVec::from(&names, |name| name.last.clone()),
-            spawned: IndexVec::new()
         })
     }
 
-    pub fn create(&mut self) -> &StonkerJSON {
-        self.spawned.push_back(StonkerJSON {
+    pub fn create(&mut self, data: &mut Data) {
+        data.stonkers.push_back(StonkerJSON {
             id: self.generator.next(),
             name: format!("{} {}", self.generator.choose(&mut self.first_names), self.generator.choose(&mut self.last_names)),
             balance: self.generator.random.gen_range(100..100000),

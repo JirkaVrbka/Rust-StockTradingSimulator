@@ -9,6 +9,7 @@
         "repr",
         "stonker",
         "stonkers",
+        "TSQL",
         "websockets"
     ]
 }

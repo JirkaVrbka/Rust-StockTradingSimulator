@@ -6,7 +6,20 @@ use strum::IntoEnumIterator;
 
 use crate::json::{CommandJSON, CommandTypesJSON, StonkerJSON, StockJSON};
 
-use super::{Generator, IndexVec};
+use super::{Generator, IndexVec, ToTSQL};
+
+impl ToTSQL for CommandJSON {
+    fn to_header() -> &'static str {
+        todo!()
+    }
+    fn to_columns() -> Vec<&'static str> {
+        vec!["id", "stonker_id", "company_id", "threshold", "share", "kind", "created_at"]
+    }
+
+    fn to_data(&self) -> Vec<String> {
+        todo!()
+    }
+}
 
 pub struct CommandGenerator {
     generator: Generator,

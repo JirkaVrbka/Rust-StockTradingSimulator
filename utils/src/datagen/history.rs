@@ -14,7 +14,7 @@ impl HistoryGenerator {
             spawned: IndexVec::new(),
         }
     }
-    pub fn create_history(&mut self, stonkers: &mut IndexVec<StonkerJSON>, sell_offer: &CommandJSON) -> &HistoryJSON {
+    pub fn create_history(&mut self, stonkers: &mut IndexVec<StonkerJSON>, sell_offer: &CommandJSON) {
         let id = self.generator.next();
         let created_at = self.generator.random_date(sell_offer.created_at);
         let buyer = self.generator.choose(stonkers).clone();

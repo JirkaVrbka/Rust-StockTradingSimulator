@@ -6,10 +6,12 @@ mod stock;
 mod command;
 
 pub mod common;
+use std::process::Command;
+
 pub use common::generator::Generator;
 pub use common::index_vec::IndexVec;
 
-use crate::json::{NewsJSON, CompanyJSON, StonkerJSON};
+use crate::json::{NewsJSON, CompanyJSON, StonkerJSON, HistoryJSON, CommandJSON};
 
 use self::company::CompanyGenerator;
 use self::news::NewsGenerator;
@@ -18,33 +20,105 @@ use self::stonker::StonkerGenerator;
 use self::history::HistoryGenerator;
 use self::command::CommandGenerator;
 
-pub struct DataGenerator {
+trait ToTSQL {
+    fn to_header() -> &'static str;  // Stonker
+    fn to_columns() -> Vec<&'static str>;  // [ id ] [ name ] [ password ]
+    fn to_data(&self) -> Vec<String>; // frank1 "Frank" "knarf"
+    fn convert(data: IndexVec<Self>) -> String where Self: Sized {
+        format!("{{ {} }}\n{}\n{}\n", Self::to_header(),
+            Self::to_columns().into_iter().map(|column| format!("[ {} ] ", column)).collect::<String>(),
+            data.into_iter().map(|data|
+                format!("{}\n", Self::to_data(&data).into_iter().enumerate()
+                    .map(|(i, column)|
+                        if i != 0 { format!("{} ", column) }
+                        else { format!("{}{} ", Self::to_header().to_ascii_lowercase(), column)})
+                    .collect::<String>()),
+            ).collect::<String>())
+    }
+}
+
+struct Data {
+    companies: IndexVec<CompanyJSON>,
+    news: IndexVec<NewsJSON>,
+    stocks: IndexVec<StonkerJSON>,
+    stonkers: IndexVec<StonkerJSON>,
+    history: IndexVec<HistoryJSON>,
+    commands: IndexVec<CommandJSON>
+}
+
+impl Data {
+    fn new() -> Data {
+        Data {
+            companies: IndexVec::new(),
+            news: IndexVec::new(),
+            stocks: IndexVec::new(),
+            stonkers: IndexVec::new(),
+            history: IndexVec::new(),
+            commands: IndexVec::new(),
+        }
+    }
+}
+
+struct Generators {
     companies: CompanyGenerator,
     news: NewsGenerator,
     stocks: StockGenerator,
     stonkers: StonkerGenerator,
     history: HistoryGenerator,
-    offers: CommandGenerator,
+    commands: CommandGenerator,
 }
 
-impl DataGenerator {
-    pub fn new() -> anyhow::Result<DataGenerator> {
-        Ok(DataGenerator {
+impl Generators {
+    pub fn new() -> anyhow::Result<Generators> {
+        Ok(Generators {
             companies: CompanyGenerator::new()?,
             news: NewsGenerator::new()?,
             stocks: StockGenerator::new(),
             stonkers: StonkerGenerator::new()?,
             history: HistoryGenerator::new(),
-            offers: CommandGenerator::new(),
+            commands: CommandGenerator::new(),
         })
     }
-    pub fn company(&mut self) -> &CompanyJSON {
-        self.companies.create()
+}
+
+pub struct DataGenerator {
+    data: Data,
+    generators: Generators
+}
+
+impl DataGenerator {
+    pub fn new() -> anyhow::Result<DataGenerator> {
+        Ok(DataGenerator {
+            data: Data::new(),
+            generators: Generators::new()?,
+        })
     }
-    pub fn news(&mut self) -> &NewsJSON {
-        self.news.create(self.companies.create())
+    fn company(&mut self) {
+        self.generators.companies.create(&mut self.data)
     }
-    pub fn stonker(&mut self) -> &StonkerJSON {
-        self.stonkers.create()
+    fn news(&mut self) {
+        self.generators.news.create(&mut self.data)
+    }
+    fn stonker(&mut self) {
+        self.generators.stonkers.create(&mut self.data)
+    }
+    fn print(self) -> String {
+        format!("{}{}{}",
+            ToTSQL::convert(self.data.companies),
+            ToTSQL::convert(self.data.stonkers),
+            ToTSQL::convert(self.data.news)
+        )
+    }
+    pub fn create(mut self) -> String {
+        for _ in 0..5 {
+            self.company()
+        }
+        for i in 0..10 {
+            self.stonker();
+        }
+        for i in 0..3 {
+            self.news();
+        }
+        self.print()
     }
 }

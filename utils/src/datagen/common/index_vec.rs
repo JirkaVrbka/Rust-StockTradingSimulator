@@ -22,9 +22,8 @@ impl<T> IndexVec<T> {
     pub fn from<J>(vec: &IndexVec<T>, convert: fn(&T)->J) -> IndexVec<J> {
         IndexVec(vec.0.iter().map(|(value, used)| (convert(value), *used)).collect())
     }
-    pub fn push_back(&mut self, item: T) -> &T {
+    pub fn push_back(&mut self, item: T) {
         self.0.push((item, false));
-        &self.0.last().unwrap().0
     }
     pub fn extend(&mut self, items: Vec<T>) {
         items.into_iter().for_each(|item| {
