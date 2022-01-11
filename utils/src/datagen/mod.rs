@@ -119,7 +119,7 @@ impl DataGenerator {
         self.generators.stonkers.n_times(&mut self.random, &mut self.data, self.min_counts.stonkers);
         self.generators.news.n_times(&mut self.random, &mut self.data, self.min_counts.news);
         self.generators.history.n_times(&mut self.random, &mut self.data, self.min_counts.history);
-        self.generators.commands.n_times(&mut self.random, &mut self.data, 5 * self.min_counts.commands);
+        self.generators.commands.n_times(&mut self.random, &mut self.data, self.min_counts.commands);
         self.data.to_string()
     }
 }

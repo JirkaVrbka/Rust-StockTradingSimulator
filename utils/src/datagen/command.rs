@@ -85,9 +85,9 @@ impl JsonGenerator for CommandGenerator {
         }
         let my_random_stock = owned_stocks.choose(&mut generator.random).unwrap();
         let cheapest = get_lowest_sell(&my_random_stock.issued_by, data);
-        let shift = generator.random_price(0, cheapest.clone().map_or(100, |c| c.threshold) / 10).abs();
+        let shift = generator.random_price(0, cheapest.clone().map_or(100, |c| c.threshold) / 100).abs();
         let price = (cheapest.clone().map_or(100, |command| command.threshold) + match kind {
-            CommandTypesJSON::Sell => -shift,
+            CommandTypesJSON::Sell => -1,
             CommandTypesJSON::SellIfHigh => shift,
             CommandTypesJSON::SellIfLow => -shift,
             CommandTypesJSON::BuyIfLow => panic!("I though we checked before"),

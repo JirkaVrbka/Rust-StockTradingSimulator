@@ -9,12 +9,12 @@ pub mod datagen;
 #[allow(dead_code)]
 fn main() -> Result<(), anyhow::Error> {
     let generator = datagen::DataGenerator::new(MinCounts{
-        companies: 1,
-        news: 1,
-        stocks: 1,
-        stonkers: 1,
-        history: 1,
-        commands: 1,
+        companies: 10,
+        news: 20,
+        stocks: 10,
+        stonkers: 10,
+        history: 100,
+        commands: 100,
     })?;
     let data_file = "./utils/data.tsql";
     fs::write(data_file, generator.create())

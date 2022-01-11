@@ -45,7 +45,7 @@ impl JsonGenerator for  HistoryGenerator {
         buyer.balance -= command.threshold;
         stock.bought_for = command.threshold;
         stock.owner = buyer.clone();
-        command.threshold = generator.random_price(sold_for, buyer.balance / 10);
+        command.threshold = generator.random_price(sold_for, sold_for / 10).max(1);
         command.stonker = buyer.clone();
         command.created_at = generator.random_date(command.created_at);
         data.history.push_back(HistoryJSON {
@@ -55,6 +55,12 @@ impl JsonGenerator for  HistoryGenerator {
             bought_for,
             created_at: command.created_at,
             sold_for,
-        })
+        });
+        for trader in data.stonkers.iter_mut() {
+            if trader.id == stock.owner.id {
+                trader.balance += bought_for;
+                break;
+            }
+        }
     }
 }
