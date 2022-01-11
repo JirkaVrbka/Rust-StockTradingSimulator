@@ -3,7 +3,7 @@ use serde::Deserialize;
 
 use crate::json::{CompanyJSON, StonkerJSON};
 
-use super::{Generator, IndexVec, Data, ToTSQL};
+use super::{Generator, IndexVec, Data, ToTSQL, TSQLValue, ToTSQLValue};
 
 impl ToTSQL for CompanyJSON {
     fn to_header() -> &'static str {
@@ -12,8 +12,8 @@ impl ToTSQL for CompanyJSON {
     fn to_columns() -> Vec<&'static str> {
         vec!["id", "name", "perfomer_id"]
     }
-    fn to_data(&self) -> Vec<String> {
-        vec![self.id.to_string(), self.name.to_string(), self.performer.id.to_string()]
+    fn to_data(&self) -> Vec<TSQLValue> {
+        vec![self.id.to_id(), self.name.to(), self.performer.id.to_id()]
     }
 }
 

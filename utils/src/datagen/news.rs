@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use serde::Deserialize;
+use crate::datagen::{ToTSQLValue, TSQLValue};
 use crate::json::NewsJSON;
 use anyhow::Error;
 use crate::json::EffectJSON;
@@ -24,11 +25,11 @@ impl ToTSQL for NewsJSON {
     fn to_columns() -> Vec<&'static str> {
         vec!["id", "title", "description", "author", "created_at", "kind", "company_id"]
     }
-    fn to_data(&self) -> Vec<String> {
-        vec![self.id.to_string(), self.title.to_string(), self.description.to_string(),
-            self.author.to_string(), self.created_at.to_string(),
-            effect_to_string(self.effect.clone()).to_string(),
-            self.company.id.to_string()]
+    fn to_data(&self) -> Vec<TSQLValue> {
+        vec![self.id.to_id(), self.title.to(), self.description.to(),
+            self.author.to(), self.created_at.to(),
+            effect_to_string(self.effect.clone()).to_string().to(),
+            self.company.id.to_id()]
     }
 }
 

@@ -6,7 +6,7 @@ use strum::IntoEnumIterator;
 
 use crate::json::{CommandJSON, CommandTypesJSON, StonkerJSON, StockJSON};
 
-use super::{Generator, IndexVec, ToTSQL, Data};
+use super::{Generator, IndexVec, ToTSQL, Data, TSQLValue};
 
 impl ToTSQL for CommandJSON {
     fn to_header() -> &'static str {
@@ -16,7 +16,7 @@ impl ToTSQL for CommandJSON {
         vec!["id", "stonker_id", "company_id", "threshold", "share", "kind", "created_at"]
     }
 
-    fn to_data(&self) -> Vec<String> {
+    fn to_data(&self) -> Vec<TSQLValue> {
         todo!()
     }
 }

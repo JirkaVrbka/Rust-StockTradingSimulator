@@ -1,6 +1,6 @@
 use rand::Rng;
 use serde::Deserialize;
-use crate::json::StonkerJSON;
+use crate::{json::StonkerJSON, datagen::{ToTSQLValue, TSQLValue}};
 use super::{Generator, IndexVec, Data, ToTSQL};
 
 impl ToTSQL for StonkerJSON {
@@ -10,10 +10,10 @@ impl ToTSQL for StonkerJSON {
     fn to_columns() -> Vec<&'static str> {
         vec!["id", "name", "balance", "blocked_balance", "invested_balance"]
     }
-    fn to_data(&self) -> Vec<String> {
-        vec![self.id.to_string(), self.name.to_string(),
-            self.balance.to_string(), self.blocked_balance.to_string(),
-            self.invested_balance.to_string()]
+    fn to_data(&self) -> Vec<TSQLValue> {
+        vec![self.id.to_id(), self.name.to(),
+            self.balance.to(), self.blocked_balance.to(),
+            self.invested_balance.to()]
     }
 }
 

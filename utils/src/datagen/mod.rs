@@ -6,11 +6,10 @@ mod stock;
 mod command;
 
 pub mod common;
-use std::convert::TryInto;
-use std::process::Command;
 
 pub use common::generator::Generator;
 pub use common::index_vec::IndexVec;
+pub use common::tsql::{ToTSQL, ToTSQLValue, TSQLValue};
 
 use crate::json::{NewsJSON, CompanyJSON, StonkerJSON, HistoryJSON, CommandJSON, StockJSON};
 
@@ -20,20 +19,6 @@ use self::stock::StockGenerator;
 use self::stonker::StonkerGenerator;
 use self::history::HistoryGenerator;
 use self::command::CommandGenerator;
-
-trait ToTSQL {
-    fn to_header() -> &'static str;  // Stonker
-    fn to_columns() -> Vec<&'static str>;  // [ id ] [ name ] [ password ]
-    fn to_data(&self) -> Vec<String>; // frank1 "Frank" "knarf"
-    fn convert(data: IndexVec<Self>) -> String where Self: Sized {
-        format!("{{ {} }}\n{}\n{}\n", Self::to_header(),
-            Self::to_columns().into_iter().map(|column| format!("[ {} ] ", column)).collect::<String>(),
-            data.into_iter().map(|data|
-                format!("{}\n", Self::to_data(&data).into_iter()
-                    .map(|column| format!("{} ", column)).collect::<String>()),
-            ).collect::<String>())
-    }
-}
 
 pub struct Data {
     companies: IndexVec<CompanyJSON>,
@@ -108,8 +93,8 @@ impl DataGenerator {
     }
     fn print(self) -> String {
         format!("{}{}{}",
-            ToTSQL::convert(self.data.companies),
             ToTSQL::convert(self.data.stonkers),
+            ToTSQL::convert(self.data.companies),
             ToTSQL::convert(self.data.news)
         )
     }
