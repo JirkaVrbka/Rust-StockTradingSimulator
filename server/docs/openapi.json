@@ -100,6 +100,39 @@
           }
         }
       }
+    },
+    "/stonkers/{id}/overview": {
+      "get": {
+        "summary": "Get overview of the user",
+        "operationId": "get_stonker_overview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the user",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Overview of the stonker",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StonkerOverview"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/schemas/DefaultError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -166,6 +199,115 @@
           "invested_balance": {
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "Portfolio": {
+        "type": "object",
+        "required": [
+          "stock",
+          "share",
+          "money",
+          "difference",
+          "bought_for"
+        ],
+        "properties": {
+          "stock": {
+            "type": "string"
+          },
+          "share": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "difference": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "bought_for": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Usage": {
+        "type": "object",
+        "required": [
+          "free",
+          "invested",
+          "blocked"
+        ],
+        "properties": {
+          "free": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "invested": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "blocked": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "History": {
+        "type": "object",
+        "required": [
+          "day",
+          "action",
+          "stock",
+          "money"
+        ],
+        "properties": {
+          "day": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "stock": {
+            "type": "string"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "StonkerOverview": {
+        "type": "object",
+        "required": [
+          "portfolio",
+          "usage",
+          "portfolio_overview",
+          "stonker_history"
+        ],
+        "properties": {
+          "portfolio": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Portfolio"
+            }
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          },
+          "portfolio_overview": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Portfolio"
+            }
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/History"
+            }
           }
         }
       },
