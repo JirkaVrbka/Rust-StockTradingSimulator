@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::diesel::BelongingToDsl;
 use crate::diesel::ExpressionMethods;
 use crate::diesel::QueryDsl;
@@ -110,19 +111,54 @@ impl StonkerRepo for Repo {
                 _ => cheapest_company_stocks.get(0).unwrap().unwrap(),
             };
 
+            let difference: i32 = if st.bought_for > 0 {
+                (((cheapest_company_stock -  st.bought_for) as f32 / st.bought_for as f32) * 100.0) as i32
+            } else { 0 };
+
+
+            print!("Cheapest comapny stocks:");
+            println!("{}", cheapest_company_stock);
+            print!("BoughtFor: ");
+            println!("{}", st.bought_for);
         Ok(PortfolioJSON {
             stock: comp.name.clone(),
             share: st.share,
             money: cheapest_company_stock - st.bought_for,
-            difference: ((cheapest_company_stock -  st.bought_for) / st.bought_for) * 100,
+            difference,
+            bought_for: st.bought_for,
         })})
         .collect();
+
+        let mut portfolio_grp: HashMap<String, PortfolioJSON> = HashMap::new();
+
+        for port in portfolio.as_ref().unwrap().iter() {
+            if !portfolio_grp.contains_key(&port.stock) {
+                portfolio_grp.insert(port.stock.clone(), port.clone());
+                continue;
+            }
+
+            let mut p = match portfolio_grp.get_mut(&port.stock) {
+                None => {panic!("Invalid state")}
+                Some(pp) => pp
+            };
+            p.share += port.share;
+            p.money += port.money;
+            p.bought_for += port.bought_for;
+        }
+
+        let mut portfolio_overview: Vec<PortfolioJSON> = portfolio_grp.into_values().collect();
+        for port in portfolio_overview.iter_mut() {
+            port.difference = if port.bought_for > 0 {
+                (port.money as f32 / port.bought_for as f32 * 100.0) as i32
+            } else { 0 };
+        }
 
 
         let result = StonkerOverviewJSON {
             portfolio: portfolio?,
             usage,
             stonker_history,
+            portfolio_overview,
         };
 
         Ok(result)
