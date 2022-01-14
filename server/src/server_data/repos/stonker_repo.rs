@@ -52,32 +52,6 @@ impl StonkerRepo for Repo {
         Ok(results)
     }
 
-    async fn get_stonker_by_id(&self, s_id: i32) -> anyhow::Result<StonkerJSON> {
-        let connection = self.connect()?;
-        let result = Repo::find::<Stonker, _>(
-            &connection,
-            stonker,
-            s_id,
-            "stonker"
-        )?;
-        result.to_json(&connection)
-    }
-
-    async fn get_stonker_by_name(&self, nname: &String) -> anyhow::Result<StonkerJSON> {
-        let connection = self.connect()?;
-        let stonkers = Repo::all::<Stonker, _>(
-            &connection,
-            stonker,
-            "stonkers"
-        )?;
-        for s in stonkers.iter() {
-            if &s.name == nname {
-                return s.to_json(&connection);
-            }
-        }
-        return Err(anyhow::Error::msg("No such stonker."));
-    }
-
     async fn get_stonker_overview(&self, s_id: i32) -> anyhow::Result<StonkerOverviewJSON> {
         let connection = self.connect()?;
         let stonker_entity = Repo::find::<Stonker, _>(
@@ -154,6 +128,17 @@ impl StonkerRepo for Repo {
         Ok(result)
     }
 
+    async fn get_stonker_by_id(&self, s_id: i32) -> anyhow::Result<StonkerJSON> {
+        let connection = self.connect()?;
+        let result = Repo::find::<Stonker, _>(
+            &connection,
+            stonker,
+            s_id,
+            "stonker"
+        )?;
+        result.to_json(&connection)
+    }
+
     async fn create_stonker(&self, new_stonker: NewStonker) -> anyhow::Result<StonkerJSON> {
         let connection = self.connect()?;
 
@@ -179,5 +164,20 @@ impl StonkerRepo for Repo {
             format!("stocks belonging to stonker with id {}", s_id).as_str()
         )?;
         stonker_stocks.to_json(&connection)
+    }
+
+    async fn get_stonker_by_name(&self, nname: &String) -> anyhow::Result<StonkerJSON> {
+        let connection = self.connect()?;
+        let stonkers = Repo::all::<Stonker, _>(
+            &connection,
+            stonker,
+            "stonkers"
+        )?;
+        for s in stonkers.iter() {
+            if &s.name == nname {
+                return s.to_json(&connection);
+            }
+        }
+        return Err(anyhow::Error::msg("No such stonker."));
     }
 }
