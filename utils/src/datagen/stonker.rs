@@ -22,7 +22,7 @@ struct Name {
     first: String,
     last: String,
 }
-
+#[allow(dead_code)]
 pub struct StonkerGenerator {
     first_names: IndexVec<String>,
     last_names: IndexVec<String>,

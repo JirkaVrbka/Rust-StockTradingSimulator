@@ -9,11 +9,15 @@ extern crate yew;
 extern crate yew_router;
 extern crate yew_styles;
 
+use crate::components::{Portfolio};
+use crate::dto::PortfolioDto;
+
 pub struct Home {
     ws: Option<WebSocketTask>,
     link: ComponentLink<Self>,
     text: String,
-    server_data: String
+    server_data: String,
+    portfolios: Vec<PortfolioDto>
 }
 
 pub enum HomeMsg {
@@ -30,11 +34,18 @@ impl Component for Home {
     type Properties = ();
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        let mut p = Vec::new();
+        p.push(PortfolioDto { stock : "Netflix".to_string(),  share: 1.0, difference: 1.0, money: 15} );
+        p.push(PortfolioDto { stock : "Netflix".to_string(),  share: 1.0, difference: 1.0, money: 15} );
+        p.push(PortfolioDto { stock : "Netflix".to_string(),  share: 1.0, difference: 1.0, money: 15} );
+        p.push(PortfolioDto { stock : "Netflix".to_string(),  share: 1.0, difference: 1.0, money: 15} );
+
         Self {
             ws: None,
             link: link,
             text: String::new(),
             server_data: String::new(),
+            portfolios: p
         }
     }
 
@@ -100,6 +111,20 @@ impl Component for Home {
 
     fn view(&self) -> Html {
         html! {
+            <>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-6">
+                        <Portfolio portfolios=self.portfolios.clone()/>
+                    </div>
+                    <div class="col-6"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6"></div>
+                </div>
+            </div>
             <div>
                 // connect button
                 <p><button onclick=self.link.callback(|_| HomeMsg::Connect)>{ "Connect" }</button></p><br/>
@@ -112,6 +137,7 @@ impl Component for Home {
                 // text area for showing data from the server
                 <p><textarea value=self.server_data.clone()></textarea></p><br/>
             </div>
+            </>
         }
     }
 }

@@ -40,6 +40,7 @@ struct Info {
     text: String
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct Headline {
     date: i32,
