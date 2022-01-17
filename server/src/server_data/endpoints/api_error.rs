@@ -28,11 +28,12 @@ impl ApiError {
     }
 
     fn handle_error(e: anyhow::Error) -> Result<HttpResponse> {
-        let api_error = match ApiError::from(e.to_string()) {
+        let err = format!("{:#}", e);
+        let api_error = match ApiError::from(err.clone()) {
             Ok(err) => err,
             Err(e) => ApiError {code:500, cause: e.to_string()}
         };
-        error!("{}", api_error.cause);
+        error!("{}", err);
         match api_error.code {
             500 => Ok(HttpResponse::InternalServerError().json(api_error)),
             400 => Ok(HttpResponse::BadRequest().json(api_error)),

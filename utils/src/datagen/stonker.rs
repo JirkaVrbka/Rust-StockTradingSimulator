@@ -1,7 +1,21 @@
 use rand::Rng;
 use serde::Deserialize;
-use crate::json::StonkerJSON;
-use super::{Generator, IndexVec};
+use crate::{json::StonkerJSON, datagen::{ToTSQLValue, TSQLValue}};
+use super::{Generator, IndexVec, Data, ToTSQL, JsonGenerator};
+
+impl ToTSQL for StonkerJSON {
+    fn to_header() -> &'static str {
+        "Stonker"
+    }
+    fn to_columns() -> Vec<&'static str> {
+        vec!["id", "name", "password", "balance", "blocked_balance", "invested_balance"]
+    }
+    fn to_data(&self) -> Vec<TSQLValue> {
+        vec![self.id.to_id(), self.name.to(), self.password.to(),
+            self.balance.to(), self.blocked_balance.to(),
+            self.invested_balance.to()]
+    }
+}
 
 #[derive(Deserialize)]
 struct Name {
@@ -10,30 +24,27 @@ struct Name {
 }
 
 pub struct StonkerGenerator {
-    generator: Generator,
     first_names: IndexVec<String>,
     last_names: IndexVec<String>,
-    spawned: IndexVec<StonkerJSON>
 }
 
-impl StonkerGenerator {
-    pub fn new() -> anyhow::Result<StonkerGenerator> {
+impl JsonGenerator for StonkerGenerator {
+    fn new() -> anyhow::Result<StonkerGenerator> {
         let names: IndexVec<Name> = IndexVec::read_csv("names.csv", b' ')?;
         Ok(StonkerGenerator {
-            generator: Generator::new(),
             first_names: IndexVec::from(&names, |name| name.first.clone()),
             last_names: IndexVec::from(&names, |name| name.last.clone()),
-            spawned: IndexVec::new()
         })
     }
 
-    pub fn create(&mut self) -> &StonkerJSON {
-        self.spawned.push_back(StonkerJSON {
-            id: self.generator.next(),
-            name: format!("{} {}", self.generator.choose(&mut self.first_names), self.generator.choose(&mut self.last_names)),
-            balance: self.generator.random.gen_range(100..100000),
+    fn create(&mut self, generator: &mut Generator, data: &mut Data) {
+        data.stonkers.push_back(StonkerJSON {
+            id: data.next(),
+            name: format!("{} {}", generator.choose(&mut self.first_names), generator.choose(&mut self.last_names)),
+            balance: generator.random.gen_range(100..100000),
             blocked_balance: 0,
-            invested_balance: 0
+            invested_balance: 0,
+            password: generator.random_password(5),
         })
     }
 }

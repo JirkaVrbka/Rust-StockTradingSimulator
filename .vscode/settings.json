@@ -9,6 +9,10 @@
         "repr",
         "stonker",
         "stonkers",
+        "TSQL",
         "websockets"
-    ]
+    ],
+    "files.associations": {
+        "*.tsql": "sql",
+    }
 }

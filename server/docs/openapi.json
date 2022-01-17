@@ -1,0 +1,374 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Stock Trading Simulator",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8081/"
+    }
+  ],
+  "paths": {
+    "/companies": {
+      "get": {
+        "summary": "List all companies",
+        "operationId": "get_companies",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of all companies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Companies"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/schemas/DefaultError"
+          }
+        }
+      }
+    },
+    "/companies/{id}": {
+      "get": {
+        "summary": "Get company",
+        "operationId": "get_company",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the company to retrieve",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company with the id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/schemas/DefaultError"
+          }
+        }
+      }
+    },
+    "/companies/{id}/stocks": {
+      "get": {
+        "summary": "Get stocks of the company",
+        "operationId": "get_company_stocks",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the company",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stocks of the company",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stocks"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/schemas/DefaultError"
+          }
+        }
+      }
+    },
+    "/stonkers/{id}/overview": {
+      "get": {
+        "summary": "Get overview of the user",
+        "operationId": "get_stonker_overview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The id of the user",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Overview of the stonker",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StonkerOverview"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/schemas/DefaultError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+
+    "schemas": {
+      "DefaultError": {
+        "description": "unexpected error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Company": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "performer"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "performer": {
+            "$ref": "#/components/schemas/Stonker"
+          }
+        }
+      },
+      "Companies": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Company"
+        }
+      },
+      "Stonker": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "balance": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "blocked_balance": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "invested_balance": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Portfolio": {
+        "type": "object",
+        "required": [
+          "stock",
+          "share",
+          "money",
+          "difference",
+          "bought_for"
+        ],
+        "properties": {
+          "stock": {
+            "type": "string"
+          },
+          "share": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "difference": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "bought_for": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "Usage": {
+        "type": "object",
+        "required": [
+          "free",
+          "invested",
+          "blocked"
+        ],
+        "properties": {
+          "free": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "invested": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "blocked": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "History": {
+        "type": "object",
+        "required": [
+          "day",
+          "action",
+          "stock",
+          "money"
+        ],
+        "properties": {
+          "day": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "stock": {
+            "type": "string"
+          },
+          "money": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "StonkerOverview": {
+        "type": "object",
+        "required": [
+          "portfolio",
+          "usage",
+          "portfolio_overview",
+          "stonker_history"
+        ],
+        "properties": {
+          "portfolio": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Portfolio"
+            }
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          },
+          "portfolio_overview": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Portfolio"
+            }
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/History"
+            }
+          }
+        }
+      },
+      "Stock": {
+        "type": "object",
+        "required": [
+          "id",
+          "owner",
+          "issued_by",
+          "share",
+          "bought_for"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Stonker"
+          },
+          "issued_by": {
+            "$ref": "#/components/schemas/Company"
+          },
+          "share": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "bought_for": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sold_for": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true,
+            "default": null
+          }
+        }
+      },
+      "Stocks": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Stock"
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

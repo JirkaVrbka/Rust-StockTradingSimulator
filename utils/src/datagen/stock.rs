@@ -1,30 +1,53 @@
 use rand::Rng;
 
-use crate::json::{CompanyJSON, StockJSON};
+use crate::{json::{StockJSON, CommandJSON, CommandTypesJSON}, datagen::ToTSQLValue};
 
-use super::Generator;
+use super::{Generator, Data, JsonGenerator, ToTSQL};
 
-pub struct StockGenerator {
-    generator: Generator
+impl ToTSQL for StockJSON {
+    fn to_header() -> &'static str {
+        "Stock"
+    }
+    fn to_columns() -> Vec<&'static str> {
+        vec!["id", "stonker_id", "company_id", "share", "bought_for"]
+    }
+    fn to_data(&self) -> Vec<super::TSQLValue> {
+        vec![self.id.to_id(), self.owner.id.to_id(), self.issued_by.id.to_id(), self.share.to(), self.bought_for.to()]
+    }
 }
 
-impl StockGenerator {
-    pub fn new() -> StockGenerator {
-        StockGenerator {
-            generator: Generator::new()
-        }
+pub struct StockGenerator;
+
+impl JsonGenerator for StockGenerator {
+    fn new() -> anyhow::Result<StockGenerator> {
+        Ok(StockGenerator)
     }
-    pub fn create(&mut self, company: &CompanyJSON) -> Vec<StockJSON> {
-        let stocks = self.generator.random.gen_range(1..1000); // 1 - 999 stocks
-        let value = self.generator.random.gen_range(1..(1_000_000/stocks));
-        (0..stocks).into_iter().map(|_nth| {
+    fn create(&mut self, generator: &mut Generator, data: &mut Data) {
+        let count = data.next();
+        let company = generator.choose(&mut data.companies);
+        let stocks = generator.random.gen_range(1..100); // 1 - 99 stocks
+        let share = generator.random.gen_range(1..(1_000_000/stocks));
+        let threshold = company.performer.invested_balance;
+        for nth in 0..stocks {
+            data.stocks.push_back(
             StockJSON {
-                id: self.generator.next(),
+                id: count + 2 * nth,
                 owner: company.performer.clone(),
                 issued_by: company.clone(),
-                share: value,
+                share,
                 bought_for: 0,
-            }
-        }).collect()
+            });
+            data.commands.push_back({
+                CommandJSON {
+                    id: count + 2 * nth + 1,
+                    stonker: company.performer.clone(),
+                    company: company.clone(),
+                    threshold,
+                    share,
+                    kind: CommandTypesJSON::Sell,
+                    created_at: Generator::get_beginning()
+                }
+            })
+        }
     }
 }

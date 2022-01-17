@@ -3,7 +3,19 @@ use serde::Deserialize;
 
 use crate::json::{CompanyJSON, StonkerJSON};
 
-use super::{Generator, IndexVec};
+use super::{Generator, IndexVec, Data, ToTSQL, TSQLValue, ToTSQLValue, JsonGenerator};
+
+impl ToTSQL for CompanyJSON {
+    fn to_header() -> &'static str {
+        "Company"
+    }
+    fn to_columns() -> Vec<&'static str> {
+        vec!["id", "name", "performer_id"]
+    }
+    fn to_data(&self) -> Vec<TSQLValue> {
+        vec![self.id.to_id(), self.name.to(), self.performer.id.to_id()]
+    }
+}
 
 #[derive(Debug, Deserialize)]
 struct Stock {
@@ -13,32 +25,30 @@ struct Stock {
 }
 
 pub struct CompanyGenerator {
-    generator: Generator,
     stocks: IndexVec<Stock>,
-    spawned: IndexVec<CompanyJSON>
 }
 
-impl CompanyGenerator {
-    pub fn new() -> anyhow::Result<CompanyGenerator> {
+impl JsonGenerator for CompanyGenerator {
+    fn new() -> anyhow::Result<CompanyGenerator> {
         Ok(CompanyGenerator{
-            generator: Generator::new(),
             stocks: IndexVec::read_csv("stocks.csv", b',')?,
-            spawned: IndexVec::new()
         })
     }
-    pub fn create(&mut self) -> &CompanyJSON {
-        let stock = self.generator.choose(&mut self.stocks);
-        let id = self.generator.next();
-        self.spawned.push_back(CompanyJSON {
-            id,
+    fn create(&mut self, generator: &mut Generator, data: &mut Data) {
+        let stock = generator.choose(&mut self.stocks);
+        let performer = StonkerJSON {
+            id: data.next(),
+            name: stock.name.clone(),
+            balance: generator.random.gen_range(10_000..100_000),
+            blocked_balance: 0,
+            invested_balance: (100.0 * stock.price.clone()).round() as i32,
+            password: generator.random_password(5),
+        };
+        data.stonkers.push_back(performer.clone());
+        data.companies.push_back(CompanyJSON {
+            id: data.next(),
             name: stock.symbol.clone(),
-            performer: StonkerJSON {
-                id,
-                name: stock.name.clone(),
-                balance: self.generator.random.gen_range(10_000..100_000),
-                blocked_balance: 0,
-                invested_balance: 0,
-            }
-        })
+            performer
+        });
     }
 }

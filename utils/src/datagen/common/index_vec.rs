@@ -22,9 +22,8 @@ impl<T> IndexVec<T> {
     pub fn from<J>(vec: &IndexVec<T>, convert: fn(&T)->J) -> IndexVec<J> {
         IndexVec(vec.0.iter().map(|(value, used)| (convert(value), *used)).collect())
     }
-    pub fn push_back(&mut self, item: T) -> &T {
+    pub fn push_back(&mut self, item: T) {
         self.0.push((item, false));
-        &self.0.last().unwrap().0
     }
     pub fn extend(&mut self, items: Vec<T>) {
         items.into_iter().for_each(|item| {
@@ -55,8 +54,27 @@ impl<T> IndexVec<T> {
             Some(val) => &self.0[val].0
         }
     }
+    // copy of choose, but with two muts added
+    pub fn choose_mut(&mut self, index: usize) -> &mut T {
+        if self.0.is_empty() {
+            panic!("Empty collection");
+        }
+        match self.next(index) {
+            None => {
+                self.reset();
+                &mut self.0[index].0
+            }
+            Some(val) => &mut self.0[val].0
+        }
+    }
     pub fn len(&self) -> usize {
         self.0.len()
+    }
+    pub fn iter_mut(&mut self) -> Vec<&mut T> {
+        self.0.iter_mut().map(|(value, _)| value).collect()
+    }
+    pub fn iter(&self) -> Vec<&T> {
+        self.0.iter().map(|(value, _)| value).collect()
     }
 }
 

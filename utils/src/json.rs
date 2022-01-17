@@ -39,6 +39,13 @@ pub struct StonkerJSON {
     pub balance: i32,
     pub blocked_balance: i32,
     pub invested_balance: i32,
+    pub password: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct StonkerCredentials {
+    pub name: String,
+    pub password: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -91,6 +98,7 @@ pub struct StonkerOverviewJSON {
     pub portfolio: Vec<PortfolioJSON>,
     pub usage: UsageJSON,
     // TODO: pub graph: unknown_yet,
+    pub portfolio_overview: Vec<PortfolioJSON>,
     pub stonker_history: Vec<StonkerHistoryJSON>,
 }
 
@@ -100,6 +108,7 @@ pub struct PortfolioJSON {
     pub share: i32,
     pub money: i32,
     pub difference: i32,
+    pub bought_for: i32,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
