@@ -73,49 +73,18 @@ impl Component for Model {
     fn view(&self) -> Html {
         html! {
             <div>
-            <div class="fs-big title ps-5">{"STONKER$"}</div>
-                <div class="container-fluid">
-                    <div class="row">
-                    <div class="col-2 navigation">
+            <div class="row fs-8vh bg-gray text-white ps-5 py-2">{"STONKER$"}</div>
+
+                <div class="d-flex flex-row h-100">
+                    <div class="d-flex flex-column fs-1 bg-dark-gray text-white pe-5 ps-2" >
                         <NavElement name="Home" icon="bi bi-house-door" link="/"/>
                         <NavElement name="Stocks" icon="bi bi-file-earmark-text" link="/stocks"/>
                         <NavElement name="History" icon="bi bi-graph-up" link="/history"/>
                         <NavElement name="Search" icon="bi bi-search" link="/search"/>
                         <NavElement name="News" icon="bi bi-exclamation-lg" link="/news"/>
-                        <div class="row">
-                            //
-                            //     <RouterAnchor<AppRouter>route=AppRouter::Stocks>
-                            //             <Button
-                            //                 class_name="navbar-route btn fs-1 text-white"
-                            //                 onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(1))>
-                            //                 {"Stocks"}
-                            //             </Button>
-                            //         </RouterAnchor<AppRouter>>
-                            //         <RouterAnchor<AppRouter>route=AppRouter::History>
-                            //             <Button
-                            //                 class_name="navbar-route btn fs-1 text-white"
-                            //                 onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(2))>
-                            //                 {"History"}
-                            //             </Button>
-                            //         </RouterAnchor<AppRouter>>
-                            //         <RouterAnchor<AppRouter>route=AppRouter::Search>
-                            //             <Button
-                            //                 class_name="navbar-route btn fs-1 text-white"
-                            //                 onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(3))>
-                            //                 {"Search"}
-                            //             </Button>
-                            //         </RouterAnchor<AppRouter>>
-                            //         <RouterAnchor<AppRouter>route=AppRouter::News>
-                            //             <Button
-                            //                 class_name="navbar-route btn fs-1 text-white"
-                            //                 onclick_signal=self.link.callback(|_| Msg::ChangeNavbarItem(4))>
-                            //                 {"News"}
-                            //             </Button>
-                            //         </RouterAnchor<AppRouter>>
-                        </div>
                     </div>
-                    <div class="col mt-3">
-                                <Router<AppRouter, ()>
+
+                 <Router<AppRouter, ()>
                                     render=Router::render(|switch: AppRouter | {
                                         match switch {
                                             AppRouter::Root => html!{
@@ -141,9 +110,8 @@ impl Component for Model {
                                         AppRouter::NotFound(Permissive(Some(route.route)))
                                     })
                                 />
-                    </div>
+
                 </div>
-            </div>
             </div>
         }
     }

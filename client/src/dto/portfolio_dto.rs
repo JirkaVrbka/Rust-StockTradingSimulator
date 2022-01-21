@@ -1,4 +1,4 @@
-use yew::{Html, html};
+use yew::{classes, Html, html};
 use crate::fetcher::ToHtml;
 use serde::{Serialize, Deserialize};
 
@@ -27,12 +27,14 @@ impl ToHtml for PortfolioDto {
         let stock = &self.stock;
         let share = self.share;
         let diff = self.difference;
+        let money_color = if money < 0 {"text-danger"} else {"text-success"};
+        let diff_color = if diff < 0.0 {"text-danger"} else {"text-success"};
         html! {
-             <div class="row">
-                    <div class="col-3 text-muted">{money}</div>
-                    <div class="col-3 text-muted">{stock}</div>
-                    <div class="col-3 text-muted">{money}</div>
-                    <div class="col-3 text-muted">{diff}</div>
+             <div class="row my-3">
+                    <div class="col-3">{stock}</div>
+                    <div class="col-3">{ if share > 0.0 {share.to_string() + "%"} else {"-".to_string()} }</div>
+                    <div class={classes!("col-3", money_color.clone())}>{money}{"$"}</div>
+                    <div class={classes!("col-3", diff_color.clone())}>{diff}{"%"}</div>
                 </div>
         }
     }

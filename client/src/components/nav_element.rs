@@ -29,14 +29,12 @@ impl Component for NavElement {
 
     fn view(&self) -> Html {
         html! {
-            <div class="row">
-                                <a href=self.props.link.clone() class="navbar-route btn fs-1 text-white text-start">
-                                    <span class="text-secondary me-2">
-                                        <i class=self.props.icon.clone()></i>
-                                    </span>
-                                    { self.props.name.clone() }
-                                </a>
-                        </div>
+            <a class="mt-3 no-highlight d-flex align-items-center" href=self.props.link.clone()>
+                            <span class="text-secondary me-2">
+                                <i class=self.props.icon.clone()></i>
+                            </span>
+                            <div class="">{ self.props.name.clone() }</div>
+            </a>
         }
     }
 }

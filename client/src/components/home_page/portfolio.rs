@@ -31,15 +31,18 @@ impl Component for Portfolio {
 
     fn view(&self) -> Html {
         html! {
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-3 text-muted">{"stock"}</div>
-                    <div class="col-3 text-muted">{"share"}</div>
-                    <div class="col-3 text-muted">{"money"}</div>
-                    <div class="col-3 text-muted">{"difference"}</div>
-                </div>
+            <>
+             <h2 class="fw-bolder">{"PORTFOLIO"}</h2>
+                        <div class="container-fluid g-0">
+                            <div class="row text-secondary fst-italic">
+                                <div class="col-3">{"stock"}</div>
+                                <div class="col-3">{"share"}</div>
+                                <div class="col-3">{"money"}</div>
+                                <div class="col-3">{"difference"}</div>
+                            </div>
                 {self.props.portfolios.to_html()}
             </div>
+            </>
         }
     }
 }
