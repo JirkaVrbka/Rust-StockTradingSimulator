@@ -28,7 +28,6 @@ enum Fetch<T> {
 #[derive(Debug)]
 pub struct ImmediateFetcher<T: ToHtml> {
     fetch: Fetch<T>,
-    link: ComponentLink<Self>,
 }
 
 impl<T: ToHtml> Component for ImmediateFetcher<T> {
@@ -48,7 +47,6 @@ impl<T: ToHtml> Component for ImmediateFetcher<T> {
         let task = FetchService::fetch(request, callback).expect("failed to start request");
         Self {
             fetch: Fetch::Fetching(task),
-            link,
         }
     }
     fn change(&mut self, _props: Self::Properties) -> bool {

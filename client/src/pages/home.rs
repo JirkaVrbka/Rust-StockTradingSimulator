@@ -9,11 +9,15 @@ extern crate yew;
 extern crate yew_router;
 extern crate yew_styles;
 
+use crate::components::home_page::{Portfolio, Usage, Graph, History};
+use crate::dto::PortfolioDto;
+
 pub struct Home {
     ws: Option<WebSocketTask>,
     link: ComponentLink<Self>,
     text: String,
-    server_data: String
+    server_data: String,
+    portfolios: Vec<PortfolioDto>
 }
 
 pub enum HomeMsg {
@@ -30,11 +34,18 @@ impl Component for Home {
     type Properties = ();
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        let mut p = Vec::new();
+        p.push(PortfolioDto { stock : "Netflix".to_string(),  share: 0.1, difference: -2.0, money: -5} );
+        p.push(PortfolioDto { stock : "Amazon".to_string(),  share: 12.0, difference: 22.0, money: 112} );
+        p.push(PortfolioDto { stock : "PizzaGuy".to_string(),  share: 5.0, difference: -12.0, money: -70} );
+        p.push(PortfolioDto { stock : "Total".to_string(),  share: -1.0, difference: 7.0, money: 37} );
+
         Self {
             ws: None,
             link: link,
             text: String::new(),
             server_data: String::new(),
+            portfolios: p
         }
     }
 
@@ -100,18 +111,36 @@ impl Component for Home {
 
     fn view(&self) -> Html {
         html! {
-            <div>
-                // connect button
-                <p><button onclick=self.link.callback(|_| HomeMsg::Connect)>{ "Connect" }</button></p><br/>
-                // text showing whether we're connected or not
-                <p>{ "Connected: "}{ !self.ws.is_none() } </p><br/>
-                // input box for sending text
-                <p><input type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| HomeMsg::TextInput(e.value))/></p><br/>
-                // button for sending text
-                <p><button onclick=self.link.callback(|_| HomeMsg::SendText)>{ "Send" }</button></p><br/>
-                // text area for showing data from the server
-                <p><textarea value=self.server_data.clone()></textarea></p><br/>
+            <>
+            <div class="flex-fill fs-3">
+                <div class="container-fluid ms-3 mt-3">
+                    <div class="row">
+                        <div class="col-6 pe-4">
+                            <Portfolio portfolios=self.portfolios.clone()/>
+                         </div>
+                        <div class="col-6 ps-4">
+                            <Usage/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 pe-4"><Graph/></div>
+                        <div class="col-6 ps-4"><History/></div>
+                     </div>
+                </div>
             </div>
+            // <div>
+            //     // connect button
+            //     <p><button onclick=self.link.callback(|_| HomeMsg::Connect)>{ "Connect" }</button></p><br/>
+            //     // text showing whether we're connected or not
+            //     <p>{ "Connected: "}{ !self.ws.is_none() } </p><br/>
+            //     // input box for sending text
+            //     <p><input type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| HomeMsg::TextInput(e.value))/></p><br/>
+            //     // button for sending text
+            //     <p><button onclick=self.link.callback(|_| HomeMsg::SendText)>{ "Send" }</button></p><br/>
+            //     // text area for showing data from the server
+            //     <p><textarea value=self.server_data.clone()></textarea></p><br/>
+            // </div>
+            </>
         }
     }
 }

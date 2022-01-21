@@ -21,20 +21,15 @@ impl ToHtml for NewsJSON {
             utils::json::EffectJSON::Rise => Palette::Success,
         };
         html! {
-            <Card
-                card_size=Size::Medium
-                card_palette=palette
-                card_style=Style::Regular
-                header=Some(html!{
-                    <div>{header}</div>
-                })
-                body=Some(html!{
-                    <div>{body}</div>
-                })
-                footer=Some(html!{
-                    <div>{footer}</div>
-                })
-            />
+            <div class="col">
+                <div class="card h-100 m-2 p-2 bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">{header}</h5>
+                        <p class="card-text">{body}</p>
+                    </div>
+                    <div class="card-footer text-end border-0 bg-warning">{footer}</div>
+                </div>
+            </div>
         }
     }
 }
@@ -42,13 +37,9 @@ impl ToHtml for NewsJSON {
 impl ToHtml for Vec<NewsJSON> {
     fn to_html(&self) -> Html {
         html! {
-            <Container direction=Direction::Row wrap=Wrap::Wrap> {
                 self.iter().map(|el| html!{
-                    <Item layouts=vec!(ItemLayout::ItXs(self.len().try_into().unwrap())) align_self=AlignSelf::FlexStart>
                         { el.to_html() }
-                    </Item>
                 }).collect::<Html>()
-            } </Container>
         }
     }
 }
@@ -73,14 +64,14 @@ impl Component for News {
 
     fn view(&self) -> Html {
         html! {
-            <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
-                <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-                    <Text plain_text="News" text_type=TextType::Plain />
-                </Item>
-                <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
+            <div class="container-fluid">
+                <div class="row">
+                    <h1 class="text-center">{"News"}</h1>
+                </div>
+                <div class="row cols-3">
                     <ImmediateFetcher::<Vec<NewsJSON>> port="news"/>
-                </Item>
-            </Container>
+                </div>
+            </div>
         }
     }
 }
