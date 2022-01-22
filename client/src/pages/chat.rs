@@ -70,6 +70,7 @@ impl Component for Chat {
                 match self.ws {
                     Some(ref mut task) => {
                         task.send(Json(&self.text));
+                        self.text = String::new();
                         true
                     }
                     None => {
@@ -95,14 +96,46 @@ impl Component for Chat {
     fn view(&self) -> Html {
         html! {
             <div>
-                <textarea class="form-control" value=self.server_data.clone() rows="20" cols="80" readonly=true/>
-                <div class="input-group mb-3">
-                    <input class="form-control" type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| ChatMsg::TextInput(e.value))/>
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" onclick=self.link.callback(|_| ChatMsg::SendText)>{ "Send" }</button>
+                <div class="container mt-3">
+                    <h3>{{"Modal Example"}}</h3>
+                    <p>{{"Click on the button to open the modal."}}</p>
+
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+                        {{"Open modal"}}
+                    </button>
+                </div>
+
+                <div class="modal" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h4 class="modal-title">{{"Modal Heading"}}</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            {{"Modal body.."}}
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{"Close"}}</button>
+                        </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
+
+              // <div>
+            //     <textarea class="form-control" value=self.server_data.clone() rows="20" cols="80" readonly=true disabled=true/>
+            //     <div class="input-group mb-3">
+            //         <input class="form-control" type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| ChatMsg::TextInput(e.value))/>
+            //         <div class="input-group-append">
+            //             <button class="btn btn-primary" onclick=self.link.callback(|_| ChatMsg::SendText)>{ "Send" }</button>
+            //         </div>
+            //     </div>
+            // </div>
         }
     }
 }

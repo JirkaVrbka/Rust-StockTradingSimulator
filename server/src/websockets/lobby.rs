@@ -79,7 +79,7 @@ impl Handler<Connect> for Lobby {
             msg.addr,
         );
 
-        self.send_message(&format!("your id is {}", msg.self_id), &msg.self_id);
+        self.send_message(&format!("Joined to global chat. Your id is {}", msg.self_id), &msg.self_id);
     }
 }
 
