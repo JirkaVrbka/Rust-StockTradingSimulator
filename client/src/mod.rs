@@ -3,7 +3,7 @@
 pub mod fetcher;
 
 use yew::prelude::*;
-use crate::pages::{Home, Stocks, History, Search, News};
+use crate::pages::{Home, Stocks, HistoryPage, Search, News};
 use crate::components::{Counter, NavElement};
 use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
 use yew_styles::button::Button;
@@ -83,7 +83,7 @@ impl Component for Model {
                         <NavElement name="Search" icon="bi bi-search" link="/search"/>
                         <NavElement name="News" icon="bi bi-exclamation-lg" link="/news"/>
                     </div>
-
+                <div class="w-100">
                  <Router<AppRouter, ()>
                                     render=Router::render(|switch: AppRouter | {
                                         match switch {
@@ -94,7 +94,7 @@ impl Component for Model {
                                                 <Stocks/>
                                             },
                                             AppRouter::History => html!{
-                                                <History/>
+                                                <HistoryPage/>
                                             },
                                             AppRouter::Search => html!{
                                                 <Search/>
@@ -110,7 +110,7 @@ impl Component for Model {
                                         AppRouter::NotFound(Permissive(Some(route.route)))
                                     })
                                 />
-
+                </div>
                 </div>
             </div>
         }

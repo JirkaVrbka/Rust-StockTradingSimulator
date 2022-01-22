@@ -10,6 +10,8 @@ use crate::fetcher::immediate::ImmediateFetcher;
 use yew_styles::styles::{Size, Palette, Style};
 use yew_styles::card::Card;
 
+use crate::components::{NewsCard};
+
 impl ToHtml for NewsJSON {
     fn to_html(&self) -> Html {
         let header = &self.title;
@@ -64,14 +66,22 @@ impl Component for News {
 
     fn view(&self) -> Html {
         html! {
-            <div class="container-fluid">
-                <div class="row">
-                    <h1 class="text-center">{"News"}</h1>
-                </div>
-                <div class="row cols-3">
-                    <ImmediateFetcher::<Vec<NewsJSON>> port="news"/>
+            <div>
+                <h1 class="text-center">{"News"}</h1>
+                <div class="d-flex flex-wrap w-100">
+                    <NewsCard title="bla bla" text="a tak dale" author="the dog" color="bg-info"/>
+                    <NewsCard title="bla bla" text="a tak dale" author="the dog" color="bg-info"/>
+                    <NewsCard title="bla bla" text="a tak dale" author="the dog" color="bg-info"/>
                 </div>
             </div>
+            // <div class="container-fluid">
+            //     <div class="row">
+            //         <h1 class="text-center">{"News"}</h1>
+            //     </div>
+            //     <div class="row cols-3">
+            //         <ImmediateFetcher::<Vec<NewsJSON>> port="news"/>
+            //     </div>
+            // </div>
         }
     }
 }
