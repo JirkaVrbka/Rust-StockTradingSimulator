@@ -29,9 +29,21 @@ impl Component for Chat {
     type Message = ChatMsg;
     type Properties = ();
 
+
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        ConsoleService::log("Connecting");
+        let cbout = link.callback(|data| ChatMsg::Received(data));
+        let cbnot = link.callback(|input| {
+            ConsoleService::log(&format!("Notification: {:?}", input));
+            match input {
+                WebSocketStatus::Closed | WebSocketStatus::Error => {
+                    ChatMsg::Disconnected
+                }
+                _ => ChatMsg::Ignore,
+            }
+        });
         Self {
-            ws: None,
+            ws: WebSocketService::connect_text("ws://127.0.0.1:8081/c05554ae-b4ee-4976-ac05-97aaf3c98a23", cbout, cbnot).ok(),
             link: link,
             text: String::new(),
             server_data: String::new(),
@@ -41,24 +53,6 @@ impl Component for Chat {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             ChatMsg::Connect => {
-                ConsoleService::log("Connecting");
-                let cbout = self.link.callback(|data| ChatMsg::Received(data));
-                let cbnot = self.link.callback(|input| {
-                    ConsoleService::log(&format!("Notification: {:?}", input));
-                    match input {
-                        WebSocketStatus::Closed | WebSocketStatus::Error => {
-                            ChatMsg::Disconnected
-                        }
-                        _ => ChatMsg::Ignore,
-                    }
-                });
-                if self.ws.is_none() {
-                    // this will connect us to the default chat lobby,
-                    // later we can replace this to private lobby
-                    // or graph lobby where chat messages will be buy and sell commands
-                    let task = WebSocketService::connect_text("ws://127.0.0.1:8081/c05554ae-b4ee-4976-ac05-97aaf3c98a23", cbout, cbnot);
-                    self.ws = Some(task.unwrap());
-                }
                 true
             }
             ChatMsg::Disconnected => {
@@ -101,16 +95,12 @@ impl Component for Chat {
     fn view(&self) -> Html {
         html! {
             <div>
-                // connect button
-                <p><button onclick=self.link.callback(|_| ChatMsg::Connect)>{ "Connect" }</button></p><br/>
-                // text showing whether we're connected or not
-                <p>{ "Connected: "}{ !self.ws.is_none() } </p><br/>
+                // text area for showing data from the server
+                <p><textarea value=self.server_data.clone()></textarea></p><br/>
                 // input box for sending text
                 <p><input type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| ChatMsg::TextInput(e.value))/></p><br/>
                 // button for sending text
                 <p><button onclick=self.link.callback(|_| ChatMsg::SendText)>{ "Send" }</button></p><br/>
-                // text area for showing data from the server
-                <p><textarea value=self.server_data.clone()></textarea></p><br/>
             </div>
         }
     }
