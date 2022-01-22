@@ -97,9 +97,13 @@ impl Component for Chat {
         html! {
             <div>
                 <div class="container mt-3">
-                    <h3>{{"Modal Example"}}</h3>
-                    <p>{{"Click on the button to open the modal."}}</p>
-
+                    <textarea class="form-control" value=self.server_data.clone() rows="20" cols="80" readonly=true disabled=true/>
+                    <div class="input-group mb-3">
+                        <input class="form-control" type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| ChatMsg::TextInput(e.value))/>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" onclick=self.link.callback(|_| ChatMsg::SendText)>{ "Send" }</button>
+                        </div>
+                    </div>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
                         {{"Open modal"}}
                     </button>
@@ -127,15 +131,6 @@ impl Component for Chat {
                 </div>
             </div>
 
-              // <div>
-            //     <textarea class="form-control" value=self.server_data.clone() rows="20" cols="80" readonly=true disabled=true/>
-            //     <div class="input-group mb-3">
-            //         <input class="form-control" type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| ChatMsg::TextInput(e.value))/>
-            //         <div class="input-group-append">
-            //             <button class="btn btn-primary" onclick=self.link.callback(|_| ChatMsg::SendText)>{ "Send" }</button>
-            //         </div>
-            //     </div>
-            // </div>
         }
     }
 }
