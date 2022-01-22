@@ -3,7 +3,7 @@
 pub mod fetcher;
 
 use yew::prelude::*;
-use crate::pages::{Home, Stocks, History, Search, News};
+use crate::pages::{Home, Chat, History, Search, News};
 use crate::components::{Counter, NavElement};
 use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
 use yew_styles::button::Button;
@@ -30,8 +30,8 @@ enum Msg {
 pub enum AppRouter {
     #[to = "/!"]
     Root,
-    #[to = "/stocks!"]
-    Stocks,
+    #[to = "/chat!"]
+    Chat,
     #[to = "/history!"]
     History,
     #[to = "/search!"]
@@ -78,7 +78,7 @@ impl Component for Model {
                 <div class="d-flex flex-row h-100">
                     <div class="d-flex flex-column fs-1 bg-dark-gray text-white pe-5 ps-2" >
                         <NavElement name="Home" icon="bi bi-house-door" link="/"/>
-                        <NavElement name="Stocks" icon="bi bi-file-earmark-text" link="/stocks"/>
+                        <NavElement name="Chat" icon="bi bi-file-earmark-text" link="/chat"/>
                         <NavElement name="History" icon="bi bi-graph-up" link="/history"/>
                         <NavElement name="Search" icon="bi bi-search" link="/search"/>
                         <NavElement name="News" icon="bi bi-exclamation-lg" link="/news"/>
@@ -90,8 +90,8 @@ impl Component for Model {
                                             AppRouter::Root => html!{
                                                 <Home/>
                                             },
-                                            AppRouter::Stocks => html!{
-                                                <Stocks/>
+                                            AppRouter::Chat => html!{
+                                                <Chat/>
                                             },
                                             AppRouter::History => html!{
                                                 <History/>
