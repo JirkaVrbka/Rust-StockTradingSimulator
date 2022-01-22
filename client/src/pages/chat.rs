@@ -95,12 +95,13 @@ impl Component for Chat {
     fn view(&self) -> Html {
         html! {
             <div>
-                // text area for showing data from the server
-                <p><textarea value=self.server_data.clone()></textarea></p><br/>
-                // input box for sending text
-                <p><input type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| ChatMsg::TextInput(e.value))/></p><br/>
-                // button for sending text
-                <p><button onclick=self.link.callback(|_| ChatMsg::SendText)>{ "Send" }</button></p><br/>
+                <textarea class="form-control" value=self.server_data.clone() rows="20" cols="80" readonly=true/>
+                <div class="input-group mb-3">
+                    <input class="form-control" type="text" value=self.text.clone() oninput=self.link.callback(|e: InputData| ChatMsg::TextInput(e.value))/>
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" onclick=self.link.callback(|_| ChatMsg::SendText)>{ "Send" }</button>
+                    </div>
+                </div>
             </div>
         }
     }
