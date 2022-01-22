@@ -1,7 +1,7 @@
-pub mod history;
+pub mod history_page;
 pub mod home;
 pub mod news;
 pub mod search;
 pub mod stocks;
 
-pub use self::{history::History, home::Home, news::News, search::Search, stocks::Stocks};
+pub use self::{history_page::HistoryPage, home::Home, news::News, search::Search, stocks::Stocks};
