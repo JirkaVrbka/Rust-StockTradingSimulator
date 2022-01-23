@@ -6,7 +6,7 @@ use utils::json::CommandTypesJSON;
 
 use super::{ToJson, FromJson};
 
-#[derive(Serialize, Deserialize, Clone, DbEnum, Debug)]
+#[derive(Serialize, Deserialize, Clone, DbEnum, Debug, PartialEq)]
 #[DieselType = "Commandtypesdb"]
 #[DbValueStyle = "SCREAMING_SNAKE_CASE"]
 pub enum CommandTypes {
