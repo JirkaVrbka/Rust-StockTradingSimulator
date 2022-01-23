@@ -101,6 +101,30 @@
         }
       }
     },
+    "/stocks/trade": {
+      "post": {
+        "summary": "Set new trading command.",
+        "operationId": "stock_trade",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Command"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully traded!"
+          },
+          "default": {
+            "$ref": "#/components/schemas/DefaultError"
+          }
+        }
+      }
+    },
     "/stonkers/{id}/overview": {
       "get": {
         "summary": "Get overview of the user",
@@ -395,6 +419,38 @@
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/Stock"
+        }
+      },
+      "Command": {
+        "type": "object",
+        "required": [
+          "stonker_id",
+          "company_id",
+          "threshold",
+          "share",
+          "kind"
+        ],
+        "properties": {
+          "stonker_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "company_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "share": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "threshold": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["Sell", "SellIfHigh", "SellIfLow", "BuyIfLow"]
+          }
         }
       },
       "Error": {
