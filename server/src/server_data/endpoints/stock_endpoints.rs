@@ -8,6 +8,7 @@ use actix_web::web;
 use actix_web::{get, post, HttpResponse, Result};
 use chrono::Utc;
 use crate::models::command::{CommandTypes, NewCommand};
+use utils::json::{CommandCreateJson, CommandTypesJSON};
 
 #[get("/stocks")]
 pub async fn get_stocks(repo: web::Data<Repo>) -> Result<HttpResponse> {
@@ -42,25 +43,29 @@ pub async fn create_stock(
 #[post("stocks/trade")]
 pub async fn trade_stock(
     repo: web::Data<Repo>,
-    command: web::Json<NewCommand>,
+    command: web::Json<CommandCreateJson>,
 ) -> Result<HttpResponse> {
+    println!("Heyyyyyy");
+    let kind = match command.kind {
+        CommandTypesJSON::Sell => CommandTypes::Sell,
+        CommandTypesJSON::SellIfHigh => CommandTypes::SellIfHigh,
+        CommandTypesJSON::SellIfLow => CommandTypes::SellIfLow,
+        CommandTypesJSON::BuyIfLow => CommandTypes::BuyIfLow
+    };
     let cmd = NewCommand {
         stonker_id: command.stonker_id,
         company_id: command.company_id,
         threshold: command.threshold,
         share: command.share,
-        kind: command.kind.clone(),
+        kind: kind.clone(),
         created_at: Utc::now().naive_utc()
     };
-    let result = match command.kind {
+    let result = match kind {
         CommandTypes::Sell => {repo.sell_stock(cmd)}
         CommandTypes::SellIfHigh => {repo.sell_stock(cmd)}
         CommandTypes::SellIfLow => {repo.sell_stock(cmd)}
         CommandTypes::BuyIfLow => {repo.buy_stock(cmd)}
     };
 
-    match result.await {
-        Ok(_) => Ok(HttpResponse::Ok().finish()),
-        Err(e) => Ok(HttpResponse::BadRequest().body(e.to_string()))
-    }
+    Ok(HttpResponse::Ok().finish())
 }

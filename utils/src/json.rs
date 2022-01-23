@@ -61,6 +61,15 @@ pub struct CommandJSON {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CommandCreateJson {
+    pub stonker_id: i32,
+    pub company_id: i32,
+    pub threshold: i32,
+    pub share: i32, // eg.: 50% = 50 * 10000 = 500000
+    pub kind: CommandTypesJSON
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StockJSON {
     pub id: i32,
     pub owner: StonkerJSON,
