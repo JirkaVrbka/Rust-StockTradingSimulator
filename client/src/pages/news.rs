@@ -1,14 +1,7 @@
-use std::convert::TryInto;
-
 use utils::json::NewsJSON;
 use yew::prelude::*;
-use yew_styles::layouts::container::{Container, Direction, Wrap};
-use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
-use yew_styles::text::{Text, TextType};
 use crate::fetcher::ToHtml;
 use crate::fetcher::immediate::ImmediateFetcher;
-use yew_styles::styles::{Size, Palette, Style};
-use yew_styles::card::Card;
 
 use crate::components::{NewsCard};
 
@@ -30,7 +23,7 @@ impl ToHtml for NewsJSON {
 
 impl ToHtml for Vec<NewsJSON> {
     fn to_html(&self) -> Html {
-        // Notice we skip all the news after eight
+        // Notice that we skip all the old news
         html! {
             self.iter().take(8).map(|el| html!{
                 { el.to_html() }
