@@ -1,4 +1,5 @@
 use anyhow::Error;
+use uuid::Uuid;
 use yew::{
     format::Json,
     prelude::*,
@@ -24,6 +25,7 @@ pub enum ChatMsg {
     TextInput(String),
     SendText,
     SwitchRoom,
+    CreateRoom,
     RoomInput(String),
     Received(Result<String, Error>),
 }
@@ -45,6 +47,14 @@ impl Chat {
     }
 }
 
+fn get_global_lobby() -> String {
+    "c05554ae-b4ee-4976-ac05-97aaf3c98a23".to_string()
+}
+
+fn get_custom_lobby() -> String {
+    Uuid::new_v4().to_hyphenated().to_string()
+}
+
 impl Component for Chat {
     type Message = ChatMsg;
     type Properties = ();
@@ -55,7 +65,7 @@ impl Component for Chat {
             ws: None,
             link: link,
             text: String::new(),
-            change_room: "c05554ae-b4ee-4976-ac05-97aaf3c98a23".to_string(),
+            change_room: get_global_lobby(),
             server_data: String::new(),
         };
         me.join();
@@ -84,6 +94,10 @@ impl Component for Chat {
             }
             ChatMsg::SwitchRoom => {
                 self.join();
+                true
+            }
+            ChatMsg::CreateRoom => {
+                self.change_room = get_custom_lobby();
                 true
             }
             ChatMsg::SendText => {
@@ -124,10 +138,10 @@ impl Component for Chat {
                             <button class="btn btn-primary" onclick=self.link.callback(|_| ChatMsg::SendText)>{ "Send" }</button>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomModal">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick=self.link.callback(|_| ChatMsg::CreateRoom) data-bs-target="#createRoomModal">
                         {{"Create room"}}
                     </button>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" oninput=self.link.callback(|e: InputData| ChatMsg::RoomInput(e.value)) data-bs-target="#joinRoomModal">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#joinRoomModal">
                         {{"Join room"}}
                     </button>
                 </div>
@@ -141,8 +155,8 @@ impl Component for Chat {
                             </div>
 
                             <div class="modal-body">
-                                <label for="exampleInputEmail1">{{"Room Code (ask other stonkers for)"}}</label>
-                                <input class="form-control" placeholder="c05554ae-b4ee-4976-ac05-97aaf3c98a23" />
+                                <label>{{"Room Code (ask other stonkers to give you one)"}}</label>
+                                <input class="form-control" placeholder=get_global_lobby() oninput=self.link.callback(|e: InputData| ChatMsg::RoomInput(e.value))/>
                             </div>
 
                             <div class="modal-footer">
@@ -162,8 +176,8 @@ impl Component for Chat {
                             </div>
 
                             <div class="modal-body">
-                                <label for="exampleInputEmail1">{{"Room Code (share this with other stonkers)"}}</label>
-                                <input class="form-control" placeholder="c05554ae-b4ee-4976-ac05-97aaf3c98a23" readonly=true disabled=true/>
+                                <label>{{"Room Code (share this with other stonkers):"}}</label>
+                                <p class="fw-bold"> {{ self.change_room.clone() }} </p>
                             </div>
 
                             <div class="modal-footer">

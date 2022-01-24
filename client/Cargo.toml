@@ -10,6 +10,7 @@ console_error_panic_hook = "0.1.6"
 serde = "1.0"  # so far used only for ToHtml trait definition
 stylist = "0.9"
 utils = { path = "../utils" }
+uuid = { version = "0.8.1", features = ["wasm-bindgen", "v4"] }
 wasm-bindgen = "0.2.78"
 web-sys = "0.3"
 yew = { version="0.18", features = ["toml", "yaml", "msgpack", "cbor", "web_sys"]}
