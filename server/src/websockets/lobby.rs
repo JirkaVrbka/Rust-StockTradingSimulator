@@ -8,7 +8,7 @@ type Socket = Recipient<WsMessage>;
 
 pub struct Lobby {
     sessions: HashMap<Uuid, Socket>, //self id to self
-    rooms: HashMap<Uuid, HashSet<Uuid>>,      //room id  to list of users id
+    rooms: HashMap<Uuid, HashSet<Uuid>>, //room id  to list of users id
 }
 
 impl Default for Lobby {
@@ -79,7 +79,10 @@ impl Handler<Connect> for Lobby {
             msg.addr,
         );
 
-        self.send_message(&format!("Joined to global chat. Your id is {}", msg.self_id), &msg.self_id);
+        self.send_message(&format!("Joined to {} chat. Your id is {}",
+            if msg.lobby_id == Uuid::parse_str("c05554ae-b4ee-4976-ac05-97aaf3c98a23").unwrap()
+                { "global".to_string() }
+                else { msg.lobby_id.to_string() }, msg.self_id), &msg.self_id);
     }
 }
 
