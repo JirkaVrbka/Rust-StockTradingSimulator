@@ -13,7 +13,7 @@ extern crate dotenv;
 
 use crate::endpoints::company_endpoints::{get_companies, get_company, get_company_stocks};
 use crate::endpoints::news_endpoints::get_news;
-use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks};
+use crate::endpoints::stock_endpoints::{create_stock, get_stock, get_stocks, trade_stock, trade_stock_g};
 use crate::endpoints::stonker_endpoints::{create_stonker, get_curr_stonker_stocks, get_stonker, get_stonker_overview, get_stonker_stocks, get_stonkers, login};
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
@@ -58,6 +58,8 @@ async fn main() -> std::io::Result<()> {
             .service(get_curr_stonker_stocks)
             .service(get_stonker_stocks)
             .service(get_news)
+            .service(trade_stock)
+            .service(trade_stock_g)
             .service(start_connection_route) //register our route. rename with "as" import or naming conflict
     })
     .bind(("0.0.0.0", 8081))?

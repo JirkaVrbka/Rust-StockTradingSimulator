@@ -1,12 +1,13 @@
 use crate::schema::command;
 use chrono::naive::serde::ts_seconds;
+use chrono::Utc;
 use diesel_derive_enum::DbEnum;
 use serde::{Deserialize, Serialize};
 use utils::json::CommandTypesJSON;
 
 use super::{ToJson, FromJson};
 
-#[derive(Serialize, Deserialize, Clone, DbEnum, Debug)]
+#[derive(Serialize, Deserialize, Clone, DbEnum, Debug, PartialEq)]
 #[DieselType = "Commandtypesdb"]
 #[DbValueStyle = "SCREAMING_SNAKE_CASE"]
 pub enum CommandTypes {
@@ -53,7 +54,7 @@ pub struct Command {
 
 // TODO: implement toJson for Command
 
-#[derive(Insertable, Serialize, Deserialize)]
+#[derive(Insertable, Serialize, Deserialize, Clone)]
 #[table_name = "command"]
 pub struct NewCommand {
     pub stonker_id: i32,
@@ -61,6 +62,20 @@ pub struct NewCommand {
     pub threshold: i32,
     pub share: i32,
     pub kind: CommandTypes,
+    pub created_at: chrono::NaiveDateTime,
+}
+
+impl FromJson<NewCommand> for NewCommand {
+    fn from_json(json: &NewCommand) -> Self {
+        NewCommand {
+            stonker_id: json.stonker_id,
+            company_id: json.company_id,
+            threshold: json.threshold,
+            share: json.share,
+            kind: json.kind.clone(),
+            created_at: Utc::now().naive_utc()
+        }
+    }
 }
 
 // TODO: implement fromJson for newCommand
