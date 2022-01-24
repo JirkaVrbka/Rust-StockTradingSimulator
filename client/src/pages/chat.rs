@@ -160,7 +160,7 @@ impl Component for Chat {
                             </div>
 
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">{{"Close"}}</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{"Close"}}</button>
                                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick=self.link.callback(|_| ChatMsg::SwitchRoom)>{{"Confirm"}}</button>
                             </div>
                         </div>

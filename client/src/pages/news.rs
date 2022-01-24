@@ -14,34 +14,27 @@ use crate::components::{NewsCard};
 
 impl ToHtml for NewsJSON {
     fn to_html(&self) -> Html {
-        let header = &self.title;
-        let body = &self.description;
-        let footer = &self.author;
+        let header = self.title.clone();
+        let body = self.description.clone();
+        let footer = self.author.clone();
         let palette = match self.effect {
-            utils::json::EffectJSON::Fall => Palette::Danger,
-            utils::json::EffectJSON::Neutral => Palette::Info,
-            utils::json::EffectJSON::Rise => Palette::Success,
-        };
+            utils::json::EffectJSON::Fall => "bg-danger",
+            utils::json::EffectJSON::Neutral => "",
+            utils::json::EffectJSON::Rise => "bg-success",
+        }.to_string();
         html! {
-            <div class="col">
-                <div class="card h-100 m-2 p-2 bg-warning">
-                    <div class="card-body">
-                        <h5 class="card-title">{header}</h5>
-                        <p class="card-text">{body}</p>
-                    </div>
-                    <div class="card-footer text-end border-0 bg-warning">{footer}</div>
-                </div>
-            </div>
+            <NewsCard title=header text=body author=footer color=palette/>
         }
     }
 }
 
 impl ToHtml for Vec<NewsJSON> {
     fn to_html(&self) -> Html {
+        // Notice we skip all the news after eight
         html! {
-                self.iter().map(|el| html!{
-                        { el.to_html() }
-                }).collect::<Html>()
+            self.iter().take(8).map(|el| html!{
+                { el.to_html() }
+            }).collect::<Html>()
         }
     }
 }
@@ -66,22 +59,14 @@ impl Component for News {
 
     fn view(&self) -> Html {
         html! {
-            <div>
-                <h1 class="text-center">{"News"}</h1>
-                <div class="d-flex flex-wrap w-100">
-                    <NewsCard title="bla bla" text="a tak dale" author="the dog" color="bg-info"/>
-                    <NewsCard title="bla bla" text="a tak dale" author="the dog" color="bg-info"/>
-                    <NewsCard title="bla bla" text="a tak dale" author="the dog" color="bg-info"/>
+            <div class="container-fluid">
+                <div class="row">
+                    <h1 class="text-left">{"News"}</h1>
+                </div>
+                <div class="row cols-3">
+                    <ImmediateFetcher::<Vec<NewsJSON>> port="news"/>
                 </div>
             </div>
-            // <div class="container-fluid">
-            //     <div class="row">
-            //         <h1 class="text-center">{"News"}</h1>
-            //     </div>
-            //     <div class="row cols-3">
-            //         <ImmediateFetcher::<Vec<NewsJSON>> port="news"/>
-            //     </div>
-            // </div>
         }
     }
 }
