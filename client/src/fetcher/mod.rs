@@ -1,4 +1,4 @@
-pub mod button;
+pub mod button_poster;
 pub mod immediate;
 
 use utils::json::StonkerJSON;
