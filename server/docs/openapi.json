@@ -448,8 +448,10 @@
             "format": "int32"
           },
           "kind": {
-            "type": "string",
-            "enum": ["Sell", "SellIfHigh", "SellIfLow", "BuyIfLow"]
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4,
+            "description": "1 - sell, 2 - sell if high, 3 - sell if low, 4 - buy if low"
           }
         }
       },

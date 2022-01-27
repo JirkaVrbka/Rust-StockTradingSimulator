@@ -66,7 +66,7 @@ pub struct CommandCreateJson {
     pub company_id: i32,
     pub threshold: i32,
     pub share: i32, // eg.: 50% = 50 * 10000 = 500000
-    pub kind: CommandTypesJSON
+    pub kind: i32
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

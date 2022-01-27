@@ -86,10 +86,11 @@ pub async fn trade_stock(
 ) -> Result<HttpResponse> {
     println!("Heyyyyyy");
     let kind = match command.kind {
-        CommandTypesJSON::Sell => CommandTypes::Sell,
-        CommandTypesJSON::SellIfHigh => CommandTypes::SellIfHigh,
-        CommandTypesJSON::SellIfLow => CommandTypes::SellIfLow,
-        CommandTypesJSON::BuyIfLow => CommandTypes::BuyIfLow
+        1 => CommandTypes::Sell,
+        2 => CommandTypes::SellIfHigh,
+        3 => CommandTypes::SellIfLow,
+        4 => CommandTypes::BuyIfLow,
+        _ => {return Ok(HttpResponse::Unauthorized().body(String::from("Bad trade command (must be 1 - 4")))}
     };
     let cmd = NewCommand {
         stonker_id: command.stonker_id,
