@@ -4,7 +4,7 @@ pub mod start_connection;
 
 use actix::{fut, ActorContext, WrapFuture, ContextFutureSpawner, ActorFuture};
 use messages::{Disconnect, Connect, WsMessage, ClientActorMessage};
-use lobby::Lobby; 
+use lobby::Lobby;
 use actix::{Actor, Addr, Running, StreamHandler};
 use actix::{AsyncContext, Handler};
 use actix_web_actors::ws;
@@ -100,10 +100,9 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsConn {
             Ok(ws::Message::Nop) => (),
             Ok(Text(s)) => self.lobby_addr.do_send(ClientActorMessage {
                 id: self.id,
-                msg: s,
+                msg: format!("{}: {}", self.id, s),
                 room_id: self.room
             }),
-            
             Err(e) => panic!("{}",e),
         }
     }
