@@ -40,7 +40,7 @@ impl Component for Portfolio {
                                 <div class="col-3">{"money"}</div>
                                 <div class="col-3">{"difference"}</div>
                             </div>
-                {self.props.portfolios.to_html()}
+                {self.props.portfolios.to_html(())}
             </div>
             </>
         }

@@ -5,8 +5,8 @@ use utils::json::StonkerJSON;
 use yew::html::Html;
 use yew::prelude::*;
 
-pub trait ToHtml: 'static + for<'de> serde::Deserialize<'de> {
-    fn to_html(&self) -> Html;
+pub trait ToHtml<T=()>: 'static + for<'de> serde::Deserialize<'de> {
+    fn to_html(&self, props: T) -> Html;
 }
 
 use yew_styles::layouts::container::{Container, Direction, Wrap};
@@ -14,7 +14,7 @@ use yew_styles::text::{Text, TextType};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 
 impl ToHtml for StonkerJSON {
-    fn to_html(&self) -> Html {
+    fn to_html(&self, _: ()) -> Html {
         html! {
             <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
                 <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>

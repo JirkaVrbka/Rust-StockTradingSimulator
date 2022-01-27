@@ -12,17 +12,17 @@ pub struct PortfolioDto{
 
 
 impl ToHtml for Vec<PortfolioDto> {
-    fn to_html(&self) -> Html {
+    fn to_html(&self, _:()) -> Html {
         html! {
                 self.iter().map(|el| html!{
-                        { el.to_html() }
+                        { el.to_html(()) }
                 }).collect::<Html>()
         }
     }
 }
 
 impl ToHtml for PortfolioDto {
-    fn to_html(&self) -> Html {
+    fn to_html(&self, _:()) -> Html {
         let money = self.money;
         let stock = &self.stock;
         let share = self.share;

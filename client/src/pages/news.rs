@@ -6,7 +6,7 @@ use crate::fetcher::immediate::ImmediateFetcher;
 use crate::components::{NewsCard};
 
 impl ToHtml for NewsJSON {
-    fn to_html(&self) -> Html {
+    fn to_html(&self, _: ()) -> Html {
         let header = self.title.clone();
         let body = self.description.clone();
         let footer = self.author.clone();
@@ -22,11 +22,11 @@ impl ToHtml for NewsJSON {
 }
 
 impl ToHtml for Vec<NewsJSON> {
-    fn to_html(&self) -> Html {
+    fn to_html(&self, _: ()) -> Html {
         // Notice that we skip all the old news
         html! {
             self.iter().take(8).map(|el| html!{
-                { el.to_html() }
+                { el.to_html(()) }
             }).collect::<Html>()
         }
     }
@@ -57,7 +57,7 @@ impl Component for News {
                     <h1 class="text-left">{"News"}</h1>
                 </div>
                 <div class="row cols-3">
-                    <ImmediateFetcher::<Vec<NewsJSON>> port="news"/>
+                    <ImmediateFetcher::<Vec<NewsJSON>> port="news" extra=()/>
                 </div>
             </div>
         }

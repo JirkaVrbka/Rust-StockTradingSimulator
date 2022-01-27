@@ -33,7 +33,7 @@ impl Repo {
     pub fn new() -> Self {
         let pg_pool = match Repo::establish_connection() {
             Ok(p) => Arc::new(p),
-            Err(_) => panic!("Cannot establish connection"),
+            Err(e) => panic!("Cannot establish connection: {}", e),
         };
         Self { pg_pool }
     }
