@@ -7,14 +7,14 @@ use crate::fetcher::immediate::ImmediateFetcher;
 
 use crate::components::home_page::{Graph, History};
 
-pub struct HistoryPage;
+pub struct Company;
 
-impl Component for HistoryPage {
+impl Component for Company {
     type Message = ();
     type Properties = ();
 
     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        HistoryPage {}
+        Company {}
     }
 
     fn update(&mut self, _: Self::Message) -> ShouldRender {

@@ -3,7 +3,7 @@
 pub mod fetcher;
 
 use yew::prelude::*;
-use crate::pages::{Home, Chat, HistoryPage, Search, News};
+use crate::pages::{Home, Chat, Company, Search, News};
 use crate::components::{Counter, NavElement};
 use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
 use yew_styles::button::Button;
@@ -94,7 +94,7 @@ impl Component for Model {
                                                 <Chat/>
                                             },
                                             AppRouter::History => html!{
-                                                <HistoryPage/>
+                                                <Company/>
                                             },
                                             AppRouter::Search => html!{
                                                 <Search/>

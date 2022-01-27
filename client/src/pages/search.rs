@@ -1,22 +1,32 @@
+use stylist::css;
 use utils::json::{StonkerJSON, CompanyJSON};
 use yew::prelude::*;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 use yew_styles::text::{Text, TextType};
 use yew_styles::forms::form_input::FormInput;
+use yew_styles::button::Button;
 use crate::fetcher::ToHtml;
 use crate::fetcher::immediate::{ImmediateFetcher, ExtraProps};
 
 impl ToHtml<ExtraProps<Search, String>> for CompanyJSON {
     fn to_html(&self, props: ExtraProps<Search, String>) -> Html {
+        let id = self.id.clone();
         html! {
+            <Button onclick_signal=props.link.callback(move |_| SearchMsg::Select(id)) class_name="row">
+                <div>
+                    { format!("{} {}", self.performer.name, self.name) }
+                </div>
+            </Button>
+        }
+        /*
             <div class="row my-2 ms-4 fs-3">
                 <div class="col-4">{self.performer.name.clone()}</div>
                 <div class="col-2">{self.name.clone()}</div>
                 <div class="col-2 text-danger">{"-4$"}</div>
                 <div class="col-2 text-success">{"+1%"}</div>
             </div>
-        }
+        */
     }
 }
 
