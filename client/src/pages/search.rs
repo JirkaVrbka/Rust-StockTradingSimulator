@@ -1,36 +1,38 @@
-use utils::json::StonkerJSON;
+use utils::json::{StonkerJSON, CompanyJSON};
 use yew::prelude::*;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 use yew_styles::text::{Text, TextType};
-use crate::fetcher::immediate::ImmediateFetcher;
+use yew_styles::forms::form_input::FormInput;
+use crate::fetcher::ToHtml;
+use crate::fetcher::immediate::{ImmediateFetcher, ExtraProps};
 
-pub struct Search;
-
-impl Component for Search {
-    type Message = ();
-    type Properties = ();
-
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        Search {}
+impl ToHtml<ExtraProps<Search, String>> for CompanyJSON {
+    fn to_html(&self, props: ExtraProps<Search, String>) -> Html {
+        html! {
+            <div class="row my-2 ms-4 fs-3">
+                <div class="col-4">{self.performer.name.clone()}</div>
+                <div class="col-2">{self.name.clone()}</div>
+                <div class="col-2 text-danger">{"-4$"}</div>
+                <div class="col-2 text-success">{"+1%"}</div>
+            </div>
+        }
     }
+}
 
-    fn update(&mut self, _: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn change(&mut self, _: Self::Properties) -> ShouldRender {
-        false
-    }
-
-    fn view(&self) -> Html {
+impl ToHtml<ExtraProps<Search, String>> for Vec<CompanyJSON> {
+    fn to_html(&self, props: ExtraProps<Search, String>) -> Html {
         html! {
             <div>
                 <div class="container-fluid ms-4 mt-4">
                     <div class="row">
                         <div class="col-9">
                             <label>
-                                <input class="border search-input fs-1 px-4 py-2" placeholder="Search"/>
+                                <FormInput
+                                    class_name="border search-input fs-1 px-4 py-2"
+                                    oninput_signal=props.link.callback(|e: InputData| SearchMsg::Search(e.value))
+                                    placeholder="Hledat"
+                                />
                             </label>
                         </div>
                         <div class="col fs-4">
@@ -44,45 +46,79 @@ impl Component for Search {
                             </div>
                         </div>
                     </div>
-
                     <div class="row mt-4 pt-3 ms-4">
                         <div class="col-4 fst-italic text-muted">{"name"}</div>
                         <div class="col-2 fst-italic text-muted">{"stock"}</div>
                         <div class="col-2 fst-italic text-muted">{"change"}</div>
                         <div class="col-2 fst-italic text-muted">{"percentage"}</div>
-                    </div>
-
-                    <div class="row my-2 ms-4 fs-3">
-                        <div class="col-4">{"Netscape"}</div>
-                        <div class="col-2">{"10"}</div>
-                        <div class="col-2 text-success">{"+2$"}</div>
-                        <div class="col-2 text-success">{"+1%"}</div>
-                    </div>
-
-                    <div class="row my-2 ms-4 fs-3">
-                        <div class="col-4">{"Networld"}</div>
-                        <div class="col-2">{"10"}</div>
-                        <div class="col-2 text-danger">{"-4$"}</div>
-                        <div class="col-2 text-danger">{"-3%"}</div>
-                    </div>
-
-                    <div class="row my-2 ms-4 fs-3">
-                        <div class="col-4">{"Netscape"}</div>
-                        <div class="col-2">{"15"}</div>
-                        <div class="col-2 text-success">{"+5$"}</div>
-                        <div class="col-2 text-success">{"+8%"}</div>
-                    </div>
+                    </div> {
+                        self.iter()
+                            .filter(|company|
+                                if props.extra.is_empty() {
+                                    true
+                                } else {
+                                    format!("{} {}",
+                                        company.name.to_lowercase(),
+                                        company.performer.name.to_lowercase(),
+                                    ).contains(&props.extra.to_lowercase())
+                                }
+                            )
+                            .take(8)
+                            .map(|el| html!{
+                                { el.to_html(props.clone()) }
+                            }).collect::<Html>()
+                    }
                 </div>
-
-            // <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
-            //     <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-            //         <Text plain_text="Search" text_type=TextType::Plain />
-            //     </Item>
-            //     <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-            //         <ImmediateFetcher::<StonkerJSON> port="stonkers/1"/>
-            //     </Item>
-            // </Container>
             </div>
+        }
+    }
+}
+
+pub enum SearchMsg {
+    Search(String),
+    Select(i32),
+}
+
+#[derive(Debug, Clone)]
+pub struct Search {
+    link: ComponentLink<Self>,
+    search: String
+}
+
+impl Component for Search {
+    type Message = SearchMsg;
+    type Properties = ();
+
+    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+        Search {
+            link,
+            search: String::new()
+        }
+    }
+
+    fn update(&mut self, message: Self::Message) -> ShouldRender {
+        match message {
+            SearchMsg::Search(s) => { self.search = s; true },
+            SearchMsg::Select(s) => { /* move to other screen */ false },
+        }
+    }
+
+    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+        false
+    }
+
+    fn view(&self) -> Html {
+        let extras = ExtraProps{link: self.link.clone(), extra: self.search.clone()};
+        html! {
+            <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
+                <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
+                    <Text plain_text="Search" text_type=TextType::Plain />
+                </Item>
+                <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
+                    <ImmediateFetcher::<Vec<CompanyJSON>, ExtraProps<Self, String>>
+                        port="companies" extra=extras/>
+                </Item>
+            </Container>
         }
     }
 }

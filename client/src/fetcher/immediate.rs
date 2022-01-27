@@ -10,9 +10,15 @@ use super::ToHtml;
 
 #[derive(Debug, Clone, Properties)]
 
-pub struct ExtraProps<L: Clone + yew::Component, E: Clone> {
+pub struct ExtraProps<L: Clone + yew::Component, E: Clone + PartialEq> {
     pub link: ComponentLink<L>,
     pub extra: E
+}
+
+impl<L: Clone + yew::Component, E: Clone + PartialEq> PartialEq for ExtraProps<L, E> {
+    fn eq(&self, other: &Self) -> bool {
+        self.extra == other.extra
+    }
 }
 
 #[derive(Debug, Clone, Properties)]
