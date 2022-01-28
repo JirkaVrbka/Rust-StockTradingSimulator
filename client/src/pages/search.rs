@@ -8,6 +8,7 @@ use yew_styles::forms::form_input::FormInput;
 use yew_styles::button::Button;
 use crate::fetcher::ToHtml;
 use crate::fetcher::immediate::{ImmediateFetcher, ExtraProps};
+use crate::components::home_page::{Graph, History};
 
 impl ToHtml<ExtraProps<Search, String>> for CompanyJSON {
     fn to_html(&self, props: ExtraProps<Search, String>) -> Html {
@@ -92,7 +93,8 @@ pub enum SearchMsg {
 #[derive(Debug, Clone)]
 pub struct Search {
     link: ComponentLink<Self>,
-    search: String
+    search: String,
+    selected: Option<i32>,
 }
 
 impl Component for Search {
@@ -102,14 +104,15 @@ impl Component for Search {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         Search {
             link,
-            search: String::new()
+            search: String::new(),
+            selected: None
         }
     }
 
     fn update(&mut self, message: Self::Message) -> ShouldRender {
         match message {
             SearchMsg::Search(s) => { self.search = s; true },
-            SearchMsg::Select(s) => { /* move to other screen */ false },
+            SearchMsg::Select(s) => { self.selected = Some(s); true },
         }
     }
 
@@ -118,17 +121,30 @@ impl Component for Search {
     }
 
     fn view(&self) -> Html {
-        let extras = ExtraProps{link: self.link.clone(), extra: self.search.clone()};
-        html! {
-            <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
-                <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-                    <Text plain_text="Search" text_type=TextType::Plain />
-                </Item>
-                <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-                    <ImmediateFetcher::<Vec<CompanyJSON>, ExtraProps<Self, String>>
-                        port="companies" extra=extras/>
-                </Item>
-            </Container>
+        if self.selected.is_none() {
+            let extras = ExtraProps{link: self.link.clone(), extra: self.search.clone()};
+            html! {
+                <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
+                    <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
+                        <Text plain_text="Search" text_type=TextType::Plain />
+                    </Item>
+                    <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
+                        <ImmediateFetcher::<Vec<CompanyJSON>, ExtraProps<Self, String>>
+                            port="companies" extra=extras/>
+                    </Item>
+                </Container>
+            }
+        } else {
+            html!{
+                <div class="flex-fill fs-3">
+                    <div class="container-fluid ms-3 mt-3">
+                        <div class="row">
+                            <div class="col-6 pe-4"><Graph/></div>
+                            <div class="col-6 ps-4"><History/></div>
+                        </div>
+                    </div>
+                </div>
+            }
         }
     }
 }
