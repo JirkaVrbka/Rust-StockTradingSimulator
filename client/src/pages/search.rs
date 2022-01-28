@@ -6,8 +6,8 @@ use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 use yew_styles::text::{Text, TextType};
 use yew_styles::forms::form_input::FormInput;
 use yew_styles::button::Button;
-use crate::fetcher::ToHtml;
-use crate::fetcher::immediate_fetcher::{ImmediateFetcher, ExtraProps};
+use crate::fetcher::{ToHtml, ExtraProps};
+use crate::fetcher::immediate_fetcher::ImmediateFetcher;
 use crate::components::home_page::{Graph, History};
 
 impl ToHtml<ExtraProps<Search, String>> for CompanyJSON {

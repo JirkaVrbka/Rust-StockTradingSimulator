@@ -8,6 +8,14 @@ use yew::prelude::*;
 #[derive(Debug, Clone, PartialEq)]
 pub struct NoProps;
 
+
+#[derive(Debug, Clone, Properties)]
+
+pub struct ExtraProps<L: Clone + yew::Component, E: Clone + PartialEq> {
+    pub link: ComponentLink<L>,
+    pub extra: E
+}
+
 pub trait ToHtml<T=NoProps>: 'static + for<'de> serde::Deserialize<'de> {
     fn to_html(&self, props: T) -> Html;
 }
