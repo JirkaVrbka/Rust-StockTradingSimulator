@@ -1,11 +1,14 @@
 pub mod button_poster;
-pub mod immediate;
+pub mod immediate_fetcher;
 
 use utils::json::StonkerJSON;
 use yew::html::Html;
 use yew::prelude::*;
 
-pub trait ToHtml<T=()>: 'static + for<'de> serde::Deserialize<'de> {
+#[derive(Debug, Clone, PartialEq)]
+pub struct NoProps;
+
+pub trait ToHtml<T=NoProps>: 'static + for<'de> serde::Deserialize<'de> {
     fn to_html(&self, props: T) -> Html;
 }
 
@@ -14,7 +17,7 @@ use yew_styles::text::{Text, TextType};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 
 impl ToHtml for StonkerJSON {
-    fn to_html(&self, _: ()) -> Html {
+    fn to_html(&self, _: NoProps) -> Html {
         html! {
             <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
                 <Item layouts=vec!(ItemLayout::ItXs(3)) align_self=AlignSelf::Auto>

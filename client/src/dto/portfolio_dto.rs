@@ -1,5 +1,5 @@
 use yew::{classes, Html, html};
-use crate::fetcher::ToHtml;
+use crate::fetcher::{ToHtml, NoProps};
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -12,17 +12,17 @@ pub struct PortfolioDto{
 
 
 impl ToHtml for Vec<PortfolioDto> {
-    fn to_html(&self, _:()) -> Html {
+    fn to_html(&self, _:NoProps) -> Html {
         html! {
                 self.iter().map(|el| html!{
-                        { el.to_html(()) }
+                        { el.to_html(NoProps) }
                 }).collect::<Html>()
         }
     }
 }
 
 impl ToHtml for PortfolioDto {
-    fn to_html(&self, _:()) -> Html {
+    fn to_html(&self, _:NoProps) -> Html {
         let money = self.money;
         let stock = &self.stock;
         let share = self.share;

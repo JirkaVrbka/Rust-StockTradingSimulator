@@ -5,6 +5,7 @@ use yew::{
 };
 use yew_styles::spinner::{Spinner, SpinnerType};
 use yew_styles::styles::{Palette, Size};
+use super::NoProps;
 
 use super::ToHtml;
 
@@ -40,7 +41,7 @@ enum Fetch<T> {
 }
 
 #[derive(Debug)]
-pub struct ImmediateFetcher<T: 'static + ToHtml<F>, F: 'static + Clone + PartialEq=()> {
+pub struct ImmediateFetcher<T: 'static + ToHtml<F>, F: 'static + Clone + PartialEq=NoProps> {
     fetch: Fetch<T>,
     link: ComponentLink<Self>,
     props: FetchProps<F>,
