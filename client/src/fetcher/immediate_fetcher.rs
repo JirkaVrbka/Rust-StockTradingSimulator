@@ -1,7 +1,7 @@
 use yew::{
     format::{Json, Nothing},
     prelude::*,
-    services::fetch::{FetchService, FetchTask, Request, Response},
+    services::fetch::{FetchService, Credentials, FetchTask, Request, Response, FetchOptions},
 };
 use yew_styles::spinner::{Spinner, SpinnerType};
 use yew_styles::styles::{Palette, Size};
@@ -55,13 +55,17 @@ impl<T: 'static + ToHtml<F>, F: 'static + Clone + PartialEq> Component for Immed
         let request = Request::get(format!("http://localhost:8081/{}", props.port))
             .body(Nothing)
             .expect("Could not build request.");
+        let options = FetchOptions {
+            credentials: Some(Credentials::Include),
+            ..FetchOptions::default()
+        };
         let callback =
             link
                 .callback(|response: Response<Json<Result<T, anyhow::Error>>>| {
                     let Json(data) = response.into_body();
                     FetchMsg::ReceiveResponse(data)
                 });
-        let task = FetchService::fetch(request, callback).expect("failed to start request");
+        let task = FetchService::fetch_with_options(request, options, callback).expect("failed to start request");
         Self {
             fetch: Fetch::Fetching(task),
             props,

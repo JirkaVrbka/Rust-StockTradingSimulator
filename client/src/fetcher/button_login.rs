@@ -1,6 +1,6 @@
 use yew::{
     prelude::*,
-    services::{fetch::{FetchService, FetchTask, Request, Response}, ConsoleService}, format::Json,
+    services::{fetch::{FetchService, FetchTask, Request, Response, Credentials, FetchOptions}, ConsoleService}, format::{Json, Text},
 };
 use yew_styles::spinner::{Spinner, SpinnerType};
 use yew_styles::styles::{Palette, Size};
@@ -9,7 +9,7 @@ use yew_styles::button::Button;
 #[derive(Debug)]
 pub enum PostMsg {
     Post,
-    ReceiveResponse(Result<(), anyhow::Error>),
+    ReceiveResponse(Result<String, anyhow::Error>),
 }
 
 #[derive(Debug)]
@@ -28,13 +28,13 @@ pub struct PostProps<T: 'static + Clone + PartialEq + serde::Serialize> {
 }
 
 #[derive(Debug)]
-pub struct ButtonPoster<T: 'static + Clone + PartialEq + serde::Serialize> {
+pub struct ButtonLogin<T: 'static + Clone + PartialEq + serde::Serialize> {
     post: Post,
     props: PostProps<T>,
     link: ComponentLink<Self>,
 }
 
-impl<T: 'static + Clone + PartialEq + serde::Serialize> Component for ButtonPoster<T> {
+impl<T: 'static + Clone + PartialEq + serde::Serialize> Component for ButtonLogin<T> {
     type Message = PostMsg;
     type Properties = PostProps<T>;
 
@@ -61,18 +61,21 @@ impl<T: 'static + Clone + PartialEq + serde::Serialize> Component for ButtonPost
                     .header("Content-Type", "application/json")
                     .body(Json(&val))
                     .expect("Could not build request.");
+                let options = FetchOptions {
+                    credentials: Some(Credentials::Include),
+                    ..FetchOptions::default()
+                };
                 let callback = self.link
-                    .callback(|response: Response<Json<Result<(), anyhow::Error>>>| {
+                    .callback(|response: Response<Text>| {
                         ConsoleService::log(format!("Response: {:?}", response).as_str());
-                        let Json(data) = response.into_body();
-                        PostMsg::ReceiveResponse(data)
+                        PostMsg::ReceiveResponse(response.into_body())
                     });
-                self.post = Post::Posting(FetchService::fetch(request, callback).expect("failed to start post"));
+                self.post = Post::Posting(FetchService::fetch_with_options(request, options, callback).expect("failed to start post"));
                 true
             },
             PostMsg::ReceiveResponse(response) => {
                 match response {
-                    Ok(()) => {
+                    Ok(_) => {
                         self.post = Post::Ok;
                     }
                     Err(error) => {

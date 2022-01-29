@@ -3,7 +3,7 @@
 pub mod fetcher;
 
 use yew::prelude::*;
-use crate::pages::{Home, Chat, Search, News};
+use crate::pages::{Home, Login, Chat, Search, News};
 use crate::components::{Counter, NavElement};
 use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
 use yew_styles::button::Button;
@@ -30,8 +30,12 @@ enum Msg {
 pub enum AppRouter {
     #[to = "/!"]
     Root,
+    #[to = "/home!"]
+    Home,
     #[to = "/search!"]
     Search,
+    #[to = "/login!"]
+    Login,
     #[to = "/news!"]
     News,
     #[to = "/chat!"]
@@ -74,7 +78,7 @@ impl Component for Model {
                 <div class="row fs-8vh bg-gray text-white ps-5 py-2">{"STONKER$"}</div>
                 <div class="d-flex flex-row h-100">
                     <div class="d-flex flex-column fs-1 bg-dark-gray text-white pe-5 ps-2" >
-                        <NavElement name="Home" icon="bi bi-house-door" link="/"/>
+                        <NavElement name="Home" icon="bi bi-house-door" link="/home"/>
                         <NavElement name="Search" icon="bi bi-search" link="/search"/>
                         <NavElement name="News" icon="bi bi-graph-up" link="/news"/> // also try: bi-newspaper
                         <NavElement name="Chat" icon="bi bi-people-fill" link="/chat"/>
@@ -83,7 +87,13 @@ impl Component for Model {
                         <Router<AppRouter, ()>
                             render=Router::render(|switch: AppRouter | {
                                 match switch {
+                                    AppRouter::Login => html! {
+                                        <Login/>
+                                    },
                                     AppRouter::Root => html!{
+                                        <Login/>
+                                    },
+                                    AppRouter::Home => html!{
                                         <Home/>
                                     },
                                     AppRouter::Search => html!{
