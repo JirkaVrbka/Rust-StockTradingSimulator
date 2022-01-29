@@ -1,5 +1,6 @@
 use utils::json::NewsJSON;
 use yew::prelude::*;
+use yew::services::ConsoleService;
 use yew_styles::layouts::item::ItemLayout;
 use yew_styles::styles::{Size, Palette};
 use crate::fetcher::{ToHtml, NoProps};
@@ -44,7 +45,7 @@ impl Component for Login {
             LoginMsg::name(name) => self.credentials.name = name,
             LoginMsg::password(password) => self.credentials.password = password,
         }
-        false
+        true
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {

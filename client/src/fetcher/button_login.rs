@@ -101,11 +101,16 @@ impl<T: 'static + Clone + PartialEq + serde::Serialize> Component for ButtonLogi
             }
             Post::Ok => {
                 html! {
-                    <p> { "Success" } </p>
+                    <p style="color:green"> { "Success" } </p>
                 }
             },
             Post::Err(error) => html! {
-                <p>{ error.to_string().clone() }</p>
+                <div>
+                    <p style="color:red">{ error.to_string().clone() }</p>
+                    <Button onclick_signal=self.link.callback(|_| PostMsg::Post)>
+                        { self.props.text }
+                    </Button>
+                </div>
             },
             Post::Posting(_) => html! {
                 <Spinner
