@@ -1,5 +1,4 @@
 pub mod button_poster;
-pub mod button_login;
 pub mod immediate_fetcher;
 
 use utils::json::StonkerJSON;
