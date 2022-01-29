@@ -5,7 +5,7 @@ use crate::server_data::repos::Repo;
 use actix_web::{http, HttpRequest, web};
 use actix_web::{get, post, HttpResponse, Result};
 use actix_web::web::Bytes;
-use utils::json::{StonkerCredentials, StonkerJSON};
+use utils::json::{StonkerCredentials, StonkerJSON, AuthJSON};
 use crate::endpoints::auth::auth;
 
 #[get("/stonkers")]
@@ -52,30 +52,34 @@ pub async fn login(
     bytes: Bytes,
 ) -> Result<HttpResponse> {
     let body = String::from_utf8(bytes.to_vec()).unwrap();
+    let to_json = |a: AuthJSON| serde_json::to_string(&a).unwrap();
 
     // body is loaded, now we can deserialize serde-json
     let stonker_data = serde_json::from_str::<StonkerCredentials>(&body)?;
 
 
     let user: StonkerJSON = match repo.get_stonker_by_name(&stonker_data.name).await {
-        Err(_) => return Ok(HttpResponse::Unauthorized().body(String::from("No such user."))),
+        Err(_) => return Ok(HttpResponse::Unauthorized().body(to_json(AuthJSON::NoSuchUser))),
         Ok(user) => user,
     };
 
     if user.password != stonker_data.password {
-        return Ok(HttpResponse::Unauthorized().body(String::from("Wrong password")));
+        return Ok(HttpResponse::Unauthorized().body(to_json(AuthJSON::WrongPassword)));
     }
 
-    return Ok(HttpResponse::Ok().cookie(
+    return Ok(HttpResponse::Ok()
+        .cookie(
             http::Cookie::build("user_id", user.id.to_string())
                 .secure(false)
                 .http_only(false)
                 .finish())
-        .cookie(http::Cookie::build("passwd", user.password.clone())
-            .secure(false)
-            .http_only(false)
-            .finish())
-        .finish())
+        .cookie(
+            http::Cookie::build("passwd", user.password.clone())
+                .secure(false)
+                .http_only(false)
+                .finish())
+        .body(to_json(AuthJSON::Ok))
+    )
 }
 
 #[get("/l/stonkers/stocks")]

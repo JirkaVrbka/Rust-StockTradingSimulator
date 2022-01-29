@@ -63,7 +63,6 @@ impl<T: 'static + Clone + PartialEq + serde::Serialize> Component for ButtonPost
                     .expect("Could not build request.");
                 let callback = self.link
                     .callback(|response: Response<Json<Result<(), anyhow::Error>>>| {
-                        ConsoleService::log(format!("Response: {:?}", response).as_str());
                         let Json(data) = response.into_body();
                         PostMsg::ReceiveResponse(data)
                     });

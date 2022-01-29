@@ -1,3 +1,4 @@
+use utils::json::AuthJSON;
 use yew::{
     prelude::*,
     services::{fetch::{FetchService, FetchTask, Request, Response, Credentials, FetchOptions}, ConsoleService}, format::{Json, Text},
@@ -9,7 +10,7 @@ use yew_styles::button::Button;
 #[derive(Debug)]
 pub enum PostMsg {
     Post,
-    ReceiveResponse(Result<String, anyhow::Error>),
+    ReceiveResponse(Result<AuthJSON, anyhow::Error>),
 }
 
 #[derive(Debug)]
@@ -66,18 +67,21 @@ impl<T: 'static + Clone + PartialEq + serde::Serialize> Component for ButtonLogi
                     ..FetchOptions::default()
                 };
                 let callback = self.link
-                    .callback(|response: Response<Text>| {
-                        ConsoleService::log(format!("Response: {:?}", response).as_str());
-                        PostMsg::ReceiveResponse(response.into_body())
+                    .callback(|response: Response<Json<Result<AuthJSON, anyhow::Error>>>| {
+                        let Json(data) = response.into_body();
+                        PostMsg::ReceiveResponse(data)
                     });
                 self.post = Post::Posting(FetchService::fetch_with_options(request, options, callback).expect("failed to start post"));
                 true
             },
             PostMsg::ReceiveResponse(response) => {
                 match response {
-                    Ok(_) => {
+                    Ok(AuthJSON::Ok) => {
                         self.post = Post::Ok;
-                    }
+                    },
+                    Ok(err) => {
+                        self.post = Post::Err(anyhow::anyhow!("{:?}", err));
+                    },
                     Err(error) => {
                         self.post = Post::Err(error);
                     }

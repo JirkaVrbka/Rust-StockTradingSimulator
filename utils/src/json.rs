@@ -148,3 +148,10 @@ pub struct StonkerHistoryJSON {
     pub stock: String,
     pub money: i32,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum AuthJSON {
+    NoSuchUser,
+    WrongPassword,
+    Ok,
+}
