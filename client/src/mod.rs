@@ -3,9 +3,8 @@
 pub mod fetcher;
 
 use yew::prelude::*;
-use crate::pages::Login;
+use crate::pages::{Login, Logged};
 
-pub mod logged;
 mod pages;
 mod components;
 mod dto;

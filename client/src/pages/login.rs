@@ -6,7 +6,7 @@ use yew::{
 use yew_styles::{spinner::{Spinner, SpinnerType}, layouts::{item::ItemLayout, container::Direction}};
 use yew_styles::styles::{Palette, Size};
 use yew_styles::button::Button;
-use crate::logged::Logged;
+use super::Logged;
 use yew_styles::layouts::{container::Container, item::Item};
 use yew_styles::forms::form_input::FormInput;
 use yew::prelude::*;

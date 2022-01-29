@@ -1,10 +1,9 @@
 #![recursion_limit = "1024"]
 
 use yew::prelude::*;
-use crate::pages::{Home, Login, Chat, Search, News};
-use crate::components::{Counter, NavElement};
+use crate::pages::{Home, Chat, Search, News};
+use crate::components::NavElement;
 use yew_router::{prelude::*, route::Route, switch::Permissive, Switch};
-use yew_styles::button::Button;
 
 extern crate web_sys;
 extern crate yew;
