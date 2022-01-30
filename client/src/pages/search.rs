@@ -142,6 +142,17 @@ impl Component for Search {
                             <div class="col-6 pe-4"><Graph/></div>
                             <div class="col-6 ps-4"><History/></div>
                         </div>
+                <div class="row justify-content-start">
+                            <div class="col-auto">
+                                <button class="btn btn-success rounded-4 text-white fs-1">{"BUY FOR 9$"}</button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-danger rounded-4 text-white fs-1">{"SELL FOR 7$"}</button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-info rounded-4 text-white fs-1">{"CUSTOMIZE"}</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             }
