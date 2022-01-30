@@ -147,7 +147,7 @@ impl Component for Chat {
                             <button class="btn btn-primary" onclick=self.link.callback(|_| ChatMsg::SendText)>{ "Send" }</button>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick=self.link.callback(|_| ChatMsg::CreateRoom) data-bs-target="#createRoomModal">
+                    <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal" onclick=self.link.callback(|_| ChatMsg::CreateRoom) data-bs-target="#createRoomModal">
                         {{"Create room"}}
                     </button>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#joinRoomModal">
