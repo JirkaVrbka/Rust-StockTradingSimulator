@@ -1,5 +1,3 @@
-#![recursion_limit = "1024"]
-
 use yew::prelude::*;
 use crate::pages::{Home, Chat, Search, News};
 use crate::components::NavElement;
