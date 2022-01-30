@@ -9,6 +9,10 @@ use yew_styles::button::Button;
 use crate::fetcher::ToHtml;
 use crate::fetcher::immediate_fetcher::{ImmediateFetcher, ExtraProps};
 use crate::components::home_page::{Graph, History};
+use crate::components::company_page::CustomizeModal;
+use crate::components::Company;
+
+
 
 impl ToHtml<ExtraProps<Search, String>> for CompanyJSON {
     fn to_html(&self, props: ExtraProps<Search, String>) -> Html {
@@ -130,25 +134,7 @@ impl Component for Search {
             }
         } else {
             html!{
-                <div class="flex-fill fs-3">
-                    <div class="container-fluid ms-3 mt-3">
-                        <div class="row">
-                            <div class="col-6 pe-4"><Graph/></div>
-                            <div class="col-6 ps-4"><History/></div>
-                        </div>
-                        <div class="row justify-content-start">
-                            <div class="col-auto">
-                                <button class="btn btn-success rounded-4 text-white fs-1">{"BUY FOR 9$"}</button>
-                            </div>
-                            <div class="col-auto">
-                                <button class="btn btn-danger rounded-4 text-white fs-1">{"SELL FOR 7$"}</button>
-                            </div>
-                            <div class="col-auto">
-                                <button class="btn btn-info rounded-4 text-white fs-1">{"CUSTOMIZE"}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <Company id={self.selected.unwrap().clone()}/>
             }
         }
     }
