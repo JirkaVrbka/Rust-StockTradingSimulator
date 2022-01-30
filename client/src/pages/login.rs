@@ -13,6 +13,7 @@ use yew::prelude::*;
 use serde::{Deserialize, Serialize};
 use yew_styles::forms::form_input::{InputType};
 use yew_styles::layouts::{container::Wrap};
+use crate::components::RegisterModal;
 
 #[derive(Deserialize, Serialize, Debug, Clone, PartialEq)]
 struct Credentials {
@@ -133,19 +134,23 @@ impl Component for Login {
         };
         match &self.post {
             LoginProcess::Wait => show_form(html! {
-                <Button onclick_signal=self.link.callback(|_| LoginMsg::Post) class_name="mt-3 btn btn-info fs-2 text-white">
+                <div class="mt-3">
+                <Button onclick_signal=self.link.callback(|_| LoginMsg::Post) class_name="btn btn-info fs-2 text-white">
                     { "Login" }
                 </Button>
+                <RegisterModal/>
+                </div>
             }),
             LoginProcess::Ok => html!{
                 <Logged/>
             },
             LoginProcess::Err(error) => show_form(html! {
-                <div>
+                <div class="mt-3">
                     <p style="color:red">{ error.to_string().clone() }</p>
                     <Button onclick_signal=self.link.callback(|_| LoginMsg::Post) class_name="mt-2 btn btn-info fs-2 text-white">
                         { "Login" }
                     </Button>
+                    <RegisterModal/>
                 </div>
             }),
             LoginProcess::Posting(_) => show_form(html! {
