@@ -101,7 +101,9 @@ impl Component for Login {
         let show_form = |html: VNode| html!{
             <Container direction=Direction::Column wrap=Wrap::Wrap>
                 <Item layouts=vec!(ItemLayout::ItXs(1))>
+                    <div class="fw-bold fs-1">
                     <b> {"LOGIN"} </b>
+                    </div>
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(1))>
                     <FormInput
@@ -110,6 +112,7 @@ impl Component for Login {
                         input_size=Size::Medium
                         oninput_signal = self.link.callback(|e: InputData| LoginMsg::name(e.value))
                         placeholder="name"
+                        class_name="fs-2 border-0 border-bottom my-2"
                     />
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(1))>
@@ -120,6 +123,7 @@ impl Component for Login {
                         id="form-input-test"
                         oninput_signal = self.link.callback(|e: InputData| LoginMsg::password(e.value))
                         placeholder="password"
+                        class_name="fs-2 border-0 border-bottom my-2"
                     />
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(1))>
@@ -129,7 +133,7 @@ impl Component for Login {
         };
         match &self.post {
             LoginProcess::Wait => show_form(html! {
-                <Button onclick_signal=self.link.callback(|_| LoginMsg::Post)>
+                <Button onclick_signal=self.link.callback(|_| LoginMsg::Post) class_name="mt-3 btn btn-info fs-2 text-white">
                     { "Login" }
                 </Button>
             }),
@@ -139,7 +143,7 @@ impl Component for Login {
             LoginProcess::Err(error) => show_form(html! {
                 <div>
                     <p style="color:red">{ error.to_string().clone() }</p>
-                    <Button onclick_signal=self.link.callback(|_| LoginMsg::Post)>
+                    <Button onclick_signal=self.link.callback(|_| LoginMsg::Post) class_name="mt-2 btn btn-info fs-2 text-white">
                         { "Login" }
                     </Button>
                 </div>
