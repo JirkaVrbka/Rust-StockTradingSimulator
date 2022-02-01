@@ -3,4 +3,4 @@ pub mod history;
 pub mod portfolio;
 pub mod usage;
 
-pub use self::{usage::Usage, history::History, graph::Graph};
+pub use self::{history::History, graph::Graph};

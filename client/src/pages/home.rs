@@ -1,9 +1,9 @@
 use yew::prelude::*;
-use crate::components::home_page::{Usage, Graph, History};
+use crate::components::home_page::{Graph, History};
 use crate::cookie;
 use crate::fetcher::{NoProps, ToHtml, immediate_fetcher::ImmediateFetcher};
 use utils::json::{StockJSON, PortfolioJSON, StonkerOverviewJSON};
-use crate::components::home_page::portfolio;
+use crate::components::home_page::{portfolio, usage};
 
 impl ToHtml for StonkerOverviewJSON {
     fn to_html(&self, _: NoProps) -> Html {
@@ -15,7 +15,7 @@ impl ToHtml for StonkerOverviewJSON {
                             { self.portfolio.to_html(NoProps) }
                          </div>
                         <div class="col-6 ps-4">
-                            <Usage/>
+                            { self.usage.to_html(NoProps) }
                         </div>
                     </div>
                     <div class="row">
