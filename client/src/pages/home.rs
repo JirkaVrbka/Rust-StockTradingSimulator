@@ -1,4 +1,5 @@
 use yew::prelude::*;
+use crate::components::home_page::history::MoneyProp;
 use crate::cookie;
 use crate::fetcher::{NoProps, ToHtml, immediate_fetcher::ImmediateFetcher};
 use utils::json::{StockJSON, PortfolioJSON, StonkerOverviewJSON};
@@ -17,7 +18,7 @@ impl ToHtml for StonkerOverviewJSON {
                             { self.usage.to_html(NoProps) }
                         </div>
                     </div>
-                    { self.stonker_history.to_html(NoProps) }
+                    { self.stonker_history.to_html(MoneyProp(self.usage.free) ) }
                 </div>
             </div>
         }

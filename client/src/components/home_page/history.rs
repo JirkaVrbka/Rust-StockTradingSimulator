@@ -3,6 +3,8 @@ use yew::services::ConsoleService;
 use yew::{html, Component, ComponentLink, Html, ShouldRender};
 use crate::fetcher::{ToHtml, NoProps};
 
+pub struct MoneyProp(pub i32);
+
 fn command_to_str(kind: CommandTypesJSON) -> &'static str {
     match kind {
         CommandTypesJSON::Sell => "Sell",
@@ -26,8 +28,8 @@ impl ToHtml for StonkerHistoryJSON {
     }
 }
 
-impl ToHtml for Vec<StonkerHistoryJSON> {
-    fn to_html(&self, _: NoProps) -> Html {
+impl ToHtml<MoneyProp> for Vec<StonkerHistoryJSON> {
+    fn to_html(&self, money: MoneyProp) -> Html {
         html! {
             <div class="row">
                 <div class="col-6 pe-4">
@@ -35,24 +37,29 @@ impl ToHtml for Vec<StonkerHistoryJSON> {
                     <div class="chart-container" style="position: relative; height:40vh; width:40vw">
                         <canvas id="lineChart"></canvas>
                     </div>
-
-                    <script> {"
+                    <script> {format!("
                         const ctxLine = document.getElementById('lineChart').getContext('2d');
-                        const lineChart = new Chart(ctxLine, {
+                        const lineChart = new Chart(ctxLine, {{
                             type: 'line',
-                            data: {
-                                labels: ['1.1','2.1','3.1','4.1','5.1'],
-                                datasets: [{
+                            data: {{
+                                labels: {:?},
+                                datasets: [{{
                                     label: 'Your money',
-                                    data: [65, 59, 80, 81, 56],
+                                    data: {:?},
                                     fill: false,
                                     borderColor: 'rgb(75, 192, 192)',
                                     tension: 0.4
-                                }]
-                            }
-                        });
+                                }}]
+                            }}
+                        }});
                         usageChart.canvas.parentNode.style.height = '50%';
-                        usageChart.canvas.parentNode.style.width = '70%';"}
+                        usageChart.canvas.parentNode.style.width = '70%';",
+                        self.iter().rev().map(|history| history.day.clone()).collect::<Vec<String>>(),
+                        self.iter().fold(vec![money.0], |mut acc, val| {
+                            acc.push(acc.last().unwrap() - val.money);
+                            acc
+                        }).into_iter().rev().skip(1).collect::<Vec<i32>>()
+                      )}
                     </script>
                 </div>
                     <div class="col-6 ps-4">

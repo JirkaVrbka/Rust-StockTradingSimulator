@@ -73,16 +73,17 @@ impl StonkerRepo for Repo {
         .filter(stonker_id.eq(s_id))
         .load::<Command>(&connection).unwrap();
 
-        let stonker_commands = Repo::all::<(Command, Company), _>(
+        let mut stonker_commands = Repo::all::<(Command, Company), _>(
             &connection,
             command.filter(stonker_id.eq(s_id)).inner_join(company),
             format!("commands for stonker {}", s_id).as_str()
         )?;
+        stonker_commands.sort_by(|(a,_), (b,_)| b.created_at.cmp(&a.created_at));
 
         let stonker_history: Vec<StonkerHistoryJSON> = stonker_commands
             .iter()
             .filter_map(|(cmd, comp)| Some(StonkerHistoryJSON {
-                day: format!("{}.{}", cmd.created_at.date().day(), cmd.created_at.date().month()),
+                day: format!("{}-{}-{}", cmd.created_at.year(), cmd.created_at.month(), cmd.created_at.day()),
                 action: cmd.kind.to_json(&connection).ok()?,
                 stock: comp.name.clone(),
                 money: cmd.threshold,
