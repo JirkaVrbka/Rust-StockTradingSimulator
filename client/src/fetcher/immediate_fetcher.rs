@@ -16,8 +16,8 @@ impl<L: Clone + yew::Component, E: Clone + PartialEq> PartialEq for ExtraProps<L
 }
 
 #[derive(Debug, Clone, Properties)]
-pub struct FetchProps<T: Clone + PartialEq> {
-    pub port: &'static str,
+pub struct FetchProps<T: Clone + PartialEq, S: Clone + ToString=&'static str> {
+    pub port: S,
     pub extra: T,
 }
 
@@ -34,18 +34,18 @@ enum Fetch<T> {
 }
 
 #[derive(Debug)]
-pub struct ImmediateFetcher<T: 'static + ToHtml<F>, F: 'static + Clone + PartialEq=NoProps> {
+pub struct ImmediateFetcher<T: 'static + ToHtml<F>, F: 'static + Clone + PartialEq=NoProps, S: 'static + Clone + ToString=&'static str> {
     fetch: Fetch<T>,
     link: ComponentLink<Self>,
-    props: FetchProps<F>,
+    props: FetchProps<F, S>,
 }
 
-impl<T: 'static + ToHtml<F>, F: 'static + Clone + PartialEq> Component for ImmediateFetcher<T, F> {
+impl<T: 'static + ToHtml<F>, F: 'static + Clone + PartialEq, S: 'static + Clone + ToString> Component for ImmediateFetcher<T, F, S> {
     type Message = FetchMsg<T>;
-    type Properties = FetchProps<F>;
+    type Properties = FetchProps<F, S>;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let request = Request::get(format!("http://localhost:8081/{}", props.port))
+        let request = Request::get(format!("http://localhost:8081/{}", props.port.to_string()))
             .body(Nothing)
             .expect("Could not build request.");
         let options = FetchOptions {

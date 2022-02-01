@@ -1,8 +1,8 @@
 use yew::prelude::*;
 use crate::components::home_page::{Portfolio, Usage, Graph, History};
-use crate::dto::PortfolioDto;
+use crate::cookie;
 use crate::fetcher::{NoProps, ToHtml, immediate_fetcher::ImmediateFetcher};
-use utils::json::StockJSON;
+use utils::json::{StockJSON, PortfolioJSON, StonkerOverviewJSON};
 
 /* Work in progress
 impl ToHtml for StockJSON {
@@ -21,13 +21,18 @@ impl ToHtml for StockJSON {
     }
 }*/
 
+/*
 impl ToHtml for Vec<StockJSON> {
     fn to_html(&self, _: NoProps) -> Html {
-        let portfolios = vec![
-            PortfolioDto { stock : "Netflix".to_string(),  share: 0.1, difference: -2.0, money: -5},
-            PortfolioDto { stock : "Amazon".to_string(),  share: 12.0, difference: 22.0, money: 112},
-            PortfolioDto { stock : "PizzaGuy".to_string(),  share: 5.0, difference: -12.0, money: -70},
-            PortfolioDto { stock : "Total".to_string(),  share: -1.0, difference: 7.0, money: 37}];
+        let portfolios = self.iter().map(|stock| {
+            let current_price = 10;
+            PortfolioDto {
+                stock: stock.owner.name.clone(),
+                share: (stock.share as f32)/10000_f32,
+                difference: 100. * ((current_price as f32)/(stock.bought_for as f32) - 1.),
+                money: current_price - stock.bought_for,
+            }
+        }).collect::<Vec<PortfolioDto>>();
         html! {
             <div class="flex-fill fs-3">
                 <div class="container-fluid ms-3 mt-3">
@@ -53,10 +58,39 @@ impl ToHtml for Vec<StockJSON> {
         }
     }
 }
+*/
+
+impl ToHtml for StonkerOverviewJSON {
+    fn to_html(&self, props: NoProps) -> Html {
+        html! {
+            <div class="flex-fill fs-3">
+                <div class="container-fluid ms-3 mt-3">
+                    <div class="row">
+                        <div class="col-6 pe-4">
+                            <Portfolio portfolios=self.portfolio.clone()/>
+                         </div>
+                        <div class="col-6 ps-4">
+                            <Usage/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 pe-4"><Graph/></div>
+                        <div class="col-6 ps-4"><History/></div>
+                     </div>
+                </div>
+            </div>
+            /*
+            self.iter().take(8).map(|el| html!{
+                { el.to_html(NoProps) }
+            }).collect::<Html>()
+            */
+        }
+    }
+}
 
 pub struct Home {
     link: ComponentLink<Self>,
-    portfolios: Vec<PortfolioDto>
+    stonker_addr: anyhow::Result<String>
 }
 
 impl Component for Home {
@@ -65,12 +99,8 @@ impl Component for Home {
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         Home {
-            link,
-            portfolios: vec![
-                PortfolioDto { stock : "Netflix".to_string(),  share: 0.1, difference: -2.0, money: -5},
-                PortfolioDto { stock : "Amazon".to_string(),  share: 12.0, difference: 22.0, money: 112},
-                PortfolioDto { stock : "PizzaGuy".to_string(),  share: 5.0, difference: -12.0, money: -70},
-                PortfolioDto { stock : "Total".to_string(),  share: -1.0, difference: 7.0, money: 37}]
+            stonker_addr: cookie::get_login().map(|id| format!("stonkers/{}/overview", id)),
+            link
         }
     }
 
@@ -83,8 +113,16 @@ impl Component for Home {
     }
 
     fn view(&self) -> Html {
-        html! {
-            <ImmediateFetcher::<Vec<StockJSON>> port="l/stonkers/stocks" extra=NoProps/>
+        match &self.stonker_addr {
+            Ok(addr) => {
+                html! {
+                    //<ImmediateFetcher::<Vec<StockJSON>> port="l/stonkers/stocks" extra=NoProps/>
+                    <ImmediateFetcher::<StonkerOverviewJSON,_,String> port=addr.clone() extra=NoProps/>
+                }
+            },
+            Err(e) => html! {
+                <p> { format!("Cookie ID Error: {:?}", e) } </p>
+            }
         }
     }
 }

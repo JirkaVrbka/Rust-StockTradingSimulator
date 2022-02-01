@@ -69,7 +69,7 @@
             "dependsOn": [
                 "docker",
                 "sleepy server",
-                "sleepy client",
+                "client",
                 "sleepy windows webpages"
             ],
             "problemMatcher": []

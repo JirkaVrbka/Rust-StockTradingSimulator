@@ -8,7 +8,6 @@ use crate::pages::{Login, Logged};
 mod cookie;
 mod pages;
 mod components;
-mod dto;
 
 struct Model;
 
