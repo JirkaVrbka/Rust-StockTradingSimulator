@@ -34,9 +34,7 @@ impl ToHtml<MoneyProp> for Vec<StonkerHistoryJSON> {
             <div class="row">
                 <div class="col-6 pe-4">
                     <h2 class="fw-bolder">{"GRAPH"}</h2>
-                    <div class="chart-container" style="position: relative; height:40vh; width:40vw">
-                        <canvas id="lineChart"></canvas>
-                    </div>
+                    <canvas id="lineChart"></canvas>
                     <script> {format!("
                         const ctxLine = document.getElementById('lineChart').getContext('2d');
                         const lineChart = new Chart(ctxLine, {{
@@ -51,9 +49,7 @@ impl ToHtml<MoneyProp> for Vec<StonkerHistoryJSON> {
                                     tension: 0.4
                                 }}]
                             }}
-                        }});
-                        usageChart.canvas.parentNode.style.height = '50%';
-                        usageChart.canvas.parentNode.style.width = '70%';",
+                        }});",
                         self.iter().rev().map(|history| history.day.clone()).collect::<Vec<String>>(),
                         self.iter().fold(vec![money.0], |mut acc, val| {
                             acc.push(acc.last().unwrap() - val.money);
@@ -72,7 +68,7 @@ impl ToHtml<MoneyProp> for Vec<StonkerHistoryJSON> {
                     </div>
 
                     <div class="container-fluid g-0">
-                        { self.iter().map(|history| history.to_html(NoProps)).collect::<Html>() }
+                        { self.iter().take(10).map(|history| history.to_html(NoProps)).collect::<Html>() }
                     </div>
                 </div>
             </div>
