@@ -8,7 +8,6 @@ use yew_styles::forms::form_input::FormInput;
 use yew_styles::button::Button;
 use crate::fetcher::{ToHtml, ExtraProps};
 use crate::fetcher::immediate_fetcher::ImmediateFetcher;
-use crate::components::home_page::{Graph, History};
 use crate::components::company_page::CustomizeModal;
 use crate::components::Company;
 

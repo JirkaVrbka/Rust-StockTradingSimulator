@@ -1,8 +1,6 @@
 use yew::services::ConsoleService;
 use yew::{html, Component, ComponentLink, Html, ShouldRender, Properties};
 
-
-use crate::components::home_page::{Graph, History};
 use crate::components::company_page::CustomizeModal;
 
 #[derive(Clone, Properties)]
@@ -36,8 +34,8 @@ impl Component for Company {
                 <div class="flex-fill fs-3">
                         <div class="container-fluid ms-3 mt-3">
                             <div class="row">
-                                <div class="col-6 pe-4"><Graph/></div>
-                                <div class="col-6 ps-4"><History/></div>
+                                //<div class="col-6 pe-4"><Graph/></div>
+                                //<div class="col-6 ps-4"><History/></div>
                             </div>
                             <div class="row justify-content-start">
                                 <div class="col-auto">
