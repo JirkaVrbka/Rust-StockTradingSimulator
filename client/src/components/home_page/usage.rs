@@ -25,7 +25,7 @@ impl Component for Usage {
         html! {
             <>
             <h2 class="fw-bolder">{"USAGE"}</h2>
-                        <div class="chart-container" style="position: relative; height:40vh; width:40vw">
+                        <div class="chart-container" style="position: relative;">
                             <canvas id="usageChart"></canvas>
                         </div>
             <script>{"
@@ -66,8 +66,6 @@ impl Component for Usage {
                     }
                 }
             });
-            usageChart.canvas.parentNode.style.height = '50%';
-            usageChart.canvas.parentNode.style.width = '70%';
             "}</script>
             </>
         }

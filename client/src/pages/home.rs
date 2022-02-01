@@ -1,73 +1,18 @@
 use yew::prelude::*;
-use crate::components::home_page::{Portfolio, Usage, Graph, History};
+use crate::components::home_page::{Usage, Graph, History};
 use crate::cookie;
 use crate::fetcher::{NoProps, ToHtml, immediate_fetcher::ImmediateFetcher};
 use utils::json::{StockJSON, PortfolioJSON, StonkerOverviewJSON};
-
-/* Work in progress
-impl ToHtml for StockJSON {
-    fn to_html(&self, _: NoProps) -> Html {
-        let header = self.title.clone();
-        let body = self.description.clone();
-        let footer = self.author.clone();
-        let palette = match self.effect {
-            utils::json::EffectJSON::Fall => "bg-danger",
-            utils::json::EffectJSON::Neutral => "",
-            utils::json::EffectJSON::Rise => "bg-success",
-        }.to_string();
-        html! {
-            <NewsCard title=header text=body author=footer color=palette/>
-        }
-    }
-}*/
-
-/*
-impl ToHtml for Vec<StockJSON> {
-    fn to_html(&self, _: NoProps) -> Html {
-        let portfolios = self.iter().map(|stock| {
-            let current_price = 10;
-            PortfolioDto {
-                stock: stock.owner.name.clone(),
-                share: (stock.share as f32)/10000_f32,
-                difference: 100. * ((current_price as f32)/(stock.bought_for as f32) - 1.),
-                money: current_price - stock.bought_for,
-            }
-        }).collect::<Vec<PortfolioDto>>();
-        html! {
-            <div class="flex-fill fs-3">
-                <div class="container-fluid ms-3 mt-3">
-                    <div class="row">
-                        <div class="col-6 pe-4">
-                            <Portfolio portfolios=portfolios/>
-                         </div>
-                        <div class="col-6 ps-4">
-                            <Usage/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 pe-4"><Graph/></div>
-                        <div class="col-6 ps-4"><History/></div>
-                     </div>
-                </div>
-            </div>
-            /*
-            self.iter().take(8).map(|el| html!{
-                { el.to_html(NoProps) }
-            }).collect::<Html>()
-            */
-        }
-    }
-}
-*/
+use crate::components::home_page::portfolio;
 
 impl ToHtml for StonkerOverviewJSON {
-    fn to_html(&self, props: NoProps) -> Html {
+    fn to_html(&self, _: NoProps) -> Html {
         html! {
             <div class="flex-fill fs-3">
                 <div class="container-fluid ms-3 mt-3">
                     <div class="row">
                         <div class="col-6 pe-4">
-                            <Portfolio portfolios=self.portfolio.clone()/>
+                            { self.portfolio.to_html(NoProps) }
                          </div>
                         <div class="col-6 ps-4">
                             <Usage/>
@@ -79,11 +24,6 @@ impl ToHtml for StonkerOverviewJSON {
                      </div>
                 </div>
             </div>
-            /*
-            self.iter().take(8).map(|el| html!{
-                { el.to_html(NoProps) }
-            }).collect::<Html>()
-            */
         }
     }
 }
