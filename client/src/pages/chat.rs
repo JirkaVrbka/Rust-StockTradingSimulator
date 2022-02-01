@@ -5,6 +5,8 @@ use yew::{
     prelude::*,
     services::{ConsoleService, websocket::{WebSocketService, WebSocketStatus, WebSocketTask}}
 };
+
+use crate::cookie;
 extern crate web_sys;
 extern crate yew;
 extern crate yew_router;
@@ -34,7 +36,7 @@ impl Chat {
     fn join(&mut self) {
         ConsoleService::log("Connecting");
         let cbout = self.link.callback(|data| ChatMsg::Received(data));
-        let cbnot = self.link.callback(|input| {
+        let conto = self.link.callback(|input| {
             ConsoleService::log(&format!("Notification: {:?}", input));
             match input {
                 WebSocketStatus::Closed | WebSocketStatus::Error => {
@@ -43,7 +45,14 @@ impl Chat {
                 _ => ChatMsg::Ignore,
             }
         });
-        self.ws = WebSocketService::connect_text(format!("ws://127.0.0.1:8081/{}", self.change_room).as_str(), cbout, cbnot).ok();
+        self.ws = match cookie::get_login() {
+            Ok(login) => WebSocketService::connect_text(
+                    format!("ws://127.0.0.1:8081/chat/{}/{}", self.change_room, login).as_str(),
+                    cbout,
+                    conto
+                ).ok(),
+            Err(e) => { ConsoleService::log(format!("{:?}", e).as_str()); None}
+        };
     }
 }
 
@@ -138,7 +147,7 @@ impl Component for Chat {
                             <button class="btn btn-primary" onclick=self.link.callback(|_| ChatMsg::SendText)>{ "Send" }</button>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" onclick=self.link.callback(|_| ChatMsg::CreateRoom) data-bs-target="#createRoomModal">
+                    <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal" onclick=self.link.callback(|_| ChatMsg::CreateRoom) data-bs-target="#createRoomModal">
                         {{"Create room"}}
                     </button>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#joinRoomModal">

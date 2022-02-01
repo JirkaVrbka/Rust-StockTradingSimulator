@@ -1,6 +1,6 @@
 use yew::{
     prelude::*,
-    services::fetch::{FetchService, FetchTask, Request, Response}, format::Json,
+    services::{fetch::{FetchService, FetchTask, Request, Response}, ConsoleService}, format::Json,
 };
 use yew_styles::spinner::{Spinner, SpinnerType};
 use yew_styles::styles::{Palette, Size};

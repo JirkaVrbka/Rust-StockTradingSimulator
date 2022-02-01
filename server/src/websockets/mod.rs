@@ -21,15 +21,17 @@ pub struct WsConn {
     lobby_addr: Addr<Lobby>,
     hb: Instant,
     id: Uuid,
+    username: String,
 }
 
 impl WsConn {
-    pub fn new(room: Uuid, lobby: Addr<Lobby>) -> WsConn {
+    pub fn new(username: String, room: Uuid, lobby: Addr<Lobby>) -> WsConn {
         WsConn {
             id: Uuid::new_v4(),
             room,
             hb: Instant::now(),
             lobby_addr: lobby,
+            username
         }
     }
 }
@@ -46,6 +48,7 @@ impl Actor for WsConn {
                 addr: addr.recipient(),
                 lobby_id: self.room,
                 self_id: self.id,
+                name: self.username.clone()
             })
             .into_actor(self)
             .then(|res, _, ctx| {
@@ -59,21 +62,21 @@ impl Actor for WsConn {
     }
 
     fn stopping(&mut self, _: &mut Self::Context) -> Running {
-        self.lobby_addr.do_send(Disconnect { id: self.id, room_id: self.room });
+        self.lobby_addr.do_send(Disconnect { id: self.id, room_id: self.room, name: self.username.clone() });
         Running::Stop
     }
 }
 
 impl WsConn {
     fn hb(&self, ctx: &mut ws::WebsocketContext<Self>) {
-        ctx.run_interval(HEARTBEAT_INTERVAL, |act, ctx| {
+        let name = self.username.clone();
+        ctx.run_interval(HEARTBEAT_INTERVAL, move |act, ctx| {
             if Instant::now().duration_since(act.hb) > CLIENT_TIMEOUT {
                 println!("Disconnecting failed heartbeat");
-                act.lobby_addr.do_send(Disconnect { id: act.id, room_id: act.room });
+                act.lobby_addr.do_send(Disconnect { id: act.id, room_id: act.room, name: name.clone() } );
                 ctx.stop();
                 return;
             }
-
             ctx.ping(b"hi");
         });
     }
@@ -100,7 +103,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsConn {
             Ok(ws::Message::Nop) => (),
             Ok(Text(s)) => self.lobby_addr.do_send(ClientActorMessage {
                 id: self.id,
-                msg: format!("{}: {}", self.id, s),
+                msg: format!("{}: {}", self.username, s),
                 room_id: self.room
             }),
             Err(e) => panic!("{}",e),

@@ -9,25 +9,27 @@ use yew_styles::button::Button;
 use crate::fetcher::{ToHtml, ExtraProps};
 use crate::fetcher::immediate_fetcher::ImmediateFetcher;
 use crate::components::home_page::{Graph, History};
+use crate::components::company_page::CustomizeModal;
+use crate::components::Company;
+
+
 
 impl ToHtml<ExtraProps<Search, String>> for CompanyJSON {
     fn to_html(&self, props: ExtraProps<Search, String>) -> Html {
         let id = self.id.clone();
         html! {
-            <Button onclick_signal=props.link.callback(move |_| SearchMsg::Select(id)) class_name="row">
-                <div>
-                    { format!("{} {}", self.performer.name, self.name) }
-                </div>
-            </Button>
-        }
-        /*
-            <div class="row my-2 ms-4 fs-3">
-                <div class="col-4">{self.performer.name.clone()}</div>
+            <div class="row my-1 ms-4">
+                <div class="col-6">{self.performer.name.clone()}</div>
                 <div class="col-2">{self.name.clone()}</div>
-                <div class="col-2 text-danger">{"-4$"}</div>
-                <div class="col-2 text-success">{"+1%"}</div>
+                <div class="col-2">
+                 <Button
+                    onclick_signal=props.link.callback(move |_| SearchMsg::Select(id))
+                    class_name="py-0 fs-6 btn btn-outline-info">
+                        {"More"}
+                    </Button>
+                </div>
             </div>
-        */
+        }
     }
 }
 
@@ -58,10 +60,9 @@ impl ToHtml<ExtraProps<Search, String>> for Vec<CompanyJSON> {
                         </div>
                     </div>
                     <div class="row mt-4 pt-3 ms-4">
-                        <div class="col-4 fst-italic text-muted">{"name"}</div>
+                        <div class="col-6 fst-italic text-muted">{"name"}</div>
                         <div class="col-2 fst-italic text-muted">{"stock"}</div>
-                        <div class="col-2 fst-italic text-muted">{"change"}</div>
-                        <div class="col-2 fst-italic text-muted">{"percentage"}</div>
+                        <div class="col-2 fst-italic text-muted"></div>
                     </div> {
                         self.iter()
                             .filter(|company|
@@ -126,9 +127,6 @@ impl Component for Search {
             html! {
                 <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
                     <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-                        <Text plain_text="Search" text_type=TextType::Plain />
-                    </Item>
-                    <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
                         <ImmediateFetcher::<Vec<CompanyJSON>, ExtraProps<Self, String>>
                             port="companies" extra=extras/>
                     </Item>
@@ -136,14 +134,7 @@ impl Component for Search {
             }
         } else {
             html!{
-                <div class="flex-fill fs-3">
-                    <div class="container-fluid ms-3 mt-3">
-                        <div class="row">
-                            <div class="col-6 pe-4"><Graph/></div>
-                            <div class="col-6 ps-4"><History/></div>
-                        </div>
-                    </div>
-                </div>
+                <Company id={self.selected.unwrap().clone()}/>
             }
         }
     }

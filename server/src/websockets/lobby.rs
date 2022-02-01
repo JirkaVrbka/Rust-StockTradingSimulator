@@ -45,7 +45,7 @@ impl Handler<Disconnect> for Lobby {
                 .unwrap()
                 .iter()
                 .filter(|conn_id| *conn_id.to_owned() != msg.id)
-                .for_each(|user_id| self.send_message(&format!("{} disconnected.", &msg.id), user_id));
+                .for_each(|user_id| self.send_message(&format!("{} disconnected.", &msg.name), user_id));
             if let Some(lobby) = self.rooms.get_mut(&msg.room_id) {
                 if lobby.len() > 1 {
                     lobby.remove(&msg.id);
@@ -72,17 +72,18 @@ impl Handler<Connect> for Lobby {
             .unwrap()
             .iter()
             .filter(|conn_id| *conn_id.to_owned() != msg.self_id)
-            .for_each(|conn_id| self.send_message(&format!("{} just joined!", msg.self_id), conn_id));
+            .for_each(|conn_id| self.send_message(&format!("{} just joined!", msg.name), conn_id));
 
         self.sessions.insert(
             msg.self_id,
             msg.addr,
         );
 
-        self.send_message(&format!("Joined to {} chat. Your id is {}.",
-            if msg.lobby_id == Uuid::parse_str("c05554ae-b4ee-4976-ac05-97aaf3c98a23").unwrap()
-                { "global".to_string() }
-                else { msg.lobby_id.to_string() }, msg.self_id), &msg.self_id);
+        let global_lobby = Uuid::parse_str("c05554ae-b4ee-4976-ac05-97aaf3c98a23").unwrap();
+        let lobby = if msg.lobby_id == global_lobby
+            { "global".to_string() } else
+            { msg.lobby_id.to_string() };
+        self.send_message(&format!("Joined to {} chat.", lobby), &msg.self_id);
     }
 }
 

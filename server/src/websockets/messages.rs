@@ -11,6 +11,7 @@ pub struct Connect {
     pub addr: Recipient<WsMessage>,
     pub lobby_id: Uuid,
     pub self_id: Uuid,
+    pub name: String,
 }
 
 #[derive(Message)]
@@ -18,6 +19,7 @@ pub struct Connect {
 pub struct Disconnect {
     pub id: Uuid,
     pub room_id: Uuid,
+    pub name: String,
 }
 
 #[derive(Message)]
