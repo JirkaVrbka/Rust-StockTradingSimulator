@@ -1,6 +1,7 @@
 use utils::json::{StonkerHistoryJSON, CommandTypesJSON};
 use yew::services::ConsoleService;
 use yew::{html, Component, ComponentLink, Html, ShouldRender};
+use crate::components::graph;
 use crate::fetcher::{ToHtml, NoProps};
 
 pub struct MoneyProp(pub i32);
@@ -32,35 +33,18 @@ impl ToHtml<MoneyProp> for Vec<StonkerHistoryJSON> {
     fn to_html(&self, money: MoneyProp) -> Html {
         html! {
             <div class="row">
-                <div class="col-6 pe-4">
-                    <h2 class="fw-bolder">{"GRAPH"}</h2>
-                    <canvas id="lineChart"></canvas>
-                    <script> {format!("
-                        const ctxLine = document.getElementById('lineChart').getContext('2d');
-                        const lineChart = new Chart(ctxLine, {{
-                            type: 'line',
-                            data: {{
-                                labels: {:?},
-                                datasets: [{{
-                                    label: 'Your money',
-                                    data: {:?},
-                                    fill: false,
-                                    borderColor: 'rgb(75, 192, 192)',
-                                    tension: 0.4
-                                }}]
-                            }}
-                        }});",
-                        self.iter().rev().map(|history| history.day.clone()).collect::<Vec<String>>(),
-                        self.iter().fold(vec![money.0], |mut acc, val| {
-                            acc.push(acc.last().unwrap() - val.money);
-                            acc
-                        }).into_iter().rev().skip(1).collect::<Vec<i32>>()
-                      )}
-                    </script>
-                </div>
-                    <div class="col-6 ps-4">
-                        <h2 class="fw-bolder">{"HISTORY"}</h2>
-                        <div class="row text-secondary fst-italic">
+                {
+                graph(
+                    "Your money",
+                    self.iter().rev().map(|history| history.day.clone()).collect::<Vec<String>>(),
+                    self.iter().fold(vec![money.0], |mut acc, val| {
+                        acc.push(acc.last().unwrap() - val.money);
+                        acc
+                    }).into_iter().rev().skip(1).collect::<Vec<i32>>()
+                )}
+                <div class="col-6 ps-4">
+                    <h2 class="fw-bolder">{"HISTORY"}</h2>
+                    <div class="row text-secondary fst-italic">
                         <div class="col-3">{"day"}</div>
                         <div class="col-3">{"action"}</div>
                         <div class="col-3">{"stock"}</div>
