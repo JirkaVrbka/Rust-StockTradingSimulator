@@ -14,8 +14,6 @@ pub struct History {
     pub sold_for: i32,
 }
 
-// TODO: implement toJson for History
-
 #[derive(Insertable, Serialize, Deserialize, Clone)]
 #[table_name = "history"]
 pub struct NewHistory {
@@ -24,5 +22,3 @@ pub struct NewHistory {
     pub bought_for: i32,
     pub sold_for: i32,
 }
-
-// TODO: implement fromJson for NewHistory

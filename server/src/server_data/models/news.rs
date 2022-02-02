@@ -69,31 +69,3 @@ impl ToJson<NewsJSON> for News {
         })
     }
 }
-
-/* TODO: add schema
-#[derive(Insertable, Serialize, Deserialize, Clone)]
-#[table_name = "news"]
-pub struct NewNews {
-    pub name: String,
-    pub title: String,
-    pub description: String,
-    pub author: String,
-    #[serde(with = "ts_seconds")]
-    pub created_at: chrono::NaiveDateTime,
-    pub kind: Effect,
-    pub company_id: i32,
-}
-
-impl FromJson<NewsJSON> for NewNews {
-    fn from_json(json: &NewsJSON) -> Self {
-        NewNews {
-            title: json.title.clone(),
-            description: json.description.clone(),
-            author: json.author.clone(),
-            created_at: json.created_at,
-            kind: Effect::from_json(&json.effect),
-            company_id: json.company.id
-        }
-    }
-}
-**/

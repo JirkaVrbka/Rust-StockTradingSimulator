@@ -71,7 +71,6 @@ impl ToHtml<ExtraProps<Search, String>> for Vec<CompanyJSON> {
                                     ).contains(&props.extra.to_lowercase())
                                 }
                             )
-                            .take(8)
                             .map(|el| html!{
                                 { el.to_html(props.clone()) }
                             }).collect::<Html>()
