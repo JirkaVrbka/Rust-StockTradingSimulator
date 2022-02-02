@@ -6,4 +6,4 @@ pub mod company;
 pub mod register_modal;
 pub mod graph;
 
-pub use self::{nav_element::NavElement, news_card::NewsCard, company::Company, register_modal::RegisterModal, graph::graph};
+pub use self::{nav_element::NavElement, news_card::NewsCard, register_modal::RegisterModal, graph::graph};

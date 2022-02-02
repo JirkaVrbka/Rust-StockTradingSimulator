@@ -120,7 +120,6 @@ pub struct HistoryJSON {
 pub struct StonkerOverviewJSON {
     pub portfolio: Vec<PortfolioJSON>,
     pub usage: UsageJSON,
-    // TODO: pub graph: unknown_yet,
     pub portfolio_overview: Vec<PortfolioJSON>,
     pub stonker_history: Vec<StonkerHistoryJSON>,
 }

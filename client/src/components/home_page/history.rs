@@ -32,8 +32,7 @@ impl ToHtml for StonkerHistoryJSON {
 impl ToHtml<MoneyProp> for Vec<StonkerHistoryJSON> {
     fn to_html(&self, money: MoneyProp) -> Html {
         html! {
-            <div class="row">
-                {
+            <div class="row"> {
                 graph(
                     "Your money",
                     self.iter().rev().map(|history| history.day.clone()).collect::<Vec<String>>(),

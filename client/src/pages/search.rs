@@ -1,17 +1,14 @@
 use stylist::css;
-use utils::json::{StonkerJSON, CompanyJSON};
+use utils::json::{StonkerJSON, CompanyJSON, CompanyDetailJSON};
 use yew::prelude::*;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
 use yew_styles::text::{Text, TextType};
 use yew_styles::forms::form_input::FormInput;
 use yew_styles::button::Button;
-use crate::fetcher::{ToHtml, ExtraProps};
+use crate::fetcher::{ToHtml, ExtraProps, NoProps};
 use crate::fetcher::immediate_fetcher::ImmediateFetcher;
 use crate::components::company_page::CustomizeModal;
-use crate::components::Company;
-
-
 
 impl ToHtml<ExtraProps<Search, String>> for CompanyJSON {
     fn to_html(&self, props: ExtraProps<Search, String>) -> Html {
@@ -133,7 +130,7 @@ impl Component for Search {
             }
         } else {
             html!{
-                <Company id={self.selected.unwrap().clone()}/>
+                <ImmediateFetcher::<CompanyDetailJSON> port="companies/1" extra=NoProps/>
             }
         }
     }
