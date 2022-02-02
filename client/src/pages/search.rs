@@ -1,5 +1,5 @@
 use stylist::css;
-use utils::json::{StonkerJSON, CompanyJSON, CompanyDetailJSON};
+use utils::json::{StonkerJSON, CompanyJSON, CompanyDetailJSON, StockJSON};
 use yew::prelude::*;
 use yew_styles::layouts::container::{Container, Direction, Wrap};
 use yew_styles::layouts::item::{AlignSelf, Item, ItemLayout};
@@ -131,8 +131,12 @@ impl Component for Search {
             },
             Some(id) => {
                 let port = format!("companies/{}", id.clone());
+                let stocks = format!("{}/stocks", port.clone());
                 html!{
-                    <ImmediateFetcher::<CompanyDetailJSON,NoProps,String> port=port extra=NoProps/>
+                    <div class="row">
+                        <ImmediateFetcher::<CompanyDetailJSON,NoProps,String> port=port extra=NoProps/>
+                        <ImmediateFetcher::<Vec<StockJSON>,NoProps,String> port=stocks extra=NoProps/>
+                    </div>
                 }
             }
         }

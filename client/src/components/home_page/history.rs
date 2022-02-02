@@ -32,15 +32,17 @@ impl ToHtml for StonkerHistoryJSON {
 impl ToHtml<MoneyProp> for Vec<StonkerHistoryJSON> {
     fn to_html(&self, money: MoneyProp) -> Html {
         html! {
-            <div class="row"> {
-                graph(
-                    "Your money",
-                    self.iter().rev().map(|history| history.day.clone()).collect::<Vec<String>>(),
-                    self.iter().fold(vec![money.0], |mut acc, val| {
-                        acc.push(acc.last().unwrap() - val.money);
-                        acc
-                    }).into_iter().rev().skip(1).collect::<Vec<i32>>()
-                )}
+            <div class="row">
+                <div class="col-6 pe-4"> {
+                    graph(
+                        "Your money",
+                        self.iter().rev().map(|history| history.day.clone()).collect::<Vec<String>>(),
+                        self.iter().fold(vec![money.0], |mut acc, val| {
+                            acc.push(acc.last().unwrap() - val.money);
+                            acc
+                        }).into_iter().rev().skip(1).collect::<Vec<i32>>()
+                    )}
+                </div>
                 <div class="col-6 ps-4">
                     <h2 class="fw-bolder">{"HISTORY"}</h2>
                     <div class="row text-secondary fst-italic">
