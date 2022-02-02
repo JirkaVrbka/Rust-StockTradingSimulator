@@ -26,7 +26,7 @@ impl Component for RegisterModal {
             <span>
 
                 // <!-- Button trigger modal -->
-                <button type="button" class="btn btn-danger rounded-3 text-white fs-2 ms-3" data-bs-toggle="modal" data-bs-target="#registerModal">
+                <button type="button" class="btn btn-success rounded-3 text-white fs-2 ms-3" data-bs-toggle="modal" data-bs-target="#registerModal">
                   {"Register"}
                 </button>
 
@@ -53,7 +53,7 @@ impl Component for RegisterModal {
                       </div>
                       <div class="modal-footer border-0">
                         <button type="button" class="btn btn-secondary rounded-3 fs-2" data-bs-dismiss="modal">{"Close"}</button>
-                        <button type="button" class="btn btn-info text-white rounded-3 fs-2">{"Register"}</button>
+                        <button type="button" class="btn btn-success text-white rounded-3 fs-2">{"Register"}</button>
                       </div>
                     </div>
                   </div>
