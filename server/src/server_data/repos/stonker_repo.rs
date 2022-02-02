@@ -76,7 +76,7 @@ impl StonkerRepo for Repo {
         let s1: Vec<Command> = command
         .filter(stonker_id.eq(s_id))
         .load::<Command>(&connection).unwrap();
-        /* Commands
+
         let mut stonker_commands = Repo::all::<(Command, Company), _>(
             &connection,
             command.filter(stonker_id.eq(s_id)).inner_join(company),
@@ -93,7 +93,7 @@ impl StonkerRepo for Repo {
                 money: cmd.threshold,
             }))
             .collect();
-        */
+        /*
         let stonker_history: Vec<(History, Stock)> = Repo::all::<(History, Stock), _>(
             &connection,
             History::belonging_to(&stonker_entity).inner_join(stock),
@@ -109,7 +109,7 @@ impl StonkerRepo for Repo {
                 money: hist.bought_for - hist.sold_for
             })
             .collect::<Vec<StonkerHistoryJSON>>();
-
+        */
         let stonker_stocks = Repo::all::<(Stock, Company), _>(
             &connection,
             Stock::belonging_to(&stonker_entity).inner_join(company),
