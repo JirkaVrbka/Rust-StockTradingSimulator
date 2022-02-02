@@ -69,6 +69,8 @@ impl CompanyRepo for Repo {
         values.append(&mut histories);
 
         values.sort_by(|a, b| a.datetime.cmp(&b.datetime));
+        values.dedup_by(|a, b|
+            a.datetime.eq(&b.datetime) && a.value.eq(&b.value));
 
         let company_json = company_r.to_json(&connection).unwrap();
 

@@ -2,7 +2,8 @@ use std::fmt::Debug;
 
 use yew::{html, Html};
 
-pub fn graph<L,X,Y>(label: L, x: X, y:Y) -> Html where L: ToString + Debug, X: Debug, Y: Debug {
+pub fn graph<L,X,Y>(label: L, x: Vec<X>, y: Vec<Y>) -> Html where L: ToString + Debug, X: Debug, Y: Debug {
+    assert_eq!(x.len(), y.len());
     html! {
         <div class="col-6 pe-4">
             <h2 class="fw-bolder">{"GRAPH"}</h2>

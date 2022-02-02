@@ -3,6 +3,7 @@
         "actix",
         "datagen",
         "Datelike",
+        "datetime",
         "dotenv",
         "chrono",
         "Insertable",

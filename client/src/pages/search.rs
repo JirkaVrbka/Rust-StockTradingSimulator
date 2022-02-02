@@ -118,19 +118,23 @@ impl Component for Search {
     }
 
     fn view(&self) -> Html {
-        if self.selected.is_none() {
-            let extras = ExtraProps{link: self.link.clone(), extra: self.search.clone()};
-            html! {
-                <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
-                    <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
-                        <ImmediateFetcher::<Vec<CompanyJSON>, ExtraProps<Self, String>>
-                            port="companies" extra=extras/>
-                    </Item>
-                </Container>
-            }
-        } else {
-            html!{
-                <ImmediateFetcher::<CompanyDetailJSON> port="companies/1" extra=NoProps/>
+        match self.selected {
+            None => {
+                let extras = ExtraProps{link: self.link.clone(), extra: self.search.clone()};
+                html! {
+                    <Container direction=Direction::Column wrap=Wrap::Wrap class_name="align-item">
+                        <Item layouts=vec!(ItemLayout::ItXs(2)) align_self=AlignSelf::Auto>
+                            <ImmediateFetcher::<Vec<CompanyJSON>, ExtraProps<Self, String>>
+                                port="companies" extra=extras/>
+                        </Item>
+                    </Container>
+                }
+            },
+            Some(id) => {
+                let port = format!("companies/{}", id.clone());
+                html!{
+                    <ImmediateFetcher::<CompanyDetailJSON,NoProps,String> port=port extra=NoProps/>
+                }
             }
         }
     }

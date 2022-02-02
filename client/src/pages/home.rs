@@ -53,7 +53,6 @@ impl Component for Home {
         match &self.stonker_addr {
             Ok(addr) => {
                 html! {
-                    //<ImmediateFetcher::<Vec<StockJSON>> port="l/stonkers/stocks" extra=NoProps/>
                     <ImmediateFetcher::<StonkerOverviewJSON,_,String> port=addr.clone() extra=NoProps/>
                 }
             },
