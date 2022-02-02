@@ -17,13 +17,13 @@ fn command_to_str(kind: CommandTypesJSON) -> &'static str {
 
 impl ToHtml for StonkerHistoryJSON {
     fn to_html(&self, _: NoProps) -> Html {
-        let (style, sign) = if self.money >= 0 { ("success", '+') } else { ("failure", '-') };
+        let style = if self.money >= 0 { "success" } else { "failure" };
         html! {
             <div class="row my-3">
                 <div class="col-3">{self.day.clone()}</div>
                 <div class="col-3">{command_to_str(self.action.clone())}</div>
                 <div class="col-3">{self.stock.clone()}</div>
-                <div class=format!("col-3 text-{}", style)>{format!("{}{}$", sign, self.money)}</div>
+                <div class=format!("col-3 text-{}", style)>{format!("{}$", self.money)}</div>
             </div>
         }
     }

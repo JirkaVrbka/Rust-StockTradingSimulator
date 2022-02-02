@@ -1,10 +1,11 @@
 use utils::json::UsageJSON;
-use yew::{html, Html};
+use yew::{html, Html, services::ConsoleService};
 
 use crate::fetcher::{ToHtml, NoProps};
 
 impl ToHtml for UsageJSON {
     fn to_html(&self, _: NoProps) -> Html {
+        ConsoleService::log(format!("{:?}", self).as_str());
         html! {
             <>
                 <h2 class="fw-bolder">{"USAGE"}</h2>
