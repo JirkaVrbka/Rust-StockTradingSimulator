@@ -3,20 +3,27 @@ use yew::prelude::*;
 use crate::fetcher::{ToHtml, NoProps};
 use crate::fetcher::immediate_fetcher::ImmediateFetcher;
 
-use crate::components::NewsCard;
-
 impl ToHtml for NewsJSON {
     fn to_html(&self, _: NoProps) -> Html {
-        let header = self.title.clone();
-        let body = self.description.clone();
-        let footer = self.author.clone();
-        let palette = match self.effect {
-            utils::json::EffectJSON::Fall => "bg-danger",
-            utils::json::EffectJSON::Neutral => "",
-            utils::json::EffectJSON::Rise => "bg-success",
-        }.to_string();
+        let color = match self.effect {
+            utils::json::EffectJSON::Fall => "bg-danger-custom",
+            utils::json::EffectJSON::Neutral => "bg-basic-custom",
+            utils::json::EffectJSON::Rise => "bg-success-custom",
+        };
         html! {
-            <NewsCard title=header text=body author=footer color=palette/>
+            <div class="col-3">
+                <div class={classes!("card", "m-3", "rounded-3", color)}>
+                    <div class="card-title fs-4 ps-3 pt-3">
+                        { self.title.clone() }
+                    </div>
+                    <div class="card-body">
+                        { self.description.clone() }
+                    </div>
+                    <div class="card-footer text-end border-0 mt-3">
+                        { self.author.clone() }
+                    </div>
+                </div>
+            </div>
         }
     }
 }
