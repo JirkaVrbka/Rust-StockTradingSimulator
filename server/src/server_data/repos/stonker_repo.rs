@@ -14,11 +14,15 @@ use crate::server_data::models::ToJson;
 use crate::server_data::models::command::Command;
 use crate::server_data::models::command::CommandTypes;
 use crate::server_data::models::company::Company;
+use crate::server_data::models::history;
+use crate::server_data::models::history::History;
 use crate::server_data::models::stonker::Stonker;
+use crate::schema::stock::dsl::stock;
 use anyhow::Context;
 use async_trait::async_trait;
 use chrono::Datelike;
 use diesel::dsl::min;
+use utils::json::CommandTypesJSON;
 use utils::json::PortfolioJSON;
 use utils::json::StockJSON;
 use utils::json::StonkerHistoryJSON;
@@ -72,7 +76,7 @@ impl StonkerRepo for Repo {
         let s1: Vec<Command> = command
         .filter(stonker_id.eq(s_id))
         .load::<Command>(&connection).unwrap();
-
+        /* Commands
         let mut stonker_commands = Repo::all::<(Command, Company), _>(
             &connection,
             command.filter(stonker_id.eq(s_id)).inner_join(company),
@@ -89,6 +93,22 @@ impl StonkerRepo for Repo {
                 money: cmd.threshold,
             }))
             .collect();
+        */
+        let stonker_history: Vec<(History, Stock)> = Repo::all::<(History, Stock), _>(
+            &connection,
+            History::belonging_to(&stonker_entity).inner_join(stock),
+            format!("History").as_str()
+        )?;
+
+        let stonker_history = stonker_history
+            .iter()
+            .map(|(hist, stk)| StonkerHistoryJSON {
+                day: format!("{}-{}-{}", hist.created_at.year(), hist.created_at.month(), hist.created_at.day()),
+                action: CommandTypesJSON::Sell,
+                stock: stk.id.to_string(),
+                money: hist.bought_for - hist.sold_for
+            })
+            .collect::<Vec<StonkerHistoryJSON>>();
 
         let stonker_stocks = Repo::all::<(Stock, Company), _>(
             &connection,
