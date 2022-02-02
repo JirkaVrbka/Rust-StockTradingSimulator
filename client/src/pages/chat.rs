@@ -47,7 +47,7 @@ impl Chat {
         });
         self.ws = match cookie::get_login() {
             Ok(login) => WebSocketService::connect_text(
-                    format!("ws://127.0.0.1:8081/chat/{}/{}", self.change_room, login).as_str(),
+                    format!("ws://20.113.13.15:8081/chat/{}/{}", self.change_room, login).as_str(),
                     cbout,
                     conto
                 ).ok(),

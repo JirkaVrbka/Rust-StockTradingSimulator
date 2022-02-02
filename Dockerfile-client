@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 5000
 
-CMD trunk --config ./src/bin/client_data/trunk.toml serve
+CMD trunk --config ./client/trunk.toml serve

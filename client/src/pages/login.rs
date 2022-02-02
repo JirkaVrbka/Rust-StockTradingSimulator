@@ -67,7 +67,7 @@ impl Component for Login {
             LoginMsg::password(password) => self.credentials.password = password,
             LoginMsg::Post => {
                 let val = serde_json::to_value(self.credentials.clone()).unwrap();
-                let request = Request::post(format!("http://localhost:8081/login").as_str())
+                let request = Request::post(format!("http://20.113.13.15:8081/login").as_str())
                     .header("Content-Type", "application/json")
                     .body(Json(&val))
                     .expect("Could not build request.");

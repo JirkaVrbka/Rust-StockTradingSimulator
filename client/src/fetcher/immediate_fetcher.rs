@@ -45,7 +45,7 @@ impl<T: 'static + ToHtml<F>, F: 'static + Clone + PartialEq, S: 'static + Clone 
     type Properties = FetchProps<F, S>;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let request = Request::get(format!("http://localhost:8081/{}", props.port.to_string()))
+        let request = Request::get(format!("http://20.113.13.15:8081/{}", props.port.to_string()))
             .body(Nothing)
             .expect("Could not build request.");
         let options = FetchOptions {

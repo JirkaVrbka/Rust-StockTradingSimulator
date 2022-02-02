@@ -57,7 +57,7 @@ impl<T: 'static + Clone + PartialEq + serde::Serialize> Component for ButtonPost
         match msg {
             PostMsg::Post => {
                 let val = serde_json::to_value(self.props.data.clone()).unwrap();
-                let request = Request::post(format!("http://localhost:8081/{}", self.props.port).as_str())
+                let request = Request::post(format!("http://20.113.13.15:8081/{}", self.props.port).as_str())
                     .header("Content-Type", "application/json")
                     .body(Json(&val))
                     .expect("Could not build request.");
